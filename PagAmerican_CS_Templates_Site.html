@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PagAmerican — CS Template Generator</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #F5F7FA; color: #1A1A2E; min-height: 100vh; }
+
+  header { background: #1A56A0; padding: 18px 32px; display: flex; align-items: center; gap: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+  header h1 { color: #fff; font-size: 18px; font-weight: 600; }
+  header span { color: #B5D4F4; font-size: 13px; margin-left: auto; }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 28px 20px; display: grid; grid-template-columns: 320px 1fr; gap: 20px; align-items: start; }
+
+  .panel { background: #fff; border-radius: 12px; border: 1px solid #E2E8F0; padding: 22px; }
+  .panel-title { font-size: 12px; font-weight: 600; color: #64748B; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 16px; }
+
+  .score-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+  .score-btn { padding: 14px 8px; border-radius: 10px; border: 1.5px solid #E2E8F0; background: #F8FAFC; cursor: pointer; text-align: center; transition: all 0.15s; }
+  .score-btn:hover { border-color: #CBD5E1; }
+  .score-btn .s-label { font-size: 13px; font-weight: 600; display: block; color: #334155; }
+  .score-btn .s-desc { font-size: 11px; color: #94A3B8; display: block; margin-top: 3px; }
+  .score-btn.active-green { border-color: #1A7A3C; background: #EAFAF1; }
+  .score-btn.active-green .s-label { color: #1A7A3C; }
+  .score-btn.active-red { border-color: #A00000; background: #FDECEA; }
+  .score-btn.active-red .s-label { color: #A00000; }
+
+  label { font-size: 12px; font-weight: 500; color: #64748B; display: block; margin-bottom: 5px; }
+  select, input[type="text"] { width: 100%; padding: 9px 12px; border: 1px solid #E2E8F0; border-radius: 8px; font-size: 13px; color: #1A1A2E; background: #F8FAFC; outline: none; transition: border 0.15s; }
+  select:focus, input[type="text"]:focus { border-color: #1A56A0; background: #fff; }
+  select { cursor: pointer; }
+
+  .divider { border: none; border-top: 1px solid #F1F5F9; margin: 18px 0; }
+
+  .fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field-full { grid-column: 1 / -1; }
+  .field-group { display: flex; flex-direction: column; }
+
+  .output-panel { background: #fff; border-radius: 12px; border: 1px solid #E2E8F0; padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+  .tag-green { background: #EAFAF1; color: #1A7A3C; }
+  .tag-red { background: #FDECEA; color: #A00000; }
+  .tag-blue { background: #E8F0FE; color: #1A4A8A; }
+
+  .template-name { font-size: 15px; font-weight: 600; color: #1A1A2E; margin-top: 4px; }
+  .template-desc { font-size: 12px; color: #64748B; margin-top: 2px; }
+
+  .output-box { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 18px; font-size: 13.5px; line-height: 1.75; color: #1A1A2E; white-space: pre-wrap; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 200px; flex: 1; }
+
+  .actions { display: flex; gap: 10px; }
+  .copy-btn { flex: 1; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 10px; border: none; background: #1A56A0; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.15s; }
+  .copy-btn:hover { background: #1A4A8A; }
+  .copy-btn.copied { background: #1A7A3C; }
+  .clear-btn { padding: 12px 16px; font-size: 13px; border-radius: 10px; border: 1px solid #E2E8F0; background: #F8FAFC; color: #64748B; cursor: pointer; transition: all 0.15s; }
+  .clear-btn:hover { background: #F1F5F9; }
+
+  .step-label { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .step-num { width: 18px; height: 18px; border-radius: 50%; background: #1A56A0; color: #fff; font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+
+  .badge-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  @media (max-width: 700px) {
+    .container { grid-template-columns: 1fr; }
+    .fields-grid { grid-template-columns: 1fr; }
+    .field-full { grid-column: 1; }
+  }
+  #login-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #F5F7FA; display: flex; align-items: center; justify-content: center; z-index: 9999; }
+  #app-screen { display: none; }
+  .login-card { background: #fff; border-radius: 16px; border: 1px solid #E2E8F0; padding: 40px 36px; width: 100%; max-width: 380px; text-align: center; }
+  .login-logo { width: 48px; height: 48px; background: #1A56A0; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+  .login-title { font-size: 20px; font-weight: 700; color: #1A1A2E; margin-bottom: 6px; }
+  .login-sub { font-size: 13px; color: #64748B; margin-bottom: 28px; }
+  .login-input { width: 100%; padding: 11px 14px; border: 1px solid #E2E8F0; border-radius: 8px; font-size: 14px; color: #1A1A2E; background: #F8FAFC; outline: none; margin-bottom: 12px; text-align: center; letter-spacing: 2px; }
+  .login-input:focus { border-color: #1A56A0; background: #fff; }
+  .login-btn { width: 100%; padding: 12px; background: #1A56A0; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  .login-btn:hover { background: #1A4A8A; }
+  .login-error { font-size: 12px; color: #A00000; margin-top: 8px; display: none; }
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7v10l10 5 10-5V7L12 2z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="login-title">PagAmerican CS</div>
+    <div class="login-sub">Ferramenta de uso interno — equipe de Customer Support</div>
+    <input class="login-input" type="password" id="pwd-input" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')checkPwd()">
+    <button class="login-btn" onclick="checkPwd()">Entrar</button>
+    <div class="login-error" id="login-error">Senha incorreta. Tente novamente.</div>
+  </div>
+</div>
+
+<div id="app-screen">
+
+<header>
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="8" fill="#fff" fill-opacity="0.15"/><path d="M7 14h14M14 7v14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
+  <h1>PagAmerican — CS Template Generator</h1>
+  <span>Customer Support · Uso Interno</span>
+</header>
+
+<div class="container">
+
+  <!-- LEFT PANEL -->
+  <div>
+    <div class="panel">
+      <div class="step-label"><span class="step-num">1</span> Score da IA</div>
+      <div class="score-row">
+        <button class="score-btn active-green" onclick="setScore('low')" id="btn-low">
+          <span class="s-label">Abaixo de 80</span>
+          <span class="s-desc">Fluxo padrão</span>
+        </button>
+        <button class="score-btn" onclick="setScore('high')" id="btn-high">
+          <span class="s-label">80 ou acima</span>
+          <span class="s-desc">Anti-chargeback</span>
+        </button>
+      </div>
+
+      <hr class="divider">
+      <div class="step-label"><span class="step-num">2</span> Motivo do contato</div>
+      <select id="reason" onchange="updateFields()"></select>
+
+      <hr class="divider">
+      <div class="step-label"><span class="step-num">3</span> Dados do cliente</div>
+      <div class="fields-grid" id="fields-grid"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="output-panel">
+    <div>
+      <div class="step-label"><span class="step-num">4</span> Template gerado</div>
+      <div class="badge-row">
+        <span class="tag tag-green" id="flow-tag">Fluxo padrão</span>
+        <span class="template-name" id="template-name">—</span>
+      </div>
+      <div class="template-desc" id="template-desc"></div>
+    </div>
+    <div class="output-box" id="output">Selecione o motivo do contato para gerar o template.</div>
+    <div class="actions">
+      <button class="copy-btn" id="copy-btn" onclick="copyTemplate()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copiar template
+      </button>
+      <button class="clear-btn" onclick="clearFields()">Limpar campos</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const TEMPLATES = {
+  low: [
+    { id:"t01", label:"Primeiro contato — confirmação de pedido", tag:"green", tagLabel:"Fluxo padrão", desc:"Todo primeiro contato com score abaixo de 80.",
+      fields:["customerName","agentName","orderNumber","purchaseDate","productName","orderTotal","cityState","orderStatus"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you with your case today on behalf of PagAmerican. We process payments for the merchant, and I'll do my best to help resolve this for you as quickly as possible.\n\nI was able to locate the following order in our system, and I'd just like to confirm that it's the order you're contacting us about:\n\nOrder Details\n• Order Number: ${f.orderNumber}\n• Purchase Date: ${f.purchaseDate}\n• Product: ${f.productName}\n• Total Amount: $${f.orderTotal}\n• Shipping Address: ${f.cityState}\n• Current Status: ${f.orderStatus}\n\nCould you please confirm that this is the correct order?\n\nI also want to reassure you — your order is still within our platform's guarantee period, and I'm fully prepared to help you get this resolved.\n\nOnce confirmed, I'll move forward and address your specific concern.\n\nThank you,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t02", label:"Detalhes do pedido", tag:"green", tagLabel:"Fluxo padrão", desc:"Cliente solicita informações detalhadas sobre o pedido.",
+      fields:["customerName","agentName","orderNumber","purchaseDate","orderStatus","quantity","productName","amount","shippingAmount","coupon","fee","shippingAddress"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nAs requested, here are the details of your order:\n\nOrder Information\n• Order Number: ${f.orderNumber}\n• Purchase Date: ${f.purchaseDate}\n• Status: ${f.orderStatus}\n• Number of Items: ${f.quantity}\n• Product(s): ${f.productName}\n\nAmounts\n• Total Amount Paid: $${f.amount}\n• Shipping Fee: $${f.shippingAmount}\n• Discount Coupon: ${f.coupon}\n• Applied Fees: ${f.fee}\n• Delivery Address: ${f.shippingAddress}\n\nIf you have any questions or need further information, I'm here to help.\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t03", label:"Status de entrega", tag:"green", tagLabel:"Fluxo padrão", desc:"Cliente quer saber onde está o pedido.",
+      fields:["customerName","agentName","orderNumber","trackingCode","trackingLink","currentStatus"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nYou can track the delivery of your order using the information below:\n\nTracking Information\n• Order Number: ${f.orderNumber}\n• Tracking Code: ${f.trackingCode}\n• Tracking Link: ${f.trackingLink}\n• Current Status: ${f.currentStatus}\n\nI've confirmed that your order is within the estimated delivery timeframe and is currently on its way to you.\n\nIf you have any further questions, feel free to reach out.\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t04", label:"Atraso na entrega", tag:"green", tagLabel:"Fluxo padrão", desc:"Pedido passou do prazo estimado de entrega.",
+      fields:["customerName","agentName"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nI sincerely apologize for the delay with your order. I've already contacted the carrier to request that this be resolved as soon as possible.\n\nWe've aligned a final estimated delivery timeframe of up to 7 additional business days.\n\nAs a courtesy for the inconvenience, I've applied a 15% discount to your total purchase amount. This will be reflected on your original payment method within up to 5 business days.\n\nI'll continue to closely monitor your case. If you need anything in the meantime, please don't hesitate to reach out.\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t05", label:"Correção de endereço — em trânsito", tag:"green", tagLabel:"Fluxo padrão", desc:"Cliente quer corrigir endereço, produto já enviado.",
+      fields:["customerName","agentName","registeredAddress","trackingCode","trackingLink"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nI've reviewed your order and confirmed that your package is currently in transit to the address registered at the time of purchase:\n• ${f.registeredAddress}\n\nUnfortunately, at this stage it is not possible to redirect the shipment.\n\nHere's what I recommend: please ask someone at the registered address to refuse the delivery. Once the package is returned, I'll arrange a new shipment to your correct address right away.\n\nCould you please monitor the tracking and let me know as soon as the return is registered?\n\nTracking Code: ${f.trackingCode}\nTracking Link: ${f.trackingLink}\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t06", label:"Correção de endereço — já entregue", tag:"green", tagLabel:"Fluxo padrão", desc:"Cliente quer corrigir endereço, produto já entregue.",
+      fields:["customerName","agentName","registeredAddress"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nI've reviewed your order and can see that the package was marked as delivered to the address provided at the time of purchase:\n• ${f.registeredAddress}\n\nIn most cases with incorrect addresses, deliveries are refused since the recipient doesn't recognize the sender. However, in your case, the delivery was completed to the registered address.\n\nI'd recommend checking with anyone at that address to see if the package can be recovered.\n\nIf that's not possible, please let me know and I'll escalate this to the merchant to explore available options. Since the delivery was completed to the registered address, a refund may not be possible — but I'll do my best to help.\n\nHow would you like to proceed?\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t07", label:"Item faltante / incorreto — solicitar evidência", tag:"green", tagLabel:"Fluxo padrão", desc:"Cliente alega item errado ou faltando.",
+      fields:["customerName","agentName"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nI'm sorry to hear about this issue with your order. To move forward, could you please send us:\n\n1. A photo of the outside of the packaging\n2. A photo of the items you received\n\nOnce I have that, I'll proceed immediately with a resolution for you.\n\nI apologize for the inconvenience and I'll make sure this gets sorted out as quickly as possible.\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t08", label:"Item faltante / incorreto — evidência recebida", tag:"green", tagLabel:"Fluxo padrão", desc:"Cliente enviou as fotos. Confirmar reenvio.",
+      fields:["customerName","agentName","shippingAddress"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nThank you for sending the photos. Based on the evidence provided, I've submitted a request for the missing items to be reshipped to your registered address:\n\nShipping Address: ${f.shippingAddress}\n\nPlease allow up to 10 business days from today for the new delivery.\n\nIf you have any questions in the meantime, feel free to reach out.\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t09", label:"Cancelamento — pedido não entregue", tag:"green", tagLabel:"Fluxo padrão", desc:"Cliente quer cancelar, produto não foi entregue ainda.",
+      fields:["customerName","agentName"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nI'm sorry to hear you'd like to cancel your order. Could you share what led you to this decision? I'd love to help find the best solution for you.\n\nI've reviewed your order and can see it's currently in an advanced stage of processing, which means we're unable to intervene at this point.\n\nIn order to proceed with the cancellation, we'll first need to wait for the delivery to be completed.\n\nBut don't worry — as soon as you receive the product, I'll be ready to move forward right away. Could you please reply to this email once it arrives?\n\nI appreciate your patience and I'm here to help every step of the way.\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t10", label:"Cancelamento — oferta de 33%", tag:"green", tagLabel:"Fluxo padrão", desc:"Produto entregue. Oferecer desconto antes do reembolso.",
+      fields:["customerName","agentName"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nI completely understand, and I want to make sure we find the best solution for you.\n\nI've reached out to the manufacturer on your behalf, and they've offered two alternatives:\n\nOption 1 — 33% Courtesy Discount\nThe manufacturer stands behind this product and would love for you to continue your experience. As a gesture of goodwill, they're offering a 33% refund — no return needed.\n\nOption 2 — Full Refund\nUpon return of the sealed, unopened items to our warehouse.\n\nIf you'd like to go with the discount, I can process it immediately to your original payment method.\n\nWhich option would you prefer?\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t11", label:"Cancelamento — aceitou o desconto de 33%", tag:"green", tagLabel:"Fluxo padrão", desc:"Cliente aceitou a oferta de desconto.",
+      fields:["customerName","agentName"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nThat's great — I'm glad we were able to find a solution that works for you!\n\nI've gone ahead and applied the 33% courtesy discount to your order. The refund will be processed to your original payment method within up to 5 business days.\n\nBased on this agreement, may I consider your case resolved? Please don't hesitate to reach out if you need anything else.\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t12", label:"Cancelamento — reembolso integral / vai devolver", tag:"green", tagLabel:"Fluxo padrão", desc:"Cliente recusou desconto. Enviar instruções de devolução.",
+      fields:["customerName","agentName"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nNo problem at all — I'll move forward with the full refund process for your order.\n\nReturn Instructions\nPlease ship the sealed, unopened items to:\n11870 62nd St. N, Largo, FL 33773 – USA\n\nImportant points:\n• Shipping costs are the customer's responsibility.\n• The refund applies only to sealed, unopened items.\n• Once received and inspected, the refund will be issued to your original payment method within up to 15 days.\n\nPlease send us two photos to proceed:\n1. A photo showing the sealed packages\n2. A clear photo of the shipping receipt\n\nAlso, please let us know if any packaging has been opened, so I can flag this in advance.\n\nI look forward to your reply with the proof of shipment.\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t13", label:"Cancelamento — comprovante recebido", tag:"green", tagLabel:"Fluxo padrão", desc:"Cliente enviou comprovante de devolução.",
+      fields:["customerName","agentName"],
+      generate:(f)=>`Hello ${f.customerName},\n\nThank you for sending the proof of shipment — everything looks good on our end.\n\nI've already notified the relevant team, and as soon as the package is received and inspected, we'll proceed with your refund.\n\n• Refund deadline: up to 15 business days after product receipt.\n• Refund method: same payment method used at the time of purchase.\n\nIf the factory confirms the product's integrity, the refund will be processed automatically. If any issues are found, I'll get back to you right away.\n\nBased on this arrangement, may I consider your request resolved?\n\nIf you need anything else, I remain at your disposal.\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t14", label:"Cobrança duplicada", tag:"green", tagLabel:"Fluxo padrão", desc:"Cliente alega ter sido cobrado duas vezes.",
+      fields:["customerName","agentName"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nI understand your concern regarding a possible duplicate charge. I'll review the payment records right away to confirm what happened.\n\nTo help us investigate, could you please send us a screenshot of your bank or card statement showing the duplicate charge?\n\nI'm also in contact with our billing team so they can look into this on their end. If an issue is confirmed, the incorrect charge will be refunded immediately.\n\nI'll keep you updated and get back to you as soon as possible.\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t15", label:"Cobrança incorreta", tag:"green", tagLabel:"Fluxo padrão", desc:"Cliente alega valor cobrado incorreto.",
+      fields:["customerName","agentName"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nThank you for bringing this to our attention. I'd like to make sure we get this sorted out for you.\n\nCould you please let us know which charge(s) you identified as incorrect?\n\nI'll review the situation to understand what may have caused this discrepancy and get back to you with a full analysis.\n\nI kindly ask for up to 3 business days to look into this and come back with a solution. We're treating this as a priority.\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t16", label:"Pagamento recusado", tag:"green", tagLabel:"Fluxo padrão", desc:"Cliente informa que o pagamento foi recusado.",
+      fields:["customerName","agentName"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nI'm sorry to hear your payment was declined. This can happen due to restrictions from your bank, incorrect payment details, or insufficient available credit.\n\nHere are a few things you can try:\n• Double-check the payment information entered\n• Ensure you have sufficient available credit or balance\n• Contact your bank to confirm no authorization is required\n• Try using a different payment method\n\nIf you'd like, I can also forward your case to our sales team so they can reach out to you directly.\n\nPlease confirm your preferred phone number and the best time to contact you.\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t18", label:"🏥 Alegação médica", tag:"blue", tagLabel:"Fluxo médico", desc:"Cliente alega contraindicação ou reação adversa (score < 80).",
+      fields:["customerName","agentName"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nI completely understand, and your health and well-being are our top priority.\n\nGiven the medical circumstances you've shared, I've escalated your case directly and we'll proceed with a full refund for your order.\n\nReturn Instructions\nPlease ship any sealed, unopened items to:\n11870 62nd St. N, Largo, FL 33773 – USA\n\nImportant points:\n• Shipping costs are the customer's responsibility.\n• The refund applies only to sealed, unopened items.\n• Once received and inspected, the refund will be issued within up to 15 days.\n\nPlease send us two photos to proceed:\n1. A photo showing the sealed packages\n2. A clear photo of the shipping receipt\n\nI look forward to your reply and I'm here to support you through this process.\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+  ],
+  high: [
+    { id:"t17", label:"Reembolso direto — qualquer motivo", tag:"red", tagLabel:"Anti-chargeback", desc:"Score 80+. Resolver rápido, sem fricção.",
+      fields:["customerName","agentName","orderTotal"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nI've reviewed your case and I want to make sure this is resolved for you as quickly as possible.\n\nI've gone ahead and initiated a full refund for your order. The amount of $${f.orderTotal} will be returned to your original payment method within up to 5 business days.\n\nIf you have any sealed, unopened items, we kindly ask that you return them to:\n11870 62nd St. N, Largo, FL 33773 – USA\n\nThis is entirely optional, but greatly appreciated.\n\nIs there anything else I can help you with?\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+    { id:"t19", label:"🏥 Alegação médica — score alto", tag:"blue", tagLabel:"Fluxo médico", desc:"Score 80+. Reembolso imediato sem exigir devolução.",
+      fields:["customerName","agentName","orderTotal"],
+      generate:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nI completely understand, and your health and well-being are our absolute priority.\n\nGiven the medical circumstances you've described, I've gone ahead and initiated a full refund for your order immediately.\n\nThe amount of $${f.orderTotal} will be returned to your original payment method within up to 5 business days.\n\nYou don't need to take any further action on your end.\n\nPlease take care of yourself, and don't hesitate to reach out if there's anything else I can help with.\n\nBest regards,\n${f.agentName}\nPagAmerican Support Team`},
+  ]
+};
+
+const FIELD_LABELS = {
+  customerName:"Nome do cliente", agentName:"Seu nome (agente)", orderNumber:"Número do pedido",
+  purchaseDate:"Data da compra", productName:"Nome do produto", orderTotal:"Valor total ($)",
+  cityState:"Cidade, Estado", orderStatus:"Status do pedido", quantity:"Qtd de itens",
+  amount:"Valor total pago ($)", shippingAmount:"Frete ($)", coupon:"Cupom de desconto",
+  fee:"Taxa aplicada", shippingAddress:"Endereço de entrega", trackingCode:"Código de rastreio",
+  trackingLink:"Link de rastreio", currentStatus:"Status atual", registeredAddress:"Endereço cadastrado",
+};
+
+let currentScore = "low";
+let currentTemplate = null;
+
+function setScore(s) {
+  currentScore = s;
+  document.getElementById("btn-low").className = "score-btn" + (s==="low"?" active-green":"");
+  document.getElementById("btn-high").className = "score-btn" + (s==="high"?" active-red":"");
+  populateReasons();
+  updateFields();
+}
+
+function populateReasons() {
+  const sel = document.getElementById("reason");
+  sel.innerHTML = TEMPLATES[currentScore].map((t,i)=>`<option value="${i}">${t.label}</option>`).join("");
+}
+
+function updateFields() {
+  const idx = parseInt(document.getElementById("reason").value)||0;
+  currentTemplate = TEMPLATES[currentScore][idx];
+  document.getElementById("template-name").textContent = currentTemplate.label;
+  document.getElementById("template-desc").textContent = currentTemplate.desc;
+  const tagEl = document.getElementById("flow-tag");
+  tagEl.className = "tag tag-" + currentTemplate.tag;
+  tagEl.textContent = currentTemplate.tagLabel;
+  const grid = document.getElementById("fields-grid");
+  grid.innerHTML = currentTemplate.fields.map(f=>{
+    const isLong = ["shippingAddress","trackingLink","registeredAddress"].includes(f);
+    return `<div class="field-group${isLong?" field-full":""}">
+      <label for="f_${f}">${FIELD_LABELS[f]||f}</label>
+      <input type="text" id="f_${f}" placeholder="${FIELD_LABELS[f]||f}" oninput="generateTemplate()">
+    </div>`;
+  }).join("");
+  generateTemplate();
+}
+
+function getFields() {
+  const out={};
+  currentTemplate.fields.forEach(f=>{
+    const el=document.getElementById("f_"+f);
+    out[f]=el&&el.value.trim()?el.value.trim():`[${(FIELD_LABELS[f]||f).toUpperCase().replace(/ /g,"_")}]`;
+  });
+  return out;
+}
+
+function generateTemplate() {
+  if(!currentTemplate)return;
+  document.getElementById("output").textContent = currentTemplate.generate(getFields());
+  const btn=document.getElementById("copy-btn");
+  btn.className="copy-btn";
+  btn.innerHTML='<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copiar template';
+}
+
+function copyTemplate() {
+  navigator.clipboard.writeText(document.getElementById("output").textContent).then(()=>{
+    const btn=document.getElementById("copy-btn");
+    btn.className="copy-btn copied";
+    btn.innerHTML='✓ Copiado!';
+    setTimeout(()=>{ btn.className="copy-btn"; btn.innerHTML='<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copiar template'; },2000);
+  });
+}
+
+function clearFields() {
+  currentTemplate.fields.forEach(f=>{ const el=document.getElementById("f_"+f); if(el)el.value=""; });
+  generateTemplate();
+}
+
+populateReasons();
+updateFields();
+</script>
+
+</div>
+
+<script>
+function checkPwd() {
+  const val = document.getElementById("pwd-input").value;
+  const err = document.getElementById("login-error");
+  if (val === "timecspagamerican") {
+    document.getElementById("login-screen").style.display = "none";
+    document.getElementById("app-screen").style.display = "block";
+    sessionStorage.setItem("cs_auth", "1");
+  } else {
+    err.style.display = "block";
+    document.getElementById("pwd-input").value = "";
+    document.getElementById("pwd-input").focus();
+  }
+}
+if (sessionStorage.getItem("cs_auth") === "1") {
+  document.getElementById("login-screen").style.display = "none";
+  document.getElementById("app-screen").style.display = "block";
+}
+document.getElementById("pwd-input").focus();
+</script>
+
+</body>
+</html>
