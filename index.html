@@ -1,9 +1,61 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PagAmerican — CS Template Generator v2</title>
+<title>PagAmerican — CS Template Generator v3.1</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#F5F7FA;color:#1A1A2E;min-height:100vh}
+header{background:#1A56A0;padding:18px 32px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+header h1{color:#fff;font-size:18px;font-weight:600}
+header .ver{background:rgba(255,255,255,.2);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+header span.sub{color:#B5D4F4;font-size:13px;margin-left:auto}
+.container{max-width:1100px;margin:0 auto;padding:28px 20px;display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start}
+.panel{background:#fff;border-radius:12px;border:1px solid #E2E8F0;padding:22px}
+.score-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+.score-btn{padding:14px 8px;border-radius:10px;border:1.5px solid #E2E8F0;background:#F8FAFC;cursor:pointer;text-align:center;transition:all .15s}
+.score-btn:hover{border-color:#CBD5E1}
+.score-btn .sl{font-size:13px;font-weight:600;display:block;color:#334155}
+.score-btn .sd{font-size:11px;color:#94A3B8;display:block;margin-top:3px}
+.score-btn.ag{border-color:#1A7A3C;background:#EAFAF1}.score-btn.ag .sl{color:#1A7A3C}
+.score-btn.ar{border-color:#A00000;background:#FDECEA}.score-btn.ar .sl{color:#A00000}
+label{font-size:12px;font-weight:500;color:#64748B;display:block;margin-bottom:5px}
+select,input[type=text],textarea{width:100%;padding:9px 12px;border:1px solid #E2E8F0;border-radius:8px;font-size:13px;color:#1A1A2E;background:#F8FAFC;outline:none;transition:border .15s}
+select:focus,input[type=text]:focus,textarea:focus{border-color:#1A56A0;background:#fff}
+select{cursor:pointer}
+textarea{resize:vertical;font-family:inherit}
+.divider{border:none;border-top:1px solid #F1F5F9;margin:18px 0}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ff{grid-column:1/-1}
+.fgrp{display:flex;flex-direction:column}
+.op{background:#fff;border-radius:12px;border:1px solid #E2E8F0;padding:22px;display:flex;flex-direction:column;gap:14px}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.tg{background:#EAFAF1;color:#1A7A3C}.tr{background:#FDECEA;color:#A00000}.tb{background:#E8F0FE;color:#1A4A8A}
+.tn{font-size:15px;font-weight:600;color:#1A1A2E;margin-top:4px}
+.td{font-size:12px;color:#64748B;margin-top:2px}
+.ob{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:18px;font-size:13.5px;line-height:1.75;color:#1A1A2E;white-space:pre-wrap;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:200px;flex:1}
+.acts{display:flex;gap:10px}
+.cb{flex:1;padding:12px;font-size:14px;font-weight:600;border-radius:10px;border:none;background:#1A56A0;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s}
+.cb:hover{background:#1A4A8A}.cb.copied{background:#1A7A3C}
+.clr{padding:12px 16px;font-size:13px;border-radius:10px;border:1px solid #E2E8F0;background:#F8FAFC;color:#64748B;cursor:pointer;transition:all .15s}
+.clr:hover{background:#F1F5F9}
+.sl2{font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.sn{width:18px;height:18px;border-radius:50%;background:#1A56A0;color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+.br{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.translate-box{background:#fff;border-radius:12px;border:1px solid #E2E8F0;padding:20px;margin-bottom:20px}
+.translate-box h3{font-size:13px;font-weight:700;color:#1A56A0;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.translate-result{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:12px;font-size:13px;line-height:1.6;color:#1A1A2E;min-height:80px;margin-top:10px;white-space:pre-wrap;font-style:italic;color:#444}
+.translate-btn{padding:10px 16px;font-size:13px;font-weight:600;border-radius:8px;border:none;background:#2E75B6;color:#fff;cursor:pointer;transition:all .15s;margin-top:10px;width:100%}
+.translate-btn:hover{background:#1A56A0}
+.translate-btn.loading{background:#94A3B8;cursor:not-allowed}
+.pt-summary{background:#FFFDE7;border:1px solid #F0C040;border-radius:10px;padding:14px 16px;font-size:13px;line-height:1.65;color:#444;margin-top:4px}
+.pt-summary-title{font-size:11px;font-weight:700;color:#7B5800;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+@media(max-width:700px){.container{grid-template-columns:1fr}.fg{grid-template-columns:1fr}.ff{grid-column:1}}
+</style>
+</head>
+<body>
 <style>
 #ls{position:fixed;top:0;left:0;width:100%;height:100%;background:#F5F7FA;display:flex;align-items:center;justify-content:center;z-index:9999}
 #as{display:none}
@@ -16,63 +68,30 @@
 .lb{width:100%;padding:12px;background:#1A56A0;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
 .lb:hover{background:#1A4A8A}
 .le{font-size:12px;color:#A00000;margin-top:8px;display:none}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#F5F7FA;color:#1A1A2E;min-height:100vh}
-header{background:#1A56A0;padding:18px 32px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
-header h1{color:#fff;font-size:18px;font-weight:600}
-header .ver{background:rgba(255,255,255,.2);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
-header span.sub{color:#B5D4F4;font-size:13px;margin-left:auto}
-.container{max-width:960px;margin:0 auto;padding:28px 20px;display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start}
-.panel{background:#fff;border-radius:12px;border:1px solid #E2E8F0;padding:22px}
-.score-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
-.score-btn{padding:14px 8px;border-radius:10px;border:1.5px solid #E2E8F0;background:#F8FAFC;cursor:pointer;text-align:center;transition:all .15s}
-.score-btn:hover{border-color:#CBD5E1}
-.score-btn .sl{font-size:13px;font-weight:600;display:block;color:#334155}
-.score-btn .sd{font-size:11px;color:#94A3B8;display:block;margin-top:3px}
-.score-btn.ag{border-color:#1A7A3C;background:#EAFAF1}
-.score-btn.ag .sl{color:#1A7A3C}
-.score-btn.ar{border-color:#A00000;background:#FDECEA}
-.score-btn.ar .sl{color:#A00000}
-label{font-size:12px;font-weight:500;color:#64748B;display:block;margin-bottom:5px}
-select,input[type=text]{width:100%;padding:9px 12px;border:1px solid #E2E8F0;border-radius:8px;font-size:13px;color:#1A1A2E;background:#F8FAFC;outline:none;transition:border .15s}
-select:focus,input[type=text]:focus{border-color:#1A56A0;background:#fff}
-select{cursor:pointer}
-.divider{border:none;border-top:1px solid #F1F5F9;margin:18px 0}
-.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ff{grid-column:1/-1}
-.fgrp{display:flex;flex-direction:column}
-.op{background:#fff;border-radius:12px;border:1px solid #E2E8F0;padding:22px;display:flex;flex-direction:column;gap:14px}
-.tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
-.tg{background:#EAFAF1;color:#1A7A3C}
-.tr{background:#FDECEA;color:#A00000}
-.tb{background:#E8F0FE;color:#1A4A8A}
-.tn{font-size:15px;font-weight:600;color:#1A1A2E;margin-top:4px}
-.td{font-size:12px;color:#64748B;margin-top:2px}
-.ob{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:18px;font-size:13.5px;line-height:1.75;color:#1A1A2E;white-space:pre-wrap;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:200px;flex:1}
-.acts{display:flex;gap:10px}
-.cb{flex:1;padding:12px;font-size:14px;font-weight:600;border-radius:10px;border:none;background:#1A56A0;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s}
-.cb:hover{background:#1A4A8A}
-.cb.copied{background:#1A7A3C}
-.clr{padding:12px 16px;font-size:13px;border-radius:10px;border:1px solid #E2E8F0;background:#F8FAFC;color:#64748B;cursor:pointer;transition:all .15s}
-.clr:hover{background:#F1F5F9}
-.sl2{font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.sn{width:18px;height:18px;border-radius:50%;background:#1A56A0;color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
-.br{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-@media(max-width:700px){.container{grid-template-columns:1fr}.fg{grid-template-columns:1fr}.ff{grid-column:1}}
 </style>
-</head>
-<body>
-<div id="ls"><div class="lc"><div class="ll"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7v10l10 5 10-5V7L12 2z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg></div><div class="lt">PagAmerican CS</div><div class="ls2">Ferramenta de uso interno — equipe de Customer Support</div><input class="li" type="password" id="pi" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')chk()"><button class="lb" onclick="chk()">Entrar</button><div class="le" id="le">Senha incorreta. Tente novamente.</div></div></div>
+<div id="ls"><div class="lc"><div class="ll"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7v10l10 5 10-5V7L12 2z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg></div><div class="lt">PagAmerican CS</div><div class="ls2">Ferramenta de uso interno — equipe de Customer Support</div><input class="li" type="password" id="pi" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')chk()"><button class="lb" onclick="chk()">Entrar</button><div class="le" id="le">Senha incorreta.</div></div></div>
 <div id="as">
 <header>
   <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="8" fill="#fff" fill-opacity=".15"/><path d="M7 14h14M14 7v14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
   <h1>PagAmerican — CS Template Generator</h1>
-  <span class="ver">v2.0</span>
+  <span class="ver">v3.1</span>
   <span class="sub">Customer Support · Uso Interno</span>
 </header>
 
 <div class="container">
   <div>
+    <!-- TRADUTOR -->
+    <div class="translate-box">
+      <h3>Tradutor — Inglês para Português</h3>
+      <div class="fgrp">
+        <label for="translate-input">Cole a mensagem do cliente aqui</label>
+        <textarea id="translate-input" rows="4" placeholder="Paste the customer message here..."></textarea>
+      </div>
+      <button class="translate-btn" id="translate-btn" onclick="translateText()">Traduzir para Português</button>
+      <div class="translate-result" id="translate-result">A tradução aparecerá aqui...</div>
+    </div>
+
+    <!-- TEMPLATES -->
     <div class="panel">
       <div class="sl2"><span class="sn">1</span> Score da IA</div>
       <div class="score-row">
@@ -87,6 +106,7 @@ select{cursor:pointer}
       <div class="fg" id="fields-grid"></div>
     </div>
   </div>
+
   <div class="op">
     <div>
       <div class="sl2"><span class="sn">4</span> Template gerado</div>
@@ -94,6 +114,10 @@ select{cursor:pointer}
       <div class="td" id="tdesc"></div>
     </div>
     <div class="ob" id="output">Selecione o motivo do contato para gerar o template.</div>
+    <div id="pt-summary-wrap" style="display:none">
+      <div class="pt-summary-title">O que este template diz (Português)</div>
+      <div class="pt-summary" id="pt-summary"></div>
+    </div>
     <div class="acts">
       <button class="cb" id="copy-btn" onclick="copyTpl()">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -106,12 +130,7 @@ select{cursor:pointer}
 
 <script>
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
-
-function fmtDate(v){
-  const m=v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if(m) return MONTHS[parseInt(m[2])-1]+" "+parseInt(m[1])+", "+m[3];
-  return v;
-}
+function fmtDate(v){const m=v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);if(m)return MONTHS[parseInt(m[2])-1]+" "+parseInt(m[1])+", "+m[3];return v;}
 
 const FL={
   customerName:"Nome do cliente",agentName:"Seu nome (agente)",orderNumber:"Número do pedido",
@@ -119,7 +138,9 @@ const FL={
   cityState:"Cidade, Estado",orderStatus:"Status do pedido",quantity:"Qtd de itens",
   amount:"Valor total pago ($)",shippingAmount:"Frete ($)",coupon:"Cupom de desconto",
   fee:"Taxa aplicada",shippingAddress:"Endereço de entrega",trackingCode:"Código de rastreio",
-  trackingLink:"Link de rastreio"
+  trackingLink:"Link de rastreio",refundDate:"Data do reembolso",refundAmount:"Valor reembolsado ($)",
+  order1Number:"Número do pedido 1",order1Product:"Produto 1",order1Total:"Valor pedido 1 ($)",
+  order2Number:"Número do pedido 2",order2Product:"Produto 2",order2Total:"Valor pedido 2 ($)",
 };
 
 const CF=["customerName","agentName","orderNumber","purchaseDate","productName","orderTotal","cityState","orderStatus"];
@@ -129,79 +150,145 @@ function hdr(f){
 }
 
 const sign=(name)=>`\nBest regards,\n${name}\nPagAmerican Support Team`;
+const guarantee=`\nAlso, please don't worry — your order is still covered under the merchant's 60-day money-back guarantee.`;
 
 const T={
   low:[
     {id:"t01",label:"Primeiro contato — confirmação de pedido",tag:"tg",tl:"Fluxo padrão",desc:"Todo primeiro contato com score abaixo de 80.",fields:[...CF],
-     gen:(f)=>hdr(f)+`Could you please confirm that this is the correct order?\n\nI want to assure you that I'm fully prepared to help you get this resolved as quickly as possible. Once confirmed, I'll move forward and address your specific concern.\n\nThank you,\n${f.agentName}\nPagAmerican Support Team`},
+     pt:"O agente se apresenta em nome da PagAmerican, confirma os dados do pedido e pede confirmação ao cliente. Também pergunta o motivo do contato e garante que está pronto para ajudar.",
+     gen:(f)=>hdr(f)+`Could you please confirm that this is the correct order?\n\nAlso, could you share what led you to reach out today? I'd love to help find the best solution for you.\n\nI want to assure you that I'm fully prepared to help you get this resolved as quickly as possible. Once confirmed, I'll move forward and address your specific concern.\n\nThank you,\n${f.agentName}\nPagAmerican Support Team`},
 
     {id:"tNF",label:"Cliente não localizado",tag:"tg",tl:"Fluxo padrão",desc:"Não foi possível localizar o pedido no sistema.",fields:["customerName","agentName"],
-     gen:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nI searched our system using the information provided, but I was unable to locate an order associated with your details.\n\nCould you please provide us with the following information so I can look further into this?\n\n• Full name\n• Email address used at the time of purchase\n• Order number (if available)\n\nOnce I have that, I'll be able to assist you right away.`+sign(f.agentName)},
+     pt:"O agente informa que não encontrou o pedido e pede nome completo, email usado na compra e número do pedido. Sugere também enviar print do email de confirmação.",
+     gen:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nI searched our system using the information provided, but I was unable to locate an order associated with your details.\n\nCould you please provide us with the following information so I can look further into this?\n\n• Full name\n• Email address used at the time of purchase\n• Order number (if available)\n\nIf it's easier, you can send us a screenshot of the confirmation email, which will help us locate your order.\n\nI look forward to your reply so we can proceed.`+sign(f.agentName)},
 
     {id:"t02",label:"Detalhes do pedido",tag:"tg",tl:"Fluxo padrão",desc:"Cliente solicita informações detalhadas sobre o pedido.",fields:[...CF,"quantity","amount","shippingAmount","coupon","fee","shippingAddress"],
+     pt:"O agente compartilha todos os detalhes do pedido: quantidade, valores pagos, frete, cupom, taxas e endereço de entrega. Se coloca à disposição para dúvidas.",
      gen:(f)=>hdr(f)+`As requested, here are the full details of your order:\n\nOrder Information\n• Number of Items: ${f.quantity}\n\nAmounts\n• Total Amount Paid: $${f.amount}\n• Shipping Fee: $${f.shippingAmount}\n• Discount Coupon: ${f.coupon}\n• Applied Fees: ${f.fee}\n• Delivery Address: ${f.shippingAddress}\n\nIf you have any questions or need further information, I'm here to help.`+sign(f.agentName)},
 
     {id:"t03",label:"Status de entrega",tag:"tg",tl:"Fluxo padrão",desc:"Cliente quer saber onde está o pedido.",fields:[...CF,"trackingCode","trackingLink"],
+     pt:"O agente informa o código e link de rastreamento e confirma que o pedido está dentro do prazo estimado de entrega.",
      gen:(f)=>hdr(f)+`You can track the delivery of your order using the information below:\n\nTracking Information\n• Tracking Code: ${f.trackingCode}\n• Tracking Link: ${f.trackingLink}\n\nI've confirmed that your order is within the estimated delivery timeframe and is currently on its way to you.\n\nIf you have any further questions, feel free to reach out.`+sign(f.agentName)},
 
+    {id:"t03b",label:"Status entregue — cliente não recebeu",tag:"tg",tl:"Fluxo padrão",desc:"Sistema marca como entregue mas cliente diz não ter recebido.",fields:[...CF,"trackingCode","trackingLink"],
+     pt:"O agente confirma que o sistema marca o pedido como entregue e sugere ao cliente verificar a caixa de correio, áreas próximas à porta e com vizinhos. Se ainda não encontrar, pede que entre em contato para escalar o caso.",
+     gen:(f)=>hdr(f)+`According to our tracking information, your order was marked as delivered to ${f.cityState}.\n\nTracking Information\n• Tracking Code: ${f.trackingCode}\n• Tracking Link: ${f.trackingLink}\n\nWe completely understand this can be concerning. We kindly suggest:\n\n1. Checking your mailbox and any secure areas around your front door\n2. Checking with neighbors nearby, as carriers sometimes leave packages with them\n3. Checking if anyone else at your address may have received it\n\nIf you're still unable to locate the package after checking these options, please let us know and we'll escalate this case right away.\n\nWe appreciate your patience and we're here to help.`+sign(f.agentName)},
+
     {id:"t04",label:"Atraso na entrega",tag:"tg",tl:"Fluxo padrão",desc:"Pedido passou do prazo estimado de entrega.",fields:[...CF],
+     pt:"O agente pede desculpas pelo atraso, informa que já contatou a transportadora e que o prazo final estimado é de até 7 dias úteis adicionais. Aplica desconto de cortesia de 15% no valor total, processado em até 5 dias úteis.",
      gen:(f)=>hdr(f)+`I sincerely apologize for the delay with your order. I've already contacted the carrier to request that this be resolved as soon as possible.\n\nWe've aligned a final estimated delivery timeframe of up to 7 additional business days.\n\nAs a courtesy for the inconvenience, I've applied a 15% discount to your total purchase amount. This will be reflected on your original payment method within up to 5 business days.\n\nI'll continue to closely monitor your case. If you need anything in the meantime, please don't hesitate to reach out.`+sign(f.agentName)},
 
     {id:"t05",label:"Correção de endereço — em trânsito",tag:"tg",tl:"Fluxo padrão",desc:"Cliente quer corrigir endereço, produto em trânsito.",fields:[...CF,"trackingCode","trackingLink"],
+     pt:"O agente informa que não é possível redirecionar o envio neste momento. Orienta o cliente a pedir para recusarem a entrega no endereço antigo. Quando o produto retornar, fará o reenvio para o endereço correto.",
      gen:(f)=>hdr(f)+`Unfortunately, at this stage it is not possible to redirect the shipment.\n\nHere's what I recommend: please ask someone at the registered address to refuse the delivery. Once the package is returned, I'll arrange a new shipment to your correct address right away.\n\nCould you please monitor the tracking and let me know as soon as the return is registered?\n\nTracking Code: ${f.trackingCode}\nTracking Link: ${f.trackingLink}`+sign(f.agentName)},
 
     {id:"t06",label:"Correção de endereço — já entregue",tag:"tg",tl:"Fluxo padrão",desc:"Cliente quer corrigir endereço, produto já entregue.",fields:[...CF],
-     gen:(f)=>hdr(f)+`I can see that the package was marked as delivered to the address provided at the time of purchase.\n\nIn most cases with incorrect addresses, deliveries are refused since the recipient doesn't recognize the sender. However, in your case, the delivery was completed to the registered address.\n\nI'd recommend checking with anyone at that address to see if the package can be recovered.\n\nIf that's not possible, please let me know and I'll escalate this to the merchant to explore available options. Since the delivery was completed to the registered address, a refund may not be possible — but I'll do my best to help.\n\nHow would you like to proceed?`+sign(f.agentName)},
+     pt:"O agente informa que o produto foi entregue no endereço cadastrado. Sugere verificar com quem está no endereço. Se não for possível recuperar, tentará escalar, mas avisa que reembolso pode não ser viável pois a entrega foi correta.",
+     gen:(f)=>hdr(f)+`I can see that the package was marked as delivered to the address provided at the time of purchase.\n\nIn most cases with incorrect addresses, deliveries are refused. However, in your case, the delivery was completed to the registered address.\n\nI'd recommend checking with anyone at that address to see if the package can be recovered.\n\nIf that's not possible, please let me know and I'll escalate this. Since the delivery was completed to the registered address, a refund may not be possible — but I'll do my best to help.\n\nHow would you like to proceed?`+sign(f.agentName)},
 
     {id:"t07",label:"Item faltante / incorreto — solicitar evidência",tag:"tg",tl:"Fluxo padrão",desc:"Cliente alega item errado ou faltando.",fields:[...CF],
+     pt:"O agente pede desculpas e solicita duas fotos: uma da embalagem (exterior) e uma dos itens recebidos. Assim que receber, avançará imediatamente com a resolução.",
      gen:(f)=>hdr(f)+`I'm sorry to hear about this issue with your order. To move forward, could you please send us:\n\n1. A photo of the outside of the packaging\n2. A photo of the items you received\n\nOnce I have that, I'll proceed immediately with a resolution for you.\n\nI apologize for the inconvenience and I'll make sure this gets sorted out as quickly as possible.`+sign(f.agentName)},
 
+    {id:"t07b",label:"Item quebrado — solicitar evidência",tag:"tg",tl:"Fluxo padrão",desc:"Cliente recebeu item quebrado ou danificado.",fields:[...CF],
+     pt:"O agente pede desculpas pelo produto danificado e solicita duas fotos: uma do item danificado e uma da embalagem. Após receber as fotos, solicitará o reenvio imediatamente.",
+     gen:(f)=>hdr(f)+`I'm so sorry to hear that your order arrived damaged. I completely understand how frustrating this must be.\n\nTo move forward with a resolution, could you please send us:\n\n1. A photo of the damaged item(s)\n2. A photo of the outside of the packaging\n\nOnce I receive the photos, I'll immediately submit a request for the replacement to be sent to your registered address.\n\nI apologize for the inconvenience and I'll make sure this is resolved as quickly as possible.`+sign(f.agentName)},
+
     {id:"t08",label:"Item faltante / incorreto — evidência recebida",tag:"tg",tl:"Fluxo padrão",desc:"Cliente enviou fotos. Confirmar reenvio.",fields:[...CF,"shippingAddress"],
+     pt:"O agente confirma o recebimento das fotos e informa que já solicitou o reenvio dos itens faltantes para o endereço cadastrado. Prazo para nova entrega: até 10 dias úteis.",
      gen:(f)=>hdr(f)+`Thank you for sending the photos. Based on the evidence provided, I've submitted a request for the missing items to be reshipped to your registered address:\n\nShipping Address: ${f.shippingAddress}\n\nPlease allow up to 10 business days from today for the new delivery.\n\nIf you have any questions in the meantime, feel free to reach out.`+sign(f.agentName)},
 
-    {id:"t09",label:"Cancelamento — pedido não entregue",tag:"tg",tl:"Fluxo padrão",desc:"Cliente quer cancelar, produto não foi entregue ainda.",fields:[...CF],
-     gen:(f)=>hdr(f)+`I'm sorry to hear you'd like to cancel your order. Could you share what led you to this decision? I'd love to help find the best solution for you.\n\nI can see your order is currently in an advanced stage of processing, which means we're unable to intervene at this point.\n\nIn order to proceed with the cancellation, we'll first need to wait for the delivery to be completed.\n\nBut don't worry — as soon as you receive the product, I'll be ready to move forward right away. Could you please reply to this email once it arrives?\n\nI appreciate your patience and I'm here to help every step of the way.`+sign(f.agentName)},
+    {id:"t09",label:"Cancelamento — pedido não entregue",tag:"tg",tl:"Fluxo padrão",desc:"Cliente quer cancelar, produto não foi entregue ainda.",fields:[...CF,"trackingCode","trackingLink"],
+     pt:"O agente pergunta o motivo do cancelamento e informa que o pedido está em estágio avançado, impossibilitando intervenção agora. Orienta aguardar a entrega e retornar contato. Fornece código e link de rastreio. Informa sobre a garantia de 60 dias.",
+     gen:(f)=>hdr(f)+`I'm sorry to hear you'd like to cancel your order. Could you share what led you to this decision? I'd love to help find the best solution for you.\n\nI can see your order is currently in an advanced stage of processing, which means we're unable to intervene at this point.\n\nIn order to proceed with the cancellation, we'll first need to wait for the delivery to be completed.\n\nYou can track your order using the information below:\n• Tracking Code: ${f.trackingCode}\n• Tracking Link: ${f.trackingLink}\n\nBut don't worry — as soon as you receive the product, I'll be ready to move forward right away. Could you please reply to this email once it arrives?\n\nI appreciate your patience and I'm here to help every step of the way.`+guarantee+sign(f.agentName)},
+
+    {id:"t09b",label:"Cancelamento — cliente não informa motivo",tag:"tg",tl:"Fluxo padrão",desc:"Cliente quer cancelar sem informar o motivo.",fields:[...CF,"trackingCode","trackingLink"],
+     pt:"O agente pergunta gentilmente o motivo do cancelamento para encontrar a melhor solução. Fornece código e link de rastreio enquanto aguarda a resposta. Informa sobre a garantia de 60 dias.",
+     gen:(f)=>hdr(f)+`I'm sorry to hear you'd like to cancel your order.\n\nTo better assist you, could you please share what led you to this decision? Understanding your concern will help us find the best possible solution for you.\n\nIn the meantime, you can track your order using the information below:\n• Tracking Code: ${f.trackingCode}\n• Tracking Link: ${f.trackingLink}\n\nI look forward to your reply and I'm here to help every step of the way.`+guarantee+sign(f.agentName)},
+
+    {id:"t09c",label:"Cliente alega assinatura — não trabalhamos com assinatura",tag:"tg",tl:"Fluxo padrão",desc:"Cliente alega ter assinatura ativa. Informar que não trabalhamos com assinatura.",fields:[...CF],
+     pt:"O agente esclarece que a PagAmerican não trabalha com assinatura ou cobrança recorrente. O pedido foi uma compra única e não haverá cobranças futuras. Se houver cobrança não reconhecida, pede print do extrato para investigar.",
+     gen:(f)=>hdr(f)+`Thank you for reaching out.\n\nI want to clarify that PagAmerican does not operate on a subscription or recurring billing model. Your order was a one-time purchase only, and no future charges will be made to your account.\n\nIf you believe there has been an unauthorized charge, please send us a screenshot of your bank or card statement and I'll investigate this right away.\n\nPlease rest assured that you will not be charged again.`+sign(f.agentName)},
 
     {id:"t10",label:"Cancelamento — oferta de 33%",tag:"tg",tl:"Fluxo padrão",desc:"Produto entregue. Oferecer desconto antes do reembolso.",fields:[...CF],
-     gen:(f)=>hdr(f)+`I completely understand, and I want to make sure we find the best solution for you.\n\nI've reached out to the manufacturer on your behalf, and they've offered two alternatives:\n\nOption 1 — 33% Courtesy Discount\nThe manufacturer stands behind this product and would love for you to continue your experience. As a gesture of goodwill, they're offering a 33% refund — no return needed.\n\nOption 2 — Full Refund\nUpon return of the sealed, unopened items to our warehouse.\n\nIf you'd like to go with the discount, I can process it immediately to your original payment method.\n\nWhich option would you prefer?`+sign(f.agentName)},
+     pt:"O agente apresenta duas opções ao cliente: Opção 1 — desconto de 33% como cortesia, sem necessidade de devolução, processado imediatamente. Opção 2 — reembolso integral mediante devolução dos itens lacrados. Informa sobre a garantia de 60 dias.",
+     gen:(f)=>hdr(f)+`I completely understand, and I want to make sure we find the best solution for you.\n\nI've reached out to the manufacturer on your behalf, and they've offered two alternatives:\n\nOption 1 — 33% Courtesy Discount\nThe manufacturer stands behind this product and would love for you to continue your experience. As a gesture of goodwill, they're offering a 33% refund — no return needed.\n\nOption 2 — Full Refund\nUpon return of the sealed, unopened items to our warehouse.\n\nIf you'd like to go with the discount, I can process it immediately to your original payment method.\n\nWhich option would you prefer?`+guarantee+sign(f.agentName)},
+
+    {id:"t10b",label:"Upsell — oferta de 33% apenas no segundo pedido",tag:"tg",tl:"Fluxo padrão",desc:"Cliente com pedido principal + upsell. Oferecer 33% apenas no segundo pedido.",fields:[...CF,"order1Number","order1Product","order1Total","order2Number","order2Product","order2Total"],
+     pt:"O agente identifica os dois pedidos separadamente. Para o segundo pedido (upsell), oferece duas opções: desconto de 33% sem devolução ou reembolso integral com devolução dos itens lacrados. O primeiro pedido não é afetado.",
+     gen:(f)=>hdr(f)+`I completely understand, and I want to make sure we find the best solution for you.\n\nI can see you have two separate orders with us:\n\nOrder 1 (Main Order)\n• Order Number: ${f.order1Number}\n• Product: ${f.order1Product}\n• Total: $${f.order1Total}\n\nOrder 2 (Additional Order)\n• Order Number: ${f.order2Number}\n• Product: ${f.order2Product}\n• Total: $${f.order2Total}\n\nRegarding Order 2, I've reached out to the manufacturer on your behalf, and they've offered two alternatives:\n\nOption 1 — 33% Courtesy Discount\nAs a gesture of goodwill, they're offering a 33% refund on Order 2 — no return needed.\n\nOption 2 — Full Refund on Order 2\nUpon return of the sealed, unopened items to our warehouse.\n\nIf you'd like to go with the discount, I can process it immediately to your original payment method.\n\nWhich option would you prefer?`+guarantee+sign(f.agentName)},
 
     {id:"t11",label:"Cancelamento — aceitou o desconto de 33%",tag:"tg",tl:"Fluxo padrão",desc:"Cliente aceitou a oferta de desconto.",fields:[...CF],
-     gen:(f)=>hdr(f)+`That's great — I'm glad we were able to find a solution that works for you!\n\nI've gone ahead and applied the 33% courtesy discount to your order. The refund will be processed to your original payment method within up to 5 business days.\n\nBased on this agreement, may I consider your case resolved? Please don't hesitate to reach out if you need anything else.`+sign(f.agentName)},
+     pt:"O agente confirma que o desconto de 33% foi aplicado e será processado no método de pagamento original em até 5 dias úteis. Pergunta se pode considerar o caso encerrado.",
+     gen:(f)=>hdr(f)+`That's great — I'm glad we were able to find a solution that works for you!\n\nI've gone ahead and applied the 33% courtesy discount to your order. The refund will be processed to your original payment method within up to 5 business days.${guarantee}\n\nBased on this agreement, may I consider your case resolved? Please don't hesitate to reach out if you need anything else.`+sign(f.agentName)},
 
     {id:"t12",label:"Cancelamento — reembolso integral / vai devolver",tag:"tg",tl:"Fluxo padrão",desc:"Cliente recusou desconto. Enviar instruções de devolução.",fields:[...CF],
+     pt:"O agente confirma o reembolso integral e passa as instruções de devolução. Endereço: 11870 62nd St. N, Largo, FL 33773 – USA. Frete por conta do cliente. Reembolso apenas para itens lacrados, em até 15 dias após recebimento. Solicita foto dos itens e do comprovante.",
      gen:(f)=>hdr(f)+`No problem at all — I'll move forward with the full refund process for your order.\n\nReturn Instructions\nPlease ship the sealed, unopened items to:\n11870 62nd St. N, Largo, FL 33773 – USA\n\nImportant points:\n• Shipping costs are the customer's responsibility.\n• The refund applies only to sealed, unopened items.\n• Once received and inspected, the refund will be issued to your original payment method within up to 15 days.\n\nPlease send us two photos to proceed:\n1. A photo showing the sealed packages\n2. A clear photo of the shipping receipt\n\nAlso, please let us know if any packaging has been opened, so I can flag this in advance.\n\nI look forward to your reply with the proof of shipment.`+sign(f.agentName)},
 
     {id:"t13",label:"Cancelamento — comprovante recebido",tag:"tg",tl:"Fluxo padrão",desc:"Cliente enviou comprovante de devolução.",fields:[...CF],
+     pt:"O agente confirma o recebimento do comprovante e informa que a equipe foi notificada. Reembolso em até 15 dias úteis após recebimento, no mesmo método de pagamento. Se o produto estiver íntegro, reembolso automático.",
      gen:(f)=>hdr(f)+`Thank you for sending the proof of shipment — everything looks good on our end.\n\nI've already notified the relevant team, and as soon as the package is received and inspected, we'll proceed with your refund.\n\n• Refund deadline: up to 15 business days after product receipt.\n• Refund method: same payment method used at the time of purchase.\n\nIf the factory confirms the product's integrity, the refund will be processed automatically. If any issues are found, I'll get back to you right away.\n\nBased on this arrangement, may I consider your request resolved?\n\nIf you need anything else, I remain at your disposal.`+sign(f.agentName)},
 
+    {id:"t13b",label:"Produto recusado na entrega — chegou na empresa",tag:"tg",tl:"Fluxo padrão",desc:"Cliente recusou entrega, produto já retornou ao armazém.",fields:[...CF],
+     pt:"O agente confirma o recebimento do produto no armazém e informa que o reembolso já foi solicitado. Prazo: até 15 dias úteis no mesmo método de pagamento. Cliente não precisa fazer mais nada.",
+     gen:(f)=>hdr(f)+`Thank you for refusing the delivery and for letting us know.\n\nI'm pleased to confirm that the package has been received at our warehouse. I've already submitted the refund request on your behalf.\n\n• Refund deadline: up to 15 business days after product receipt.\n• Refund method: same payment method used at the time of purchase.\n\nYou don't need to take any further action on your end.\n\nBased on this arrangement, may I consider your request resolved? Please don't hesitate to reach out if you need anything else.`+sign(f.agentName)},
+
+    {id:"t13c",label:"Produto recusado na entrega — ainda não chegou na empresa",tag:"tg",tl:"Fluxo padrão",desc:"Cliente recusou entrega mas produto ainda não retornou ao armazém.",fields:[...CF,"trackingCode","trackingLink"],
+     pt:"O agente confirma que a recusa foi registrada e que o produto está a caminho do armazém. Fornece código e link de rastreio para acompanhar o retorno. Assim que chegar e ser inspecionado, o reembolso será processado.",
+     gen:(f)=>hdr(f)+`Thank you for refusing the delivery and for letting us know.\n\nWe have registered that you refused the package. Currently, the product is on its way back to our warehouse. You can track the return using the information below:\n\n• Tracking Code: ${f.trackingCode}\n• Tracking Link: ${f.trackingLink}\n\nAs soon as the package is received and inspected at our warehouse, we'll proceed with your full refund immediately.\n\nCould you please keep an eye on the tracking and let us know once the return is confirmed? We'll take it from there.\n\nThank you for your patience and cooperation.`+sign(f.agentName)},
+
+    {id:"t13d",label:"Reembolso já realizado — orientar aguardar",tag:"tg",tl:"Fluxo padrão",desc:"Reembolso já foi processado. Orientar cliente a aguardar.",fields:[...CF,"refundDate","refundAmount"],
+     pt:"O agente informa que o reembolso já foi processado, informando data e valor. Orienta aguardar até 5 dias úteis para o valor aparecer na conta, dependendo do banco.",
+     gen:(f)=>hdr(f)+`I want to let you know that your refund has already been processed on our end.\n\n• Refund Date: ${fmtDate(f.refundDate)}\n• Refund Amount: $${f.refundAmount}\n• Refund Method: same payment method used at the time of purchase.\n\nPlease allow up to 5 business days for the amount to be reflected on your account, as processing times may vary depending on your bank or card issuer.\n\nIf you have any further questions in the meantime, feel free to reach out — we're here to help.`+sign(f.agentName)},
+
+    {id:"t13e",label:"Reembolso total feito + produto a caminho — orientar recusar",tag:"tg",tl:"Fluxo padrão",desc:"Reembolso já processado mas produto ainda está a caminho. Orientar recusar entrega.",fields:[...CF,"refundDate"],
+     pt:"O agente confirma que o reembolso total já foi processado e será devolvido em até 5 dias úteis. Como o produto ainda está a caminho, orienta o cliente a recusar a entrega para que o produto retorne automaticamente sem custo.",
+     gen:(f)=>hdr(f)+`That's great — I'm glad we were able to find a solution that works for you.\n\nThe full refund was processed on ${fmtDate(f.refundDate)}. The amount will be returned to your original payment method within up to 5 business days, depending on your bank or card issuer's processing time.\n\nSince the order is already on its way, we kindly ask that you refuse the package at the time of delivery. This way, the product will automatically be returned to the company at no cost to you.\n\nBased on this agreement, may I consider your case resolved? Please don't hesitate to reach out if you need anything else.`+sign(f.agentName)},
+
+    {id:"t13f",label:"Garantia vencida — solicitar reembolso",tag:"tg",tl:"Fluxo padrão",desc:"Cliente solicita reembolso mas garantia de 60 dias já venceu.",fields:[...CF],
+     pt:"O agente informa que o prazo de garantia de 60 dias já expirou. Porém, como exceção, o fabricante autorizou um reembolso de 33% do valor total como cortesia. Pergunta se o cliente aceita esta oferta.",
+     gen:(f)=>hdr(f)+`Thank you for reaching out and I completely understand your concern.\n\nAfter reviewing your order, I can see that the 60-day money-back guarantee period has unfortunately already expired for this purchase.\n\nHowever, I've contacted the manufacturer on your behalf to seek the best possible solution for your case.\n\nAs an exception, even though the refund eligibility period has been exceeded, the manufacturer has authorized a 33% refund of the total purchase amount as a courtesy gesture.\n\nIf you agree with this offer, I can proceed immediately with the refund to your original payment method.\n\nPlease let me know how you would like to proceed.`+sign(f.agentName)},
+
     {id:"t14",label:"Cobrança duplicada",tag:"tg",tl:"Fluxo padrão",desc:"Cliente alega ter sido cobrado duas vezes.",fields:[...CF],
+     pt:"O agente reconhece a preocupação com cobrança duplicada e informa que vai revisar os registros. Solicita print do extrato do cartão. Está em contato com o time de faturamento e, se confirmado erro, reembolso imediato.",
      gen:(f)=>hdr(f)+`I understand your concern regarding a possible duplicate charge. I'll review the payment records right away to confirm what happened.\n\nTo help us investigate, could you please send us a screenshot of your bank or card statement showing the duplicate charge?\n\nI'm also in contact with our billing team so they can look into this on their end. If an issue is confirmed, the incorrect charge will be refunded immediately.\n\nI'll keep you updated and get back to you as soon as possible.`+sign(f.agentName)},
 
     {id:"t15",label:"Cobrança incorreta",tag:"tg",tl:"Fluxo padrão",desc:"Cliente alega valor cobrado incorreto.",fields:[...CF],
+     pt:"O agente agradece o contato e pede que o cliente especifique qual cobrança está incorreta. Informa que analisará o caso e retornará em até 3 dias úteis com solução, tratando como prioridade.",
      gen:(f)=>hdr(f)+`Thank you for bringing this to our attention. I'd like to make sure we get this sorted out for you.\n\nCould you please let us know which charge(s) you identified as incorrect?\n\nI'll review the situation to understand what may have caused this discrepancy and get back to you with a full analysis.\n\nI kindly ask for up to 3 business days to look into this and come back with a solution. We're treating this as a priority.`+sign(f.agentName)},
 
     {id:"t16",label:"Pagamento recusado",tag:"tg",tl:"Fluxo padrão",desc:"Cliente informa que o pagamento foi recusado.",fields:["customerName","agentName"],
+     pt:"O agente explica que o pagamento recusado pode ter ocorrido por restrições do banco, dados incorretos ou limite insuficiente. Sugere verificar dados, contatar o banco ou usar outro método. Oferece encaminhar para o time de vendas.",
      gen:(f)=>`Hello ${f.customerName},\n\nMy name is ${f.agentName}, and I'll be assisting you today on behalf of PagAmerican.\n\nI'm sorry to hear your payment was declined. This can happen due to restrictions from your bank, incorrect payment details, or insufficient available credit.\n\nHere are a few things you can try:\n• Double-check the payment information entered\n• Ensure you have sufficient available credit or balance\n• Contact your bank to confirm no authorization is required\n• Try using a different payment method\n\nIf you'd like, I can also forward your case to our sales team so they can reach out to you directly.\n\nPlease confirm your preferred phone number and the best time to contact you.`+sign(f.agentName)},
 
     {id:"t18",label:"🏥 Alegação médica",tag:"tb",tl:"Fluxo médico",desc:"Cliente alega contraindicação ou reação adversa (score < 80).",fields:[...CF],
+     pt:"O agente demonstra empatia com a situação médica e informa que o caso foi escalado para reembolso integral. Solicita devolução dos itens lacrados para o endereço do armazém. Frete por conta do cliente. Reembolso em até 15 dias. Nunca oferecer desconto de 33%.",
      gen:(f)=>hdr(f)+`I completely understand, and your health and well-being are our top priority.\n\nGiven the medical circumstances you've shared, I've escalated your case directly and we'll proceed with a full refund for your order.\n\nReturn Instructions\nPlease ship any sealed, unopened items to:\n11870 62nd St. N, Largo, FL 33773 – USA\n\nImportant points:\n• Shipping costs are the customer's responsibility.\n• The refund applies only to sealed, unopened items.\n• Once received and inspected, the refund will be issued within up to 15 days.\n\nPlease send us two photos to proceed:\n1. A photo showing the sealed packages\n2. A clear photo of the shipping receipt\n\nI look forward to your reply and I'm here to support you through this process.`+sign(f.agentName)},
   ],
   high:[
     {id:"t17",label:"Reembolso direto — qualquer motivo",tag:"tr",tl:"Anti-chargeback",desc:"Score 80+. Resolver rápido, sem fricção.",fields:[...CF],
-     gen:(f)=>hdr(f)+`I've reviewed your case and I want to make sure this is resolved for you as quickly as possible.\n\nI've gone ahead and initiated a full refund for your order. The amount of $${f.orderTotal} will be returned to your original payment method within up to 5 business days.\n\nIf you have any sealed, unopened items, we kindly ask that you return them to:\n11870 62nd St. N, Largo, FL 33773 – USA\n\nThis is entirely optional, but greatly appreciated.\n\nIs there anything else I can help you with?`+sign(f.agentName)},
+     pt:"O agente tranquiliza o cliente e informa que o reembolso integral já foi iniciado. O valor será devolvido em até 5 dias úteis no método de pagamento original. Solicita gentilmente (e de forma opcional) a devolução dos itens lacrados.",
+     gen:(f)=>hdr(f)+`I've reviewed your case and I want to make sure this is resolved for you as quickly as possible.\n\nPlease don't worry — I've gone ahead and initiated a full refund for your order. The amount of $${f.orderTotal} will be returned to your original payment method within up to 5 business days.\n\nIf you have any sealed, unopened items, we kindly ask that you return them to:\n11870 62nd St. N, Largo, FL 33773 – USA\n\nThis is entirely optional, but greatly appreciated.\n\nIs there anything else I can help you with?`+sign(f.agentName)},
+
+    {id:"t17b",label:"Chargeback ativo — acalmar + produto em trânsito",tag:"tr",tl:"Anti-chargeback",desc:"Cliente abriu chargeback. Acalmar e orientar recusar entrega.",fields:[...CF,"trackingCode","trackingLink"],
+     pt:"O agente tranquiliza o cliente, informa que o reembolso integral já foi iniciado e será processado em até 5 dias úteis. Como o produto ainda está a caminho, orienta recusar a entrega para retorno automático sem custo. Fornece código e link de rastreio.",
+     gen:(f)=>hdr(f)+`Please don't worry — I completely understand your concern and I'm here to make sure this gets resolved for you as quickly as possible.\n\nI've already initiated a full refund for your order. The amount of $${f.orderTotal} will be returned to your original payment method within up to 5 business days.\n\nSince your order is currently on its way to you, we kindly ask that you refuse the package at the time of delivery. This way, the product will automatically be returned to us at no cost to you.\n\nYou can track your order here:\n• Tracking Code: ${f.trackingCode}\n• Tracking Link: ${f.trackingLink}\n\nYou don't need to take any further action. We've got everything covered on our end.\n\nThank you for your patience, and please feel free to reach out if you have any questions.`+sign(f.agentName)},
 
     {id:"t19",label:"🏥 Alegação médica — score alto",tag:"tb",tl:"Fluxo médico",desc:"Score 80+. Reembolso imediato sem exigir devolução.",fields:[...CF],
+     pt:"O agente prioriza o bem-estar do cliente e confirma que o reembolso integral já foi iniciado imediatamente. Valor devolvido em até 5 dias úteis. Não solicita devolução — resolução total sem fricção.",
      gen:(f)=>hdr(f)+`I completely understand, and your health and well-being are our absolute priority.\n\nGiven the medical circumstances you've described, I've gone ahead and initiated a full refund for your order immediately.\n\nThe amount of $${f.orderTotal} will be returned to your original payment method within up to 5 business days.\n\nYou don't need to take any further action on your end.\n\nPlease take care of yourself, and don't hesitate to reach out if there's anything else I can help with.`+sign(f.agentName)},
   ]
 };
 
-let score="low", tpl=null;
+
+let score="low",tpl=null;
 
 function setScore(s){
   score=s;
   document.getElementById("btn-low").className="score-btn"+(s==="low"?" ag":"");
   document.getElementById("btn-high").className="score-btn"+(s==="high"?" ar":"");
-  populateReasons(); updateFields();
+  populateReasons();updateFields();
 }
 
 function populateReasons(){
@@ -214,9 +301,9 @@ function updateFields(){
   document.getElementById("tname").textContent=tpl.label;
   document.getElementById("tdesc").textContent=tpl.desc;
   const tag=document.getElementById("flow-tag");
-  tag.className="tag "+tpl.tag; tag.textContent=tpl.tl;
+  tag.className="tag "+tpl.tag;tag.textContent=tpl.tl;
   document.getElementById("fields-grid").innerHTML=tpl.fields.map(f=>{
-    const long=["shippingAddress","trackingLink"].includes(f);
+    const long=["shippingAddress","trackingLink","order1Product","order2Product"].includes(f);
     return `<div class="fgrp${long?" ff":""}"><label for="f_${f}">${FL[f]||f}</label><input type="text" id="f_${f}" placeholder="${FL[f]||f}" oninput="genTpl()"></div>`;
   }).join("");
   genTpl();
@@ -224,16 +311,17 @@ function updateFields(){
 
 function getF(){
   const o={};
-  tpl.fields.forEach(f=>{
-    const el=document.getElementById("f_"+f);
-    o[f]=el&&el.value.trim()?el.value.trim():`[${(FL[f]||f).toUpperCase().replace(/ /g,"_")}]`;
-  });
+  tpl.fields.forEach(f=>{const el=document.getElementById("f_"+f);o[f]=el&&el.value.trim()?el.value.trim():`[${(FL[f]||f).toUpperCase().replace(/ /g,"_")}]`;});
   return o;
 }
 
 function genTpl(){
   if(!tpl)return;
   document.getElementById("output").textContent=tpl.gen(getF());
+  const wrap=document.getElementById("pt-summary-wrap");
+  const sum=document.getElementById("pt-summary");
+  if(tpl.pt){wrap.style.display="block";sum.textContent=tpl.pt;}
+  else{wrap.style.display="none";}
   resetBtn();
 }
 
@@ -246,17 +334,40 @@ function resetBtn(){
 function copyTpl(){
   navigator.clipboard.writeText(document.getElementById("output").textContent).then(()=>{
     const b=document.getElementById("copy-btn");
-    b.className="cb copied"; b.innerHTML="✓ Copiado!";
+    b.className="cb copied";b.innerHTML="Copiado!";
     setTimeout(resetBtn,2000);
   });
 }
 
-function clearFields(){
-  tpl.fields.forEach(f=>{const el=document.getElementById("f_"+f);if(el)el.value="";});
-  genTpl();
+function clearFields(){tpl.fields.forEach(f=>{const el=document.getElementById("f_"+f);if(el)el.value="";});genTpl();}
+
+// TRANSLATOR
+async function translateText(){
+  const input=document.getElementById("translate-input").value.trim();
+  if(!input){document.getElementById("translate-result").textContent="Por favor cole uma mensagem para traduzir.";return;}
+  const btn=document.getElementById("translate-btn");
+  btn.className="translate-btn loading";btn.textContent="Traduzindo...";
+  document.getElementById("translate-result").textContent="Aguarde...";
+  try{
+    const response=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-20250514",
+        max_tokens:1000,
+        messages:[{role:"user",content:`Translate the following text from English to Brazilian Portuguese. Return ONLY the translation, nothing else:\n\n${input}`}]
+      })
+    });
+    const data=await response.json();
+    const translation=data.content[0].text;
+    document.getElementById("translate-result").textContent=translation;
+  }catch(e){
+    document.getElementById("translate-result").textContent="Erro ao traduzir. Tente novamente.";
+  }
+  btn.className="translate-btn";btn.textContent="Traduzir para Português";
 }
 
-populateReasons(); updateFields();
+populateReasons();updateFields();
 </script>
 </div>
 <script>
