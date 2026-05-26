@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PagAmerican — CS Tools v4.0</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#F5F7FA;color:#1A1A2E;min-height:100vh}
@@ -29,8 +31,8 @@ header span.sub{color:#B5D4F4;font-size:13px;margin-left:auto}
 .score-btn.ag{border-color:#1A7A3C;background:#EAFAF1}.score-btn.ag .sl{color:#1A7A3C}
 .score-btn.ar{border-color:#A00000;background:#FDECEA}.score-btn.ar .sl{color:#A00000}
 label{font-size:12px;font-weight:500;color:#64748B;display:block;margin-bottom:5px}
-select,input[type=text],textarea{width:100%;padding:9px 12px;border:1px solid #E2E8F0;border-radius:8px;font-size:13px;color:#1A1A2E;background:#F8FAFC;outline:none;transition:border .15s}
-select:focus,input[type=text]:focus,textarea:focus{border-color:#1A56A0;background:#fff}
+select,input[type=text],input[type=email],input[type=date],input[type=time],textarea{width:100%;padding:9px 12px;border:1px solid #E2E8F0;border-radius:8px;font-size:13px;color:#1A1A2E;background:#F8FAFC;outline:none;transition:border .15s}
+select:focus,input[type=text]:focus,input[type=email]:focus,input[type=date]:focus,input[type=time]:focus,textarea:focus{border-color:#1A56A0;background:#fff}
 select{cursor:pointer}
 textarea{resize:vertical;font-family:inherit}
 .divider{border:none;border-top:1px solid #F1F5F9;margin:18px 0}
@@ -115,7 +117,58 @@ textarea{resize:vertical;font-family:inherit}
 .ploading{text-align:center;padding:60px;color:#64748B;font-size:14px}
 .pspinner{width:28px;height:28px;border:3px solid #E2E8F0;border-top-color:#1A56A0;border-radius:50%;animation:pspin .8s linear infinite;margin:0 auto 14px}
 @keyframes pspin{to{transform:rotate(360deg)}}
-@media(max-width:700px){.container{grid-template-columns:1fr}.fg{grid-template-columns:1fr}.ff{grid-column:1}.navtabs{padding:0 16px}.navtab{padding:14px 14px}header span.sub{display:none}.pfield-grid{grid-template-columns:1fr}}
+
+/* ===== COMPROVANTE (nova aba) ===== */
+.comp-wrap{max-width:1100px;margin:0 auto;padding:28px 20px;display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start}
+.comp-callout{grid-column:1/-1;background:#FFFBEB;border:1px solid #FCD34D;border-radius:10px;padding:13px 16px;font-size:12.5px;line-height:1.6;color:#92400E}
+.comp-callout b{color:#7B3F00}
+.field-block{margin-bottom:13px}
+.field-block.req label::after{content:" *";color:#A00000}
+.req-note{font-size:11px;color:#A00000;margin-top:4px;display:none}
+.field-block.invalid input{border-color:#FCA5A5;background:#FEF2F2}
+.field-block.invalid .req-note{display:block}
+.hint{font-weight:400;color:#94A3B8}
+.comp-actions{display:flex;gap:10px;margin-top:8px}
+.comp-btn{flex:1;padding:12px;font-size:14px;font-weight:600;border-radius:10px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s}
+.comp-btn.primary{background:#1A56A0;color:#fff}.comp-btn.primary:hover{background:#1A4A8A}
+.comp-btn.ghost{background:#F8FAFC;color:#1A56A0;border:1px solid #1A56A0}.comp-btn.ghost:hover{background:#EAF1FA}
+.comp-preview-label{font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.comp-stage{position:sticky;top:80px}
+.comp-scroll{overflow:auto}
+
+.receipt{width:600px;max-width:100%;margin:0 auto;background:#fff;border:1px solid #E2E8F0;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(20,40,80,.1)}
+.r-head{background:#1A56A0;color:#fff;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.r-logo{display:flex;align-items:center;gap:11px}
+.r-logo img{height:32px;display:block}
+.r-logo .fb{font-weight:800;font-size:19px;letter-spacing:.3px}
+.r-logo .fb span{opacity:.7;font-weight:600}
+.r-doctype{text-align:right;font-size:11px;line-height:1.4;opacity:.95}
+.r-doctype b{display:block;font-size:13px;font-weight:700;letter-spacing:.4px}
+.r-title{padding:22px 28px 6px}
+.r-title h2{font-size:18px;font-weight:800;color:#1A1A2E;margin:0}
+.r-title p{font-size:12.5px;color:#64748B;margin-top:3px}
+.r-amount{margin:14px 28px 0;background:#EAFAF1;border:1px solid #CFE9D8;border-radius:12px;padding:17px 20px;display:flex;align-items:center;justify-content:space-between}
+.r-amount .lbl{font-size:11px;font-weight:700;color:#1A7A3C;text-transform:uppercase;letter-spacing:.5px}
+.r-amount .val{font-size:28px;font-weight:800;color:#1A7A3C;letter-spacing:-.5px;margin-top:2px}
+.r-amount .stat{font-size:11px;font-weight:700;color:#fff;background:#1A7A3C;padding:5px 11px;border-radius:20px;white-space:nowrap}
+.r-details{padding:18px 28px 4px}
+.r-dr{display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid #F1F5F9;font-size:13px}
+.r-dr:last-child{border-bottom:none}
+.r-dr .k{color:#64748B;font-weight:500;flex-shrink:0}
+.r-dr .v{color:#1A1A2E;font-weight:600;text-align:right;word-break:break-word}
+.r-dr .v.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px}
+.r-verify{margin:14px 28px 0;border:1px dashed #1A56A0;background:#EAF1FA;border-radius:12px;padding:15px 17px}
+.r-verify .vt{font-size:11px;font-weight:700;color:#1A56A0;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.r-verify .vid{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:15px;font-weight:700;color:#1A1A2E;word-break:break-all;margin-bottom:7px}
+.r-verify .vhow{font-size:11.5px;color:#33506F;line-height:1.5}
+.r-foot{margin-top:18px;padding:18px 28px;background:#F8FAFC;border-top:1px solid #E2E8F0;font-size:11.5px;color:#64748B;line-height:1.55}
+.r-foot .company{font-weight:700;color:#1A1A2E;font-size:13px;margin-bottom:3px}
+.r-foot .ref{margin-top:9px;font-size:10.5px;color:#94A3B8}
+.r-foot .ref b{color:#64748B;font-weight:600}
+.comp-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1A1A2E;color:#fff;padding:12px 20px;border-radius:10px;font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.comp-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:700px){.container{grid-template-columns:1fr}.fg{grid-template-columns:1fr}.ff{grid-column:1}.navtabs{padding:0 16px}.navtab{padding:14px 14px}header span.sub{display:none}.pfield-grid{grid-template-columns:1fr}.comp-wrap{grid-template-columns:1fr}.comp-stage{position:static}}
 #ls{position:fixed;top:0;left:0;width:100%;height:100%;background:#F5F7FA;display:flex;align-items:center;justify-content:center;z-index:9999}
 #as{display:none}
 .lc{background:#fff;border-radius:16px;border:1px solid #E2E8F0;padding:40px 36px;width:100%;max-width:380px;text-align:center}
@@ -148,7 +201,12 @@ textarea{resize:vertical;font-family:inherit}
     Produtos
     <span class="badge" id="prodBadge">40</span>
   </div>
+  <div class="navtab" data-view="comprovante" onclick="switchView('comprovante')">
+    <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 13l2 2 4-4"/></svg>
+    Comprovante
+  </div>
 </div>
+
 <div class="view active" id="view-templates">
 <div class="container">
   <div>
@@ -196,6 +254,7 @@ textarea{resize:vertical;font-family:inherit}
   </div>
 </div>
 </div>
+
 <div class="view" id="view-produtos">
 <div class="prod-wrap">
   <div class="prod-search-row">
@@ -212,7 +271,142 @@ textarea{resize:vertical;font-family:inherit}
   <div class="psync">Dados sincronizados <span class="live">ao vivo</span> da planilha do Google Sheets — edições refletem aqui automaticamente.</div>
 </div>
 </div>
+
+<div class="view" id="view-comprovante">
+<div class="comp-wrap">
+
+  <div class="comp-callout">
+    <b>Emita somente após o reembolso ser processado.</b> Este comprovante é o espelho de um estorno que já aconteceu. Cole o <b>ID real do reembolso</b> gerado pelo seu processador de pagamento — é esse número que o cliente e o banco conseguem verificar de forma independente, e é o que dá validade ao documento em caso de questionamento.
+  </div>
+
+  <div class="panel">
+    <div class="sl2"><span class="sn">✓</span> Dados do comprovante</div>
+
+    <div class="field-block req" id="cf-name">
+      <label for="ci-name">Nome completo do cliente</label>
+      <input type="text" id="ci-name" placeholder="Ex: Maria Santos Oliveira" oninput="compRender()">
+      <div class="req-note">Campo obrigatório.</div>
+    </div>
+
+    <div class="fg">
+      <div class="fgrp field-block req" id="cf-amount">
+        <label for="ci-amount">Valor reembolsado</label>
+        <input type="text" id="ci-amount" placeholder="0,00" oninput="compRender()">
+        <div class="req-note">Obrigatório.</div>
+      </div>
+      <div class="fgrp field-block">
+        <label for="ci-currency">Moeda</label>
+        <select id="ci-currency" onchange="compRender()">
+          <option value="US$">US$ (Dólar)</option>
+          <option value="R$">R$ (Real)</option>
+          <option value="€">€ (Euro)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="fg">
+      <div class="fgrp field-block req" id="cf-date">
+        <label for="ci-date">Data do reembolso</label>
+        <input type="date" id="ci-date" oninput="compRender()">
+        <div class="req-note">Obrigatório.</div>
+      </div>
+      <div class="fgrp field-block">
+        <label for="ci-time">Horário <span class="hint">(opcional)</span></label>
+        <input type="time" id="ci-time" oninput="compRender()">
+      </div>
+    </div>
+
+    <div class="field-block req" id="cf-txid">
+      <label for="ci-txid">ID da transação de reembolso <span class="hint">(do processador)</span></label>
+      <input type="text" id="ci-txid" placeholder="Ex: re_3QabcXYZ... / 5AB12345CD..." oninput="compRender()">
+      <div class="req-note">Obrigatório — é o identificador verificável do estorno.</div>
+    </div>
+
+    <div class="field-block">
+      <label for="ci-processor">Processador de pagamento</label>
+      <select id="ci-processor" onchange="compRender()">
+        <option value="">— selecione —</option>
+        <option value="Stripe">Stripe</option>
+        <option value="PayPal">PayPal</option>
+        <option value="Mercado Pago">Mercado Pago</option>
+        <option value="Adyen">Adyen</option>
+        <option value="Outro">Outro</option>
+      </select>
+    </div>
+
+    <div class="field-block">
+      <label for="ci-order">Nº do pedido <span class="hint">(opcional)</span></label>
+      <input type="text" id="ci-order" placeholder="Ex: #PA-48217" oninput="compRender()">
+    </div>
+
+    <div class="field-block">
+      <label for="ci-email">E-mail do cliente <span class="hint">(opcional)</span></label>
+      <input type="email" id="ci-email" placeholder="cliente@email.com" oninput="compRender()">
+    </div>
+
+    <div class="field-block">
+      <label for="ci-note">Observação <span class="hint">(opcional)</span></label>
+      <textarea id="ci-note" rows="2" placeholder="Ex: Reembolso referente ao pedido X." oninput="compRender()"></textarea>
+    </div>
+
+    <div class="comp-actions">
+      <button class="comp-btn ghost" onclick="compExportPNG()">⬇ PNG</button>
+      <button class="comp-btn primary" onclick="compExportPDF()">⬇ PDF</button>
+    </div>
+  </div>
+
+  <div class="comp-stage">
+    <div class="comp-preview-label">👁 Pré-visualização ao vivo</div>
+    <div class="comp-scroll">
+      <div class="receipt" id="receipt">
+        <div class="r-head">
+          <div class="r-logo">
+            <img src="https://assets.pagamerican.net/logo-white.png" alt="PagAmerican" crossorigin="anonymous"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+            <div class="fb" style="display:none">PagAmerican<span> LLC</span></div>
+          </div>
+          <div class="r-doctype"><b>COMPROVANTE</b>DE REEMBOLSO</div>
+        </div>
+        <div class="r-title">
+          <h2>Comprovante de Reembolso</h2>
+          <p>Confirmação de reembolso processado</p>
+        </div>
+        <div class="r-amount">
+          <div>
+            <div class="lbl">Valor reembolsado</div>
+            <div class="val" id="cp-amount">US$ 0,00</div>
+          </div>
+          <div class="stat">REEMBOLSADO</div>
+        </div>
+        <div class="r-details">
+          <div class="r-dr"><span class="k">Cliente</span><span class="v" id="cp-name">—</span></div>
+          <div class="r-dr" id="cdr-email" style="display:none"><span class="k">E-mail</span><span class="v" id="cp-email"></span></div>
+          <div class="r-dr"><span class="k">Data do reembolso</span><span class="v" id="cp-date">—</span></div>
+          <div class="r-dr" id="cdr-order" style="display:none"><span class="k">Nº do pedido</span><span class="v mono" id="cp-order"></span></div>
+          <div class="r-dr"><span class="k">Forma de reembolso</span><span class="v">Forma de pagamento original</span></div>
+          <div class="r-dr" id="cdr-note" style="display:none"><span class="k">Observação</span><span class="v" id="cp-note" style="font-weight:500"></span></div>
+        </div>
+        <div class="r-verify">
+          <div class="vt">🔎 Identificação verificável do reembolso</div>
+          <div class="vid" id="cp-txid">—</div>
+          <div class="vhow" id="cp-vhow">Você pode confirmar este reembolso no seu extrato, junto à instituição emissora do seu meio de pagamento, usando o identificador acima.</div>
+        </div>
+        <div class="r-foot">
+          <div class="company">PagAmerican LLC</div>
+          <div>11870 62nd St. N, Largo, FL 33773 · Estados Unidos</div>
+          <div>O valor reembolsado retorna pela mesma forma de pagamento utilizada na compra. O prazo de compensação é de 5 a 15 dias úteis, podendo variar conforme a instituição financeira do cliente.</div>
+          <div class="ref"><b>Referência interna:</b> <span id="cp-ref">RB-0000-0000</span> · gerada para organização da PagAmerican (não substitui o ID do processador acima).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
+</div>
+
+</div>
+<div class="comp-toast" id="comp-toast"></div>
+
 <script>
 function switchView(v){
   document.querySelectorAll('.navtab').forEach(t=>t.classList.toggle('active',t.dataset.view===v));
@@ -331,12 +525,12 @@ const T={
      gen:(f)=>hdr(f)+`Thank you for refusing the delivery and for letting us know.\n\nWe have registered that you refused the package. Currently, the product is on its way back to our warehouse. You can track the return using the information below:\n\n• Tracking Code: ${f.trackingCode}\n• Tracking Link: ${f.trackingLink}\n\nAs soon as the package is received and inspected at our warehouse, we'll proceed with your full refund immediately.\n\nCould you please keep an eye on the tracking and let us know once the return is confirmed? We'll take it from there.\n\nThank you for your patience and cooperation.`+sign()},
 
     {id:"t13d",label:"Reembolso já realizado — orientar aguardar",tag:"tg",tl:"Fluxo padrão",desc:"Reembolso já foi processado. Orientar cliente a aguardar.",fields:[...CF,"refundDate","refundAmount"],
-     pt:"O agente informa que o reembolso já foi processado, informando data e valor. Orienta aguardar até 5 dias úteis para o valor aparecer na conta, dependendo do banco.",
-     gen:(f)=>hdr(f)+`I want to let you know that your refund has already been processed on our end.\n\n• Refund Date: ${fmtDate(f.refundDate)}\n• Refund Amount: $${f.refundAmount}\n• Refund Method: same payment method used at the time of purchase.\n\nPlease allow up to 5 business days for the amount to be reflected on your account, as processing times may vary depending on your bank or card issuer.\n\nIf you have any further questions in the meantime, feel free to reach out — we're here to help.`+sign()},
+     pt:"O agente informa que o reembolso já foi processado, informando data e valor. Orienta aguardar de 5 a 15 dias úteis para o valor aparecer na conta, dependendo do banco.",
+     gen:(f)=>hdr(f)+`I want to let you know that your refund has already been processed on our end.\n\n• Refund Date: ${fmtDate(f.refundDate)}\n• Refund Amount: $${f.refundAmount}\n• Refund Method: same payment method used at the time of purchase.\n\nPlease allow 5 to 15 business days for the amount to be reflected on your account, as processing times may vary depending on your bank or card issuer.\n\nIf you have any further questions in the meantime, feel free to reach out — we're here to help.`+sign()},
 
     {id:"t13e",label:"Reembolso total feito + produto a caminho — orientar recusar",tag:"tg",tl:"Fluxo padrão",desc:"Reembolso já processado mas produto ainda está a caminho. Orientar recusar entrega.",fields:[...CF,"refundDate"],
-     pt:"O agente confirma que o reembolso total já foi processado e será devolvido em até 5 dias úteis. Como o produto ainda está a caminho, orienta o cliente a recusar a entrega para que o produto retorne automaticamente sem custo.",
-     gen:(f)=>hdr(f)+`That's great — I'm glad we were able to find a solution that works for you.\n\nThe full refund was processed on ${fmtDate(f.refundDate)}. The amount will be returned to your original payment method within up to 5 business days, depending on your bank or card issuer's processing time.\n\nSince the order is already on its way, we kindly ask that you refuse the package at the time of delivery. This way, the product will automatically be returned to the company at no cost to you.\n\nBased on this agreement, may I consider your case resolved? Please don't hesitate to reach out if you need anything else.`+sign()},
+     pt:"O agente confirma que o reembolso total já foi processado e será devolvido de 5 a 15 dias úteis. Como o produto ainda está a caminho, orienta o cliente a recusar a entrega para que o produto retorne automaticamente sem custo.",
+     gen:(f)=>hdr(f)+`That's great — I'm glad we were able to find a solution that works for you.\n\nThe full refund was processed on ${fmtDate(f.refundDate)}. The amount will be returned to your original payment method within 5 to 15 business days, depending on your bank or card issuer's processing time.\n\nSince the order is already on its way, we kindly ask that you refuse the package at the time of delivery. This way, the product will automatically be returned to the company at no cost to you.\n\nBased on this agreement, may I consider your case resolved? Please don't hesitate to reach out if you need anything else.`+sign()},
 
     {id:"t13f",label:"Garantia vencida — solicitar reembolso",tag:"tg",tl:"Fluxo padrão",desc:"Cliente solicita reembolso mas garantia de 60 dias já venceu.",fields:[...CF],
      pt:"O agente informa que o prazo de garantia de 60 dias já expirou. Porém, como exceção, o fabricante autorizou um reembolso de 33% do valor total como cortesia. Pergunta se o cliente aceita esta oferta.",
@@ -442,6 +636,139 @@ async function translateText(){
 
 populateReasons();updateFields();
 </script>
+
+<script>
+/* ============ COMPROVANTE DE REEMBOLSO ============ */
+const COMP_MONTHS_BR=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+function compFmtDate(d){
+  if(!d)return"—";
+  const [y,m,day]=d.split("-");
+  return `${day}/${m}/${y}`;
+}
+function compFmtAmount(raw,currency){
+  if(!raw)return currency+" 0,00";
+  let s=String(raw).trim().replace(/\s/g,"").replace(/[^\d.,]/g,"");
+  let normalized;
+  if(s.indexOf(",")>-1&&s.indexOf(".")>-1){normalized=s.replace(/\./g,"").replace(",",".");}
+  else if(s.indexOf(",")>-1){normalized=s.replace(",",".");}
+  else{normalized=s;}
+  const n=parseFloat(normalized);
+  if(isNaN(n))return currency+" 0,00";
+  return currency+" "+n.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function compGenRef(){
+  const y=new Date().getFullYear();
+  const rnd=Math.floor(1000+Math.random()*9000);
+  return `RB-${y}-${rnd}`;
+}
+let COMP_REF=compGenRef();
+
+function compRender(){
+  const g=id=>document.getElementById(id);
+  const name=g("ci-name").value.trim();
+  const amount=g("ci-amount").value.trim();
+  const currency=g("ci-currency").value;
+  const date=g("ci-date").value;
+  const time=g("ci-time").value;
+  const txid=g("ci-txid").value.trim();
+  const processor=g("ci-processor").value;
+  const order=g("ci-order").value.trim();
+  const email=g("ci-email").value.trim();
+  const note=g("ci-note").value.trim();
+
+  g("cp-name").textContent=name||"—";
+  g("cp-amount").textContent=compFmtAmount(amount,currency);
+
+  let dateStr=compFmtDate(date);
+  if(date&&time)dateStr+=" · "+time;
+  g("cp-date").textContent=dateStr;
+
+  const drEmail=g("cdr-email");
+  if(email){drEmail.style.display="flex";g("cp-email").textContent=email;}else drEmail.style.display="none";
+
+  const drOrder=g("cdr-order");
+  if(order){drOrder.style.display="flex";g("cp-order").textContent=order;}else drOrder.style.display="none";
+
+  const drNote=g("cdr-note");
+  if(note){drNote.style.display="flex";g("cp-note").textContent=note;}else drNote.style.display="none";
+
+  g("cp-txid").textContent=txid||"—";
+  const how=g("cp-vhow");
+  if(processor){
+    how.textContent=`Reembolso processado via ${processor}. Você pode confirmá-lo no seu extrato ou junto à instituição emissora do seu meio de pagamento usando o identificador acima.`;
+  }else{
+    how.textContent=`Você pode confirmar este reembolso no seu extrato, junto à instituição emissora do seu meio de pagamento, usando o identificador acima.`;
+  }
+  g("cp-ref").textContent=COMP_REF;
+}
+
+function compValidate(){
+  let ok=true;
+  [["ci-name","cf-name"],["ci-amount","cf-amount"],["ci-date","cf-date"],["ci-txid","cf-txid"]].forEach(([inp,field])=>{
+    const el=document.getElementById(inp),f=document.getElementById(field);
+    if(!el.value.trim()){f.classList.add("invalid");ok=false;}else f.classList.remove("invalid");
+  });
+  if(!ok)compToast("Preencha os campos obrigatórios (incluindo o ID do reembolso).");
+  return ok;
+}
+
+let compToastTimer;
+function compToast(msg){
+  const t=document.getElementById("comp-toast");
+  t.textContent=msg;t.classList.add("show");
+  clearTimeout(compToastTimer);
+  compToastTimer=setTimeout(()=>t.classList.remove("show"),2800);
+}
+
+function compFileBase(){
+  const name=document.getElementById("ci-name").value.trim().replace(/[^\w\s-]/g,"").replace(/\s+/g,"-")||"cliente";
+  return `comprovante-reembolso-${name}-${COMP_REF}`;
+}
+async function compRenderCanvas(){
+  const node=document.getElementById("receipt");
+  return await html2canvas(node,{scale:3,backgroundColor:"#ffffff",useCORS:true,logging:false});
+}
+async function compExportPNG(){
+  if(!compValidate())return;
+  compToast("Gerando PNG…");
+  try{
+    const canvas=await compRenderCanvas();
+    const link=document.createElement("a");
+    link.download=compFileBase()+".png";
+    link.href=canvas.toDataURL("image/png");
+    link.click();
+    compToast("PNG gerado ✓");
+  }catch(e){console.error(e);compToast("Erro ao gerar PNG.");}
+}
+async function compExportPDF(){
+  if(!compValidate())return;
+  compToast("Gerando PDF…");
+  try{
+    const canvas=await compRenderCanvas();
+    const img=canvas.toDataURL("image/png");
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF("p","mm","a4");
+    const pw=pdf.internal.pageSize.getWidth();
+    const ph=pdf.internal.pageSize.getHeight();
+    const margin=14;
+    const usableW=pw-margin*2;
+    const imgH=canvas.height*usableW/canvas.width;
+    let y=margin;
+    if(imgH<ph-margin*2){y=(ph-imgH)/2;}
+    pdf.addImage(img,"PNG",margin,y,usableW,imgH);
+    pdf.save(compFileBase()+".pdf");
+    compToast("PDF gerado ✓");
+  }catch(e){console.error(e);compToast("Erro ao gerar PDF.");}
+}
+
+/* init comprovante: data padrão = hoje */
+(function compInit(){
+  const today=new Date().toISOString().split("T")[0];
+  document.getElementById("ci-date").value=today;
+  compRender();
+})();
+</script>
+
 <script>
 const SHEET_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vQSK1B0OKaxeTIC1i0vKX1JHpxzTcSEWPjaFhqkxBT-8DwuaCC2hae2hkD9Ok3YG0tS3HnyTbPwGBNf/pub?output=csv";
 const FALLBACK=[{"nome": "Slimvia", "empresa": "Maiver", "nicho": "Emagrecimento/Perda de Peso", "subnicho": "SlimVia é um suplemento alimentar desenvolvido para apoiar o controle de peso, ajudando na saciedade e no metabolismo como parte de um estilo de vida saudável.", "formato": "Cápsulas", "salespage": "https://vipheath.com/slimvia-pagamerican/", "checkout": "1 Pote: https://pay.pagamerican.app/kggnDPiY\n3 Potes: https://pay.pagamerican.app/ikixMXWg\n6 Potes: https://pay.pagamerican.app/iEHRikhF", "fotos": "https://drive.google.com/drive/folders/1Mq39BqKWJQR-r4FLTsFzEc6aiTPcChfT?usp=sharing", "pacotes": "", "precos": "", "assinatura": "Não", "garantia": "60 dias", "garantia_det": "Entrar em contato com a plataforma de pagamento no caso de solicitações de reembolso ou chargeback ou via e-mail que todo suporte será realizado, quando for necessário outro tipo de esclarecimentos sobre o pedido.", "promessa": "Apoiar o processo de emagrecimento de forma natural, ajudando no controle do apetite e no equilíbrio do metabolismo.", "evitar": "Cura obesidade, Trata doenças metabólicas, Age como remédio", "marketing": "Nenhum em específico", "sensivel": "Promessa de perda de 11kg no mês e comparação ou substituição por medicamentos.", "ingredientes": "Chromium Picolinate (Picolinato de Cromo)\nCholine (Colina)\nVitaminas do Complexo B (B1, B2, etc.)", "modo_uso": "1 cápsula por dia antes de alguma refeição", "tempo_resultado": "Primeiro mês, mas o ideal é o tratamento de pelo ou menos 3 meses.", "contraindicacao": "Gestantes e Lactantes, Crianças, Pessoas com doenças preexistentes graves", "prazo": "24 a 48h para processamento e permanece em transito de 2 a 5 dias", "paises": "Estados Unidos", "transportadora": "Fullstack", "script": "Não, o suporte deve usar as diretrizes gerais", "responsavel": "Gustavo - (38)991601125", "obs": "Público alvo - Mulheres de 45+"}, {"nome": "Cognivive", "empresa": "Maiver", "nicho": "Memória/Cognição", "subnicho": "Apoiar a função cognitiva e ajudar a manter a clareza mental e o foco no dia a dia.", "formato": "Cápsulas", "salespage": "https://vipheath.com/cognivive-pagamerican/", "checkout": "1 - https://pay.pagamerican.app/71S1lf53\n3 - https://pay.pagamerican.app/s8gflb15\n6 - https://pay.pagamerican.app/bJVlbQO5", "fotos": "https://drive.google.com/drive/folders/1_ZeV6dbg1RgMpp-T4H6AltqilyPgb4Cu?usp=sharing", "pacotes": "1, 3 e 6 fracos", "precos": "1 - 89 dólares\n3 - 207 dólares \n6 - 294 dólares", "assinatura": "Não possuímos assinatura", "garantia": "60 dias", "garantia_det": "Caso não goste após 60 dias de uso, pode entrar em contato com o suporte ou plataofrma de pagamento e seguir o processo de reembolso e chargeback", "promessa": "Clareza mental + foco consistente + melhor desempenho cognitivo diário\nAjudar a manter a mente mais clara, focada e organizada ao longo do dia.", "evitar": "Cura perda de memória\nTrata Alzheimer ou demência\nPrevine doenças cerebrais", "marketing": "Nenhum específico", "sensivel": "Não se compara ou substitui o uso de medicamentos, enquadramos como uma suplementação", "ingredientes": "Branched Chain Amino Acids (BCAAs) – 540 mg\nL-Leucine\nL-Isoleucine\nL-Valine", "modo_uso": "2 cápsulas ao dia", "tempo_resultado": "A partir de 30 dias", "contraindicacao": "Gestantes e Lactantes, Crianças, Pessoas com doenças preexistentes graves", "prazo": "24 a 48 horas para processar o pedido e 2 a 5 dias em transito.", "paises": "Estados Unidos", "transportadora": "Fullstack - Eagle Labs", "script": "Não, o suporte deve usar as diretrizes gerais", "responsavel": "Gustavo (38)991601125", "obs": ""}];
