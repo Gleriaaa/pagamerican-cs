@@ -772,7 +772,7 @@ async function compExportPDF(){
 <script>
 const SHEET_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vQDl6X_-6Jet-gEVxNXtuFNK01-20Gi3ITrupik7UHPW4bjw0XSEAaAh92Sgl7pHTP1eIdQPb5gxlZm/pub?output=csv";
 const FALLBACK=[{"nome": "Slimvia", "empresa": "Maiver", "nicho": "Emagrecimento/Perda de Peso", "subnicho": "SlimVia é um suplemento alimentar desenvolvido para apoiar o controle de peso, ajudando na saciedade e no metabolismo como parte de um estilo de vida saudável.", "formato": "Cápsulas", "salespage": "https://vipheath.com/slimvia-pagamerican/", "checkout": "1 Pote: https://pay.pagamerican.app/kggnDPiY\n3 Potes: https://pay.pagamerican.app/ikixMXWg\n6 Potes: https://pay.pagamerican.app/iEHRikhF", "fotos": "https://drive.google.com/drive/folders/1Mq39BqKWJQR-r4FLTsFzEc6aiTPcChfT?usp=sharing", "pacotes": "", "precos": "", "assinatura": "Não", "garantia": "60 dias", "garantia_det": "Entrar em contato com a plataforma de pagamento no caso de solicitações de reembolso ou chargeback ou via e-mail que todo suporte será realizado, quando for necessário outro tipo de esclarecimentos sobre o pedido.", "promessa": "Apoiar o processo de emagrecimento de forma natural, ajudando no controle do apetite e no equilíbrio do metabolismo.", "evitar": "Cura obesidade, Trata doenças metabólicas, Age como remédio", "marketing": "Nenhum em específico", "sensivel": "Promessa de perda de 11kg no mês e comparação ou substituição por medicamentos.", "ingredientes": "Chromium Picolinate (Picolinato de Cromo)\nCholine (Colina)\nVitaminas do Complexo B (B1, B2, etc.)", "modo_uso": "1 cápsula por dia antes de alguma refeição", "tempo_resultado": "Primeiro mês, mas o ideal é o tratamento de pelo ou menos 3 meses.", "contraindicacao": "Gestantes e Lactantes, Crianças, Pessoas com doenças preexistentes graves", "prazo": "24 a 48h para processamento e permanece em transito de 2 a 5 dias", "paises": "Estados Unidos", "transportadora": "Fullstack", "script": "Não, o suporte deve usar as diretrizes gerais", "responsavel": "Gustavo - (38)991601125", "obs": "Público alvo - Mulheres de 45+"}, {"nome": "Cognivive", "empresa": "Maiver", "nicho": "Memória/Cognição", "subnicho": "Apoiar a função cognitiva e ajudar a manter a clareza mental e o foco no dia a dia.", "formato": "Cápsulas", "salespage": "https://vipheath.com/cognivive-pagamerican/", "checkout": "1 - https://pay.pagamerican.app/71S1lf53\n3 - https://pay.pagamerican.app/s8gflb15\n6 - https://pay.pagamerican.app/bJVlbQO5", "fotos": "https://drive.google.com/drive/folders/1_ZeV6dbg1RgMpp-T4H6AltqilyPgb4Cu?usp=sharing", "pacotes": "1, 3 e 6 fracos", "precos": "1 - 89 dólares\n3 - 207 dólares \n6 - 294 dólares", "assinatura": "Não possuímos assinatura", "garantia": "60 dias", "garantia_det": "Caso não goste após 60 dias de uso, pode entrar em contato com o suporte ou plataofrma de pagamento e seguir o processo de reembolso e chargeback", "promessa": "Clareza mental + foco consistente + melhor desempenho cognitivo diário\nAjudar a manter a mente mais clara, focada e organizada ao longo do dia.", "evitar": "Cura perda de memória\nTrata Alzheimer ou demência\nPrevine doenças cerebrais", "marketing": "Nenhum específico", "sensivel": "Não se compara ou substitui o uso de medicamentos, enquadramos como uma suplementação", "ingredientes": "Branched Chain Amino Acids (BCAAs) – 540 mg\nL-Leucine\nL-Isoleucine\nL-Valine", "modo_uso": "2 cápsulas ao dia", "tempo_resultado": "A partir de 30 dias", "contraindicacao": "Gestantes e Lactantes, Crianças, Pessoas com doenças preexistentes graves", "prazo": "24 a 48 horas para processar o pedido e 2 a 5 dias em transito.", "paises": "Estados Unidos", "transportadora": "Fullstack - Eagle Labs", "script": "Não, o suporte deve usar as diretrizes gerais", "responsavel": "Gustavo (38)991601125", "obs": ""}];
-const COLMAP={1:"nome",2:"empresa",3:"nicho",4:"subnicho",5:"formato",7:"salespage",8:"checkout",9:"fotos",10:"pacotes",11:"precos",12:"assinatura",13:"garantia",14:"garantia_det",15:"promessa",16:"evitar",17:"marketing",18:"sensivel",19:"ingredientes",20:"modo_uso",21:"tempo_resultado",22:"contraindicacao",23:"prazo",24:"paises",25:"transportadora",26:"script",29:"responsavel",30:"obs"};
+const COLMAP={3:"nome",2:"empresa",4:"nicho",5:"formato",6:"salespage",7:"checkout",8:"garantia",9:"prazo",10:"transportadora",11:"pacotes",12:"assinatura",13:"paises",14:"ingredientes",15:"contraindicacao",17:"responsavel"};
 const EMP_NORM={"BHever":"BHEver","Insider X":"INSIDER X","SIXBLACK":"SIX BLACK"};
 let PRODUCTS=[],activeFormat="all",prodSearchTerm="";
 
@@ -793,7 +793,7 @@ function fromCSV(text){
     for(const[idx,key]of Object.entries(COLMAP)){p[key]=(row[idx]||"").trim()}
     if(!p.nome)continue;
     p.empresa=EMP_NORM[p.empresa]||p.empresa;
-    const sig=p.nome.toLowerCase()+"|"+p.empresa.toLowerCase()+"|"+p.modo_uso;
+    const sig=p.nome.toLowerCase()+"|"+p.empresa.toLowerCase();
     if(seen.has(sig))continue;seen.add(sig);out.push(p);}
   return out.length?out:null;
 }
@@ -831,7 +831,6 @@ function prodRender(){
 function pcardHTML(p,i){
   let alerts="";
   if(!noVal(p.contraindicacao))alerts+=`<div class="palert warn"><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><div><b>Contraindicações:</b> ${pesc(p.contraindicacao)}</div></div>`;
-  if(!noVal(p.sensivel))alerts+=`<div class="palert danger"><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div><b>Alegação sensível — CUIDADO:</b> ${pesc(p.sensivel)}</div></div>`;
   return `<div class="pcard" style="animation-delay:${Math.min(i*25,350)}ms">
     <div class="pcard-head">
       <div class="pcard-main">
@@ -839,10 +838,10 @@ function pcardHTML(p,i){
         <div class="pcard-tags">
           ${p.formato?`<span class="ptag ptag-formato">${pesc(p.formato)}</span>`:""}
           ${p.empresa?`<span class="ptag ptag-empresa">${pesc(p.empresa)}</span>`:""}
-          ${p.nicho?`<span class="ptag ptag-nicho">${pesc(p.nicho.split("/")[0])}</span>`:""}
+          ${p.nicho?`<span class="ptag ptag-nicho">${pesc(p.nicho.split("/")[0].trim())}</span>`:""}
         </div>
         <div class="pquick">
-          ${p.modo_uso?`<div class="pquick-item"><span class="lbl">Modo de uso</span><span class="val">${pesc(p.modo_uso)}</span></div>`:""}
+          ${p.prazo?`<div class="pquick-item"><span class="lbl">Prazo de entrega</span><span class="val">${pesc(p.prazo)}</span></div>`:""}
           ${p.garantia?`<div class="pquick-item"><span class="lbl">Garantia</span><span class="val">${pesc(p.garantia)}</span></div>`:""}
         </div>
       </div>
@@ -852,29 +851,19 @@ function pcardHTML(p,i){
       ${alerts}
       <div class="psection">Atendimento</div>
       <div class="pfield-grid">
-        ${pfield("Modo de uso",p.modo_uso)}
-        ${pfield("Tempo p/ resultado",p.tempo_resultado)}
         ${pfield("Garantia",p.garantia)}
         ${pfield("Prazo de entrega",p.prazo)}
         ${pfield("Transportadora",p.transportadora)}
         ${pfield("Países",p.paises)}
         ${pfield("Assinatura/Recorrência",p.assinatura)}
       </div>
-      ${pfield("Detalhes da garantia",p.garantia_det)}
       ${pfield("Ingredientes",p.ingredientes)}
-      <div class="psection">Produto</div>
-      ${pfield("Promessa principal",p.promessa)}
-      ${pfield("Subnicho",p.subnicho)}
-      ${pfield("EVITAR afirmar",p.evitar)}
-      <div class="psection">Ofertas</div>
-      ${pfield("Pacotes",p.pacotes)}
-      ${pfield("Preços",p.precos)}
+      <div class="psection">Pacotes & Valores</div>
+      ${pfield("Pacotes e Valores",p.pacotes)}
       <div class="psection">Links</div>
       ${pfield("Página de vendas",p.salespage,true)}
       ${pfield("Checkout",p.checkout,true)}
-      ${pfield("Fotos/Rótulos",p.fotos,true)}
-      ${pfield("Responsável",p.responsavel)}
-      ${pfield("Observações",p.obs)}
+      ${pfield("Canal de atendimento",p.responsavel)}
     </div></div>
   </div>`;
 }
