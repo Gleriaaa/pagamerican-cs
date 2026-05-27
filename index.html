@@ -365,37 +365,37 @@ textarea{resize:vertical;font-family:inherit}
                  onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
             <div class="fb" style="display:none">PagAmerican<span> LLC</span></div>
           </div>
-          <div class="r-doctype"><b>REFUND</b>RECEIPT</div>
+          <div class="r-doctype"><b>COMPROVANTE</b>DE REEMBOLSO</div>
         </div>
         <div class="r-title">
-          <h2>Refund Receipt</h2>
-          <p>Confirmation of processed refund</p>
+          <h2>Comprovante de Reembolso</h2>
+          <p>Confirmação de reembolso processado</p>
         </div>
         <div class="r-amount">
           <div>
-            <div class="lbl">Refunded Amount</div>
-            <div class="val" id="cp-amount">US$ 0.00</div>
+            <div class="lbl">Valor reembolsado</div>
+            <div class="val" id="cp-amount">US$ 0,00</div>
           </div>
-          <div class="stat">REFUNDED</div>
+          <div class="stat">REEMBOLSADO</div>
         </div>
         <div class="r-details">
-          <div class="r-dr"><span class="k">Customer</span><span class="v" id="cp-name">—</span></div>
+          <div class="r-dr"><span class="k">Cliente</span><span class="v" id="cp-name">—</span></div>
           <div class="r-dr" id="cdr-email" style="display:none"><span class="k">E-mail</span><span class="v" id="cp-email"></span></div>
-          <div class="r-dr"><span class="k">Refund Date</span><span class="v" id="cp-date">—</span></div>
-          <div class="r-dr" id="cdr-order" style="display:none"><span class="k">Order No.</span><span class="v mono" id="cp-order"></span></div>
-          <div class="r-dr"><span class="k">Refund Method</span><span class="v">Original payment method</span></div>
-          <div class="r-dr" id="cdr-note" style="display:none"><span class="k">Note</span><span class="v" id="cp-note" style="font-weight:500"></span></div>
+          <div class="r-dr"><span class="k">Data do reembolso</span><span class="v" id="cp-date">—</span></div>
+          <div class="r-dr" id="cdr-order" style="display:none"><span class="k">Nº do pedido</span><span class="v mono" id="cp-order"></span></div>
+          <div class="r-dr"><span class="k">Forma de reembolso</span><span class="v">Forma de pagamento original</span></div>
+          <div class="r-dr" id="cdr-note" style="display:none"><span class="k">Observação</span><span class="v" id="cp-note" style="font-weight:500"></span></div>
         </div>
         <div class="r-verify">
-          <div class="vt">🔎 Verifiable Refund Identifier</div>
+          <div class="vt">🔎 Identificação verificável do reembolso</div>
           <div class="vid" id="cp-txid">—</div>
-          <div class="vhow" id="cp-vhow">You can confirm this refund on your statement, with the issuing institution of your payment method, using the identifier above.</div>
+          <div class="vhow" id="cp-vhow">Você pode confirmar este reembolso no seu extrato, junto à instituição emissora do seu meio de pagamento, usando o identificador acima.</div>
         </div>
         <div class="r-foot">
           <div class="company">PagAmerican LLC</div>
-          <div>11870 62nd St. N, Largo, FL 33773 · United States</div>
-          <div>The refunded amount will be returned via the same payment method used at the time of purchase. Processing time is 5 to 15 business days and may vary depending on the customer's financial institution.</div>
-          <div class="ref"><b>Internal Reference:</b> <span id="cp-ref">RB-0000-0000</span> · generated for PagAmerican's records (does not replace the processor ID above).</div>
+          <div>11870 62nd St. N, Largo, FL 33773 · Estados Unidos</div>
+          <div>O valor reembolsado retorna pela mesma forma de pagamento utilizada na compra. O prazo de compensação é de 5 a 15 dias úteis, podendo variar conforme a instituição financeira do cliente.</div>
+          <div class="ref"><b>Referência interna:</b> <span id="cp-ref">RB-0000-0000</span> · gerada para organização da PagAmerican (não substitui o ID do processador acima).</div>
         </div>
       </div>
     </div>
@@ -639,22 +639,22 @@ populateReasons();updateFields();
 
 <script>
 /* ============ COMPROVANTE DE REEMBOLSO ============ */
-const COMP_MONTHS_EN=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const COMP_MONTHS_BR=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
 function compFmtDate(d){
   if(!d)return"—";
   const [y,m,day]=d.split("-");
-  return `${COMP_MONTHS_EN[parseInt(m,10)-1]} ${parseInt(day,10)}, ${y}`;
+  return `${day}/${m}/${y}`;
 }
 function compFmtAmount(raw,currency){
-  if(!raw)return currency+" 0.00";
+  if(!raw)return currency+" 0,00";
   let s=String(raw).trim().replace(/\s/g,"").replace(/[^\d.,]/g,"");
   let normalized;
   if(s.indexOf(",")>-1&&s.indexOf(".")>-1){normalized=s.replace(/\./g,"").replace(",",".");}
   else if(s.indexOf(",")>-1){normalized=s.replace(",",".");}
   else{normalized=s;}
   const n=parseFloat(normalized);
-  if(isNaN(n))return currency+" 0.00";
-  return currency+" "+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(isNaN(n))return currency+" 0,00";
+  return currency+" "+n.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 function compGenRef(){
   const y=new Date().getFullYear();
@@ -695,9 +695,9 @@ function compRender(){
   g("cp-txid").textContent=txid||"—";
   const how=g("cp-vhow");
   if(processor){
-    how.textContent=`Refund processed via ${processor}. You can confirm it on your statement or with the issuing institution of your payment method using the identifier above.`;
+    how.textContent=`Reembolso processado via ${processor}. Você pode confirmá-lo no seu extrato ou junto à instituição emissora do seu meio de pagamento usando o identificador acima.`;
   }else{
-    how.textContent=`You can confirm this refund on your statement, with the issuing institution of your payment method, using the identifier above.`;
+    how.textContent=`Você pode confirmar este reembolso no seu extrato, junto à instituição emissora do seu meio de pagamento, usando o identificador acima.`;
   }
   g("cp-ref").textContent=COMP_REF;
 }
@@ -770,7 +770,7 @@ async function compExportPDF(){
 </script>
 
 <script>
-const SHEET_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vQSK1B0OKaxeTIC1i0vKX1JHpxzTcSEWPjaFhqkxBT-8DwuaCC2hae2hkD9Ok3YG0tS3HnyTbPwGBNf/pub?output=csv";
+const SHEET_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vQDl6X_-6Jet-gEVxNXtuFNK01-20Gi3ITrupik7UHPW4bjw0XSEAaAh92Sgl7pHTP1eIdQPb5gxlZm/pub?output=csv";
 const FALLBACK=[{"nome": "Slimvia", "empresa": "Maiver", "nicho": "Emagrecimento/Perda de Peso", "subnicho": "SlimVia é um suplemento alimentar desenvolvido para apoiar o controle de peso, ajudando na saciedade e no metabolismo como parte de um estilo de vida saudável.", "formato": "Cápsulas", "salespage": "https://vipheath.com/slimvia-pagamerican/", "checkout": "1 Pote: https://pay.pagamerican.app/kggnDPiY\n3 Potes: https://pay.pagamerican.app/ikixMXWg\n6 Potes: https://pay.pagamerican.app/iEHRikhF", "fotos": "https://drive.google.com/drive/folders/1Mq39BqKWJQR-r4FLTsFzEc6aiTPcChfT?usp=sharing", "pacotes": "", "precos": "", "assinatura": "Não", "garantia": "60 dias", "garantia_det": "Entrar em contato com a plataforma de pagamento no caso de solicitações de reembolso ou chargeback ou via e-mail que todo suporte será realizado, quando for necessário outro tipo de esclarecimentos sobre o pedido.", "promessa": "Apoiar o processo de emagrecimento de forma natural, ajudando no controle do apetite e no equilíbrio do metabolismo.", "evitar": "Cura obesidade, Trata doenças metabólicas, Age como remédio", "marketing": "Nenhum em específico", "sensivel": "Promessa de perda de 11kg no mês e comparação ou substituição por medicamentos.", "ingredientes": "Chromium Picolinate (Picolinato de Cromo)\nCholine (Colina)\nVitaminas do Complexo B (B1, B2, etc.)", "modo_uso": "1 cápsula por dia antes de alguma refeição", "tempo_resultado": "Primeiro mês, mas o ideal é o tratamento de pelo ou menos 3 meses.", "contraindicacao": "Gestantes e Lactantes, Crianças, Pessoas com doenças preexistentes graves", "prazo": "24 a 48h para processamento e permanece em transito de 2 a 5 dias", "paises": "Estados Unidos", "transportadora": "Fullstack", "script": "Não, o suporte deve usar as diretrizes gerais", "responsavel": "Gustavo - (38)991601125", "obs": "Público alvo - Mulheres de 45+"}, {"nome": "Cognivive", "empresa": "Maiver", "nicho": "Memória/Cognição", "subnicho": "Apoiar a função cognitiva e ajudar a manter a clareza mental e o foco no dia a dia.", "formato": "Cápsulas", "salespage": "https://vipheath.com/cognivive-pagamerican/", "checkout": "1 - https://pay.pagamerican.app/71S1lf53\n3 - https://pay.pagamerican.app/s8gflb15\n6 - https://pay.pagamerican.app/bJVlbQO5", "fotos": "https://drive.google.com/drive/folders/1_ZeV6dbg1RgMpp-T4H6AltqilyPgb4Cu?usp=sharing", "pacotes": "1, 3 e 6 fracos", "precos": "1 - 89 dólares\n3 - 207 dólares \n6 - 294 dólares", "assinatura": "Não possuímos assinatura", "garantia": "60 dias", "garantia_det": "Caso não goste após 60 dias de uso, pode entrar em contato com o suporte ou plataofrma de pagamento e seguir o processo de reembolso e chargeback", "promessa": "Clareza mental + foco consistente + melhor desempenho cognitivo diário\nAjudar a manter a mente mais clara, focada e organizada ao longo do dia.", "evitar": "Cura perda de memória\nTrata Alzheimer ou demência\nPrevine doenças cerebrais", "marketing": "Nenhum específico", "sensivel": "Não se compara ou substitui o uso de medicamentos, enquadramos como uma suplementação", "ingredientes": "Branched Chain Amino Acids (BCAAs) – 540 mg\nL-Leucine\nL-Isoleucine\nL-Valine", "modo_uso": "2 cápsulas ao dia", "tempo_resultado": "A partir de 30 dias", "contraindicacao": "Gestantes e Lactantes, Crianças, Pessoas com doenças preexistentes graves", "prazo": "24 a 48 horas para processar o pedido e 2 a 5 dias em transito.", "paises": "Estados Unidos", "transportadora": "Fullstack - Eagle Labs", "script": "Não, o suporte deve usar as diretrizes gerais", "responsavel": "Gustavo (38)991601125", "obs": ""}];
 const COLMAP={1:"nome",2:"empresa",3:"nicho",4:"subnicho",5:"formato",7:"salespage",8:"checkout",9:"fotos",10:"pacotes",11:"precos",12:"assinatura",13:"garantia",14:"garantia_det",15:"promessa",16:"evitar",17:"marketing",18:"sensivel",19:"ingredientes",20:"modo_uso",21:"tempo_resultado",22:"contraindicacao",23:"prazo",24:"paises",25:"transportadora",26:"script",29:"responsavel",30:"obs"};
 const EMP_NORM={"BHever":"BHEver","Insider X":"INSIDER X","SIXBLACK":"SIX BLACK"};
