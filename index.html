@@ -365,37 +365,37 @@ textarea{resize:vertical;font-family:inherit}
                  onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
             <div class="fb" style="display:none">PagAmerican<span> LLC</span></div>
           </div>
-          <div class="r-doctype"><b>COMPROVANTE</b>DE REEMBOLSO</div>
+          <div class="r-doctype"><b>REFUND</b>RECEIPT</div>
         </div>
         <div class="r-title">
-          <h2>Comprovante de Reembolso</h2>
-          <p>Confirmação de reembolso processado</p>
+          <h2>Refund Receipt</h2>
+          <p>Confirmation of processed refund</p>
         </div>
         <div class="r-amount">
           <div>
-            <div class="lbl">Valor reembolsado</div>
-            <div class="val" id="cp-amount">US$ 0,00</div>
+            <div class="lbl">Refunded Amount</div>
+            <div class="val" id="cp-amount">US$ 0.00</div>
           </div>
-          <div class="stat">REEMBOLSADO</div>
+          <div class="stat">REFUNDED</div>
         </div>
         <div class="r-details">
-          <div class="r-dr"><span class="k">Cliente</span><span class="v" id="cp-name">—</span></div>
+          <div class="r-dr"><span class="k">Customer</span><span class="v" id="cp-name">—</span></div>
           <div class="r-dr" id="cdr-email" style="display:none"><span class="k">E-mail</span><span class="v" id="cp-email"></span></div>
-          <div class="r-dr"><span class="k">Data do reembolso</span><span class="v" id="cp-date">—</span></div>
-          <div class="r-dr" id="cdr-order" style="display:none"><span class="k">Nº do pedido</span><span class="v mono" id="cp-order"></span></div>
-          <div class="r-dr"><span class="k">Forma de reembolso</span><span class="v">Forma de pagamento original</span></div>
-          <div class="r-dr" id="cdr-note" style="display:none"><span class="k">Observação</span><span class="v" id="cp-note" style="font-weight:500"></span></div>
+          <div class="r-dr"><span class="k">Refund Date</span><span class="v" id="cp-date">—</span></div>
+          <div class="r-dr" id="cdr-order" style="display:none"><span class="k">Order No.</span><span class="v mono" id="cp-order"></span></div>
+          <div class="r-dr"><span class="k">Refund Method</span><span class="v">Original payment method</span></div>
+          <div class="r-dr" id="cdr-note" style="display:none"><span class="k">Note</span><span class="v" id="cp-note" style="font-weight:500"></span></div>
         </div>
         <div class="r-verify">
-          <div class="vt">🔎 Identificação verificável do reembolso</div>
+          <div class="vt">🔎 Verifiable Refund Identifier</div>
           <div class="vid" id="cp-txid">—</div>
-          <div class="vhow" id="cp-vhow">Você pode confirmar este reembolso no seu extrato, junto à instituição emissora do seu meio de pagamento, usando o identificador acima.</div>
+          <div class="vhow" id="cp-vhow">You can confirm this refund on your statement, with the issuing institution of your payment method, using the identifier above.</div>
         </div>
         <div class="r-foot">
           <div class="company">PagAmerican LLC</div>
-          <div>11870 62nd St. N, Largo, FL 33773 · Estados Unidos</div>
-          <div>O valor reembolsado retorna pela mesma forma de pagamento utilizada na compra. O prazo de compensação é de 5 a 15 dias úteis, podendo variar conforme a instituição financeira do cliente.</div>
-          <div class="ref"><b>Referência interna:</b> <span id="cp-ref">RB-0000-0000</span> · gerada para organização da PagAmerican (não substitui o ID do processador acima).</div>
+          <div>11870 62nd St. N, Largo, FL 33773 · United States</div>
+          <div>The refunded amount will be returned via the same payment method used at the time of purchase. Processing time is 5 to 15 business days and may vary depending on the customer's financial institution.</div>
+          <div class="ref"><b>Internal Reference:</b> <span id="cp-ref">RB-0000-0000</span> · generated for PagAmerican's records (does not replace the processor ID above).</div>
         </div>
       </div>
     </div>
@@ -639,22 +639,22 @@ populateReasons();updateFields();
 
 <script>
 /* ============ COMPROVANTE DE REEMBOLSO ============ */
-const COMP_MONTHS_BR=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+const COMP_MONTHS_EN=["January","February","March","April","May","June","July","August","September","October","November","December"];
 function compFmtDate(d){
   if(!d)return"—";
   const [y,m,day]=d.split("-");
-  return `${day}/${m}/${y}`;
+  return `${COMP_MONTHS_EN[parseInt(m,10)-1]} ${parseInt(day,10)}, ${y}`;
 }
 function compFmtAmount(raw,currency){
-  if(!raw)return currency+" 0,00";
+  if(!raw)return currency+" 0.00";
   let s=String(raw).trim().replace(/\s/g,"").replace(/[^\d.,]/g,"");
   let normalized;
   if(s.indexOf(",")>-1&&s.indexOf(".")>-1){normalized=s.replace(/\./g,"").replace(",",".");}
   else if(s.indexOf(",")>-1){normalized=s.replace(",",".");}
   else{normalized=s;}
   const n=parseFloat(normalized);
-  if(isNaN(n))return currency+" 0,00";
-  return currency+" "+n.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(isNaN(n))return currency+" 0.00";
+  return currency+" "+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 function compGenRef(){
   const y=new Date().getFullYear();
@@ -695,9 +695,9 @@ function compRender(){
   g("cp-txid").textContent=txid||"—";
   const how=g("cp-vhow");
   if(processor){
-    how.textContent=`Reembolso processado via ${processor}. Você pode confirmá-lo no seu extrato ou junto à instituição emissora do seu meio de pagamento usando o identificador acima.`;
+    how.textContent=`Refund processed via ${processor}. You can confirm it on your statement or with the issuing institution of your payment method using the identifier above.`;
   }else{
-    how.textContent=`Você pode confirmar este reembolso no seu extrato, junto à instituição emissora do seu meio de pagamento, usando o identificador acima.`;
+    how.textContent=`You can confirm this refund on your statement, with the issuing institution of your payment method, using the identifier above.`;
   }
   g("cp-ref").textContent=COMP_REF;
 }
