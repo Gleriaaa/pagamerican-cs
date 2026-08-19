@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PagAmerican — CS Tools v4.0</title>
+<title>PagAmerican — CS Tools v4.1</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -188,7 +188,7 @@ textarea{resize:vertical;font-family:inherit}
 <header>
   <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="8" fill="#fff" fill-opacity=".15"/><path d="M7 14h14M14 7v14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
   <h1>PagAmerican — CS Tools</h1>
-  <span class="ver">v4.0</span>
+  <span class="ver">v4.1</span>
   <span class="sub">Customer Support · Uso Interno</span>
 </header>
 <div class="navtabs">
@@ -429,15 +429,18 @@ const FL={
   trackingLink:"Link de rastreio",refundDate:"Data do reembolso",refundAmount:"Valor reembolsado ($)",
   order1Number:"Número do pedido 1",order1Product:"Produto 1",order1Total:"Valor pedido 1 ($)",
   order2Number:"Número do pedido 2",order2Product:"Produto 2",order2Total:"Valor pedido 2 ($)",
-  productName2:"Produto adicional (opcional)",
+  productName2:"Produto adicional (opcional)",productName3:"Terceiro produto (opcional)",
   discPercent:"Desconto oferecido % (27/33/37/43 conforme Risk Score)",
   mainProduct:"Produto do pedido principal",mainAmount:"Valor do pedido principal ($)",
-  upsellProduct:"Produto adicional (upsell)",upsellAmount:"Valor do item adicional ($)",
+  upsellProduct:"1º item adicional (upsell)",upsellAmount:"Valor do 1º item adicional ($)",
+  upsellProduct2:"2º item adicional (upsell 2, opcional)",upsellAmount2:"Valor do 2º item adicional ($, opcional)",
 };
 const CF=["customerName","orderNumber","purchaseDate","productName","orderTotal","cityState","orderStatus"];
 
 function hdr(f){
-  const extraProduct=f.productName2?`\n• Additional Product: ${f.productName2}`:"";
+  let extraProduct="";
+  if(f.productName2)extraProduct+=`\n• Additional Product: ${f.productName2}`;
+  if(f.productName3)extraProduct+=`\n• Additional Product: ${f.productName3}`;
   return `Hello ${f.customerName},\n\nMy name is ${AGENT_NAME}, and I'll be assisting you with your case today on behalf of PagAmerican. We process payments for the merchant, and I'll do my best to help resolve this for you as quickly as possible.\n\nI was able to locate the following order in our system:\n\nOrder Details\n• Order Number: ${f.orderNumber}\n• Purchase Date: ${fmtDate(f.purchaseDate)}\n• Product: ${f.productName}${extraProduct}\n• Total Amount: $${f.orderTotal}\n• Shipping Address: ${f.cityState}\n• Current Status: ${f.orderStatus}\n\n`;
 }
 const sign=()=>`\nBest regards,\n${AGENT_NAME}\nPagAmerican Support Team`;
@@ -453,7 +456,7 @@ const T={
      pt:"O agente informa que não encontrou o pedido e pede nome completo, email usado na compra e número do pedido. Sugere também enviar print do email de confirmação.",
      gen:(f)=>`Hello ${f.customerName},\n\nMy name is ${AGENT_NAME}, and I'll be assisting you today on behalf of PagAmerican.\n\nI searched our system using the information provided, but I was unable to locate an order associated with your details.\n\nCould you please provide us with the following information so I can look further into this?\n\n• Full name\n• Email address used at the time of purchase\n• Order number (if available)\n\nIf it's easier, you can send us a screenshot of the confirmation email, which will help us locate your order.\n\nI look forward to your reply so we can proceed.`+sign()},
 
-    {id:"t02",label:"Detalhes do pedido",tag:"tg",tl:"Fluxo padrão",desc:"Cliente solicita informações detalhadas sobre o pedido. Use 'Produto adicional' quando houver 2 itens (ex: upsell) no mesmo pedido.",fields:["customerName","orderNumber","purchaseDate","productName","productName2","orderTotal","cityState","orderStatus","quantity","amount","shippingAmount","coupon","fee","shippingAddress"],
+    {id:"t02",label:"Detalhes do pedido",tag:"tg",tl:"Fluxo padrão",desc:"Cliente solicita informações detalhadas sobre o pedido. Use 'Produto adicional' quando houver 2 ou 3 itens (ex: upsell) no mesmo pedido.",fields:["customerName","orderNumber","purchaseDate","productName","productName2","productName3","orderTotal","cityState","orderStatus","quantity","amount","shippingAmount","coupon","fee","shippingAddress"],
      pt:"O agente compartilha todos os detalhes do pedido: quantidade, valores pagos, frete, cupom, taxas e endereço de entrega. Se houver um segundo produto no pedido (upsell), ele aparece logo abaixo do produto principal. Se coloca à disposição para dúvidas.",
      gen:(f)=>hdr(f)+`As requested, here are the full details of your order:\n\nOrder Information\n• Number of Items: ${f.quantity}\n\nAmounts\n• Total Amount Paid: $${f.amount}\n• Shipping Fee: $${f.shippingAmount}\n• Discount Coupon: ${f.coupon}\n• Applied Fees: ${f.fee}\n• Delivery Address: ${f.shippingAddress}\n\nIf you have any questions or need further information, I'm here to help.`+sign()},
 
@@ -513,9 +516,19 @@ const T={
      pt:"O agente identifica os dois pedidos separadamente e oferece flexibilidade: o cliente pode aceitar o desconto de cortesia (% conforme Risk Score) em um ou nos dois pedidos, ou optar pelo reembolso integral devolvendo os itens lacrados do pedido que escolher. Pergunta como o cliente prefere proceder.",
      gen:(f)=>hdr(f)+`I completely understand, and I want to make sure we find the best solution for you.\n\nI can see you have two separate orders with us:\n\nOrder 1 (Main Order)\n• Order Number: ${f.order1Number}\n• Product: ${f.order1Product}\n• Total: $${f.order1Total}\n\nOrder 2 (Additional Order)\n• Order Number: ${f.order2Number}\n• Product: ${f.order2Product}\n• Total: $${f.order2Total}\n\nI've reached out to the manufacturer on your behalf, and you're free to choose how you'd like to proceed with each order:\n\nOption 1 — ${f.discPercent}% Courtesy Discount\nA ${f.discPercent}% refund on either order, or on both — no return needed.\n\nOption 2 — Full Refund\nOn whichever order you prefer to return, upon receipt of the sealed, unopened items at our warehouse.\n\nYou can mix and match — for example, keep one order with the discount and return the other for a full refund. Just let me know which option you'd like for each order, and I'll take care of it right away.`+guarantee+sign()},
 
-    {id:"t10e",label:"Upsell — explicar cobrança (pedido ainda não entregue)",tag:"tg",tl:"Fluxo padrão",desc:"Cliente questiona duas cobranças/itens no mesmo pedido; produto ainda não foi entregue. Apenas explicar a oferta de checkout, sem oferecer desconto ainda.",fields:["customerName","orderNumber","mainProduct","mainAmount","upsellProduct","upsellAmount"],
-     pt:"O agente explica que, após a compra principal, uma oferta especial de checkout (upsell) foi apresentada e aceita separadamente — ela não cancela nem substitui o pedido original, por isso os dois valores aparecem. Como o pedido ainda não foi entregue, o agente informa que as opções sobre o item adicional serão discutidas assim que ele chegar.",
-     gen:(f)=>`Hi ${f.customerName},\n\nThank you for reaching out, and I'm happy to explain what happened with your order.\n\nI checked our records, and here's the breakdown of order #${f.orderNumber}:\n\n• Main Order: ${f.mainProduct} — $${f.mainAmount}\n• Additional Item: ${f.upsellProduct} — $${f.upsellAmount}\n\nWhat happened is that during checkout, after completing your main purchase, you were presented with a special one-time offer for the additional item. This is a separate, optional offer that appears at checkout — selecting it does not cancel or replace your original order. Both purchases were processed as separate items, which is why your total reflects both.\n\nI completely understand the confusion, as these checkout offers can sometimes be easy to miss or misinterpret. Your order has not yet been delivered, so once it arrives, I'll be glad to go over your options with you regarding the additional item.\n\nWe're always here if you need anything.`+sign()},
+    {id:"t10e",label:"Upsell — explicar cobrança (pedido ainda não entregue)",tag:"tg",tl:"Fluxo padrão",desc:"Cliente questiona 2 ou 3 cobranças/itens no MESMO pedido (mesmo Order Number); produto ainda não foi entregue. Apenas explicar a(s) oferta(s) de checkout, sem oferecer desconto ainda. Deixe o campo do 2º upsell vazio quando houver apenas 1 item adicional.",fields:["customerName","orderNumber","mainProduct","mainAmount","upsellProduct","upsellAmount","upsellProduct2","upsellAmount2"],
+     pt:"O agente explica que, após a compra principal, uma ou mais ofertas especiais de checkout (upsell) foram apresentadas e aceitas separadamente — elas não cancelam nem substituem o pedido original, por isso os valores aparecem somados. Como o pedido ainda não foi entregue, o agente informa que as opções sobre os itens adicionais serão discutidas assim que ele chegar.",
+     gen:(f)=>{
+       const hasSecond=!!f.upsellProduct2;
+       const breakdown=`• Main Order: ${f.mainProduct} — $${f.mainAmount}\n• Additional Item: ${f.upsellProduct} — $${f.upsellAmount}`+(hasSecond?`\n• Additional Item: ${f.upsellProduct2} — $${f.upsellAmount2}`:"");
+       const offerLine=hasSecond?"you were presented with special one-time offers for the additional items":"you were presented with a special one-time offer for the additional item";
+       const optionsLine=hasSecond?"the additional items":"the additional item";
+       return `Hi ${f.customerName},\n\nThank you for reaching out, and I'm happy to explain what happened with your order.\n\nI checked our records, and here's the breakdown of order #${f.orderNumber}:\n\n${breakdown}\n\nWhat happened is that during checkout, after completing your main purchase, ${offerLine}. These are separate, optional offers that appear at checkout — selecting them does not cancel or replace your original order. Each purchase was processed as a separate item, which is why your total reflects all of them.\n\nI completely understand the confusion, as these checkout offers can sometimes be easy to miss or misinterpret. Your order has not yet been delivered, so once it arrives, I'll be glad to go over your options with you regarding ${optionsLine}.\n\nWe're always here if you need anything.`+sign();
+     }},
+
+    {id:"t10f",label:"2 pedidos — números diferentes (explicar, sem desconto)",tag:"tg",tl:"Fluxo padrão",desc:"Cliente com 2 pedidos SEPARADOS (2 Order Numbers diferentes) questiona a cobrança. Apenas explicar a situação, sem oferecer desconto ainda — use antes da entrega ou quando só precisar esclarecer.",fields:["customerName","order1Number","order1Product","order1Total","order2Number","order2Product","order2Total"],
+     pt:"O agente explica que foram identificados dois pedidos distintos, cada um com seu próprio número — ou seja, foram duas compras separadas, e não itens dentro do mesmo pedido. Não há erro do nosso lado. Assim que ambos forem entregues, o agente se coloca à disposição para discutir as opções sobre cada um. Não oferece desconto nesta etapa.",
+     gen:(f)=>`Hi ${f.customerName},\n\nThank you for reaching out, and I'm happy to clarify this for you.\n\nI checked our system and found two separate orders under your name, each with its own order number:\n\n• Order 1\n  - Order Number: ${f.order1Number}\n  - Product: ${f.order1Product}\n  - Total: $${f.order1Total}\n\n• Order 2\n  - Order Number: ${f.order2Number}\n  - Product: ${f.order2Product}\n  - Total: $${f.order2Total}\n\nThis means these were processed as two separate purchases rather than items within a single order, which is why each one has its own order number and appears as a separate transaction on your statement. There's no error on our end.\n\nOnce both orders are delivered, I'll be happy to go over any options you may have regarding either of them.`+guarantee+sign()},
 
     {id:"t11",label:"Cancelamento — aceitou o desconto",tag:"tg",tl:"Fluxo padrão",desc:"Cliente aceitou a oferta de desconto.",fields:[...CF,"discPercent"],
      pt:"O agente confirma que o desconto de cortesia (% conforme Risk Score) foi aplicado e será processado no método de pagamento original em até 5 dias úteis. Pergunta se pode considerar o caso encerrado.",
@@ -615,7 +628,7 @@ function updateFields(){
   }).join("");
   genTpl();
 }
-const OPTIONAL_EMPTY=["productName2"];
+const OPTIONAL_EMPTY=["productName2","productName3","upsellProduct2","upsellAmount2"];
 function getF(){
   const o={};
   tpl.fields.forEach(f=>{
