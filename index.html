@@ -3,192 +3,254 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PagAmerican — CS Tools v4.1</title>
+<title>PagAmerican — CS Tools v5.2</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
+:root{
+  --ink:#0F1B2D;--ink-600:#4A5972;--ink-400:#8695B0;--ink-200:#C7D1E0;
+  --brand:#1A56A0;--brand-deep:#0E3868;--brand-mist:#EEF4FC;--brand-mist-2:#E2ECFA;
+  --paper:#F5F7FB;--surface:#FFFFFF;--line:#E1E7F0;--line-strong:#CBD6E6;
+  --ok:#157347;--ok-mist:#E7F6EE;--ok-line:#BEE3CE;
+  --risk:#B3261E;--risk-mist:#FCEAE8;--risk-line:#F3C6C2;
+  --signal:#9A6B14;--signal-mist:#FBF1DF;--signal-line:#EFD9A6;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --shadow-sm:0 1px 2px rgba(14,56,104,.06),0 1px 1px rgba(14,56,104,.04);
+  --shadow-md:0 4px 14px rgba(14,56,104,.08),0 1px 3px rgba(14,56,104,.06);
+  --shadow-lg:0 16px 44px rgba(14,56,104,.14),0 4px 12px rgba(14,56,104,.08);
+  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#F5F7FA;color:#1A1A2E;min-height:100vh}
-header{background:#1A56A0;padding:18px 32px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
-header h1{color:#fff;font-size:18px;font-weight:600}
-header .ver{background:rgba(255,255,255,.2);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
-header span.sub{color:#B5D4F4;font-size:13px;margin-left:auto}
-.navtabs{background:#fff;border-bottom:1px solid #E2E8F0;padding:0 32px;display:flex;gap:4px;position:sticky;top:0;z-index:40;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.navtab{padding:15px 22px;font-size:14px;font-weight:600;color:#64748B;cursor:pointer;border-bottom:3px solid transparent;transition:all .15s;display:flex;align-items:center;gap:8px}
-.navtab:hover{color:#1A56A0}
-.navtab.active{color:#1A56A0;border-bottom-color:#1A56A0}
-.navtab svg{width:17px;height:17px}
-.navtab .badge{background:#EAFAF1;color:#1A7A3C;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:2px}
+html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height:100vh;font-size:14.5px;line-height:1.5}
+::selection{background:var(--brand-mist-2);color:var(--brand-deep)}
+:focus-visible{outline:2.5px solid var(--brand);outline-offset:2px;border-radius:4px}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+
+/* ================= HEADER ================= */
+header{background:linear-gradient(135deg,var(--brand-deep) 0%,var(--brand) 100%);padding:16px 32px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 16px rgba(14,56,104,.25);position:relative;z-index:41}
+.logo-lockup{display:flex;align-items:center;gap:11px;flex-shrink:0}
+.logo-lockup img{height:26px;width:auto;display:block;filter:drop-shadow(0 1px 2px rgba(0,0,0,.15))}
+.logo-lockup .logo-fallback{display:none;width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.16);align-items:center;justify-content:center}
+header h1{color:#fff;font-size:15.5px;font-weight:700;letter-spacing:-.01em}
+header .ver{background:rgba(255,255,255,.18);color:#fff;font-size:10px;font-weight:700;letter-spacing:.03em;padding:3px 9px;border-radius:20px;border:1px solid rgba(255,255,255,.22)}
+header span.sub{color:rgba(232,241,253,.85);font-size:12.5px;margin-left:auto;font-weight:500}
+
+/* ================= NAV TABS ================= */
+.navtabs{background:var(--surface);border-bottom:1px solid var(--line);padding:0 32px;display:flex;gap:2px;position:sticky;top:0;z-index:40;box-shadow:0 1px 0 rgba(14,56,104,.03)}
+.navtab{padding:14px 20px;font-size:13.5px;font-weight:600;color:var(--ink-400);cursor:pointer;border-bottom:2.5px solid transparent;transition:color .15s,border-color .15s;display:flex;align-items:center;gap:8px;letter-spacing:-.005em}
+.navtab:hover{color:var(--brand)}
+.navtab.active{color:var(--brand-deep);border-bottom-color:var(--brand)}
+.navtab svg{width:16px;height:16px;opacity:.85}
+.navtab .badge{background:var(--ok-mist);color:var(--ok);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:2px}
 .view{display:none}
 .view.active{display:block}
-.container{max-width:1100px;margin:0 auto;padding:28px 20px;display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start}
-.panel{background:#fff;border-radius:12px;border:1px solid #E2E8F0;padding:22px}
-.score-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
-.score-btn{padding:14px 8px;border-radius:10px;border:1.5px solid #E2E8F0;background:#F8FAFC;cursor:pointer;text-align:center;transition:all .15s}
-.score-btn:hover{border-color:#CBD5E1}
-.score-btn .sl{font-size:13px;font-weight:600;display:block;color:#334155}
-.score-btn .sd{font-size:11px;color:#94A3B8;display:block;margin-top:3px}
-.score-btn.ag{border-color:#1A7A3C;background:#EAFAF1}.score-btn.ag .sl{color:#1A7A3C}
-.score-btn.ar{border-color:#A00000;background:#FDECEA}.score-btn.ar .sl{color:#A00000}
-label{font-size:12px;font-weight:500;color:#64748B;display:block;margin-bottom:5px}
-select,input[type=text],input[type=email],input[type=date],input[type=time],textarea{width:100%;padding:9px 12px;border:1px solid #E2E8F0;border-radius:8px;font-size:13px;color:#1A1A2E;background:#F8FAFC;outline:none;transition:border .15s}
-select:focus,input[type=text]:focus,input[type=email]:focus,input[type=date]:focus,input[type=time]:focus,textarea:focus{border-color:#1A56A0;background:#fff}
+
+/* ================= LAYOUT ================= */
+.container{max-width:1120px;margin:0 auto;padding:26px 20px 40px;display:grid;grid-template-columns:322px 1fr;gap:18px;align-items:start}
+.panel{background:var(--surface);border-radius:var(--r-lg);border:1px solid var(--line);padding:22px;box-shadow:var(--shadow-sm)}
+.op{background:var(--surface);border-radius:var(--r-lg);border:1px solid var(--line);padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow-sm)}
+.divider{border:none;border-top:1px solid var(--line);margin:18px 0}
+
+/* ================= STEP LABELS ================= */
+.sl2{font-size:10.5px;font-weight:700;color:var(--ink-400);text-transform:uppercase;letter-spacing:.09em;margin-bottom:11px;display:flex;align-items:center;gap:7px}
+.sn{width:19px;height:19px;border-radius:50%;background:var(--brand);color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 1px 2px rgba(14,56,104,.35)}
+
+/* ================= RISK GAUGE (score selector — signature element) ================= */
+.score-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;position:relative;padding-top:9px}
+.score-row::before{content:"";position:absolute;top:0;left:2px;right:2px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--ok) 0%,var(--signal) 50%,var(--risk) 100%);opacity:.55}
+.score-btn{padding:15px 8px 12px;border-radius:var(--r-md);border:1.5px solid var(--line);background:var(--paper);cursor:pointer;text-align:center;transition:border-color .15s,background .15s,transform .1s}
+.score-btn:hover{border-color:var(--line-strong);transform:translateY(-1px)}
+.score-btn:active{transform:translateY(0)}
+.score-btn .sl{font-size:13px;font-weight:700;display:block;color:var(--ink-600);letter-spacing:-.01em}
+.score-btn .sd{font-size:10.5px;color:var(--ink-400);display:block;margin-top:3px;font-weight:500}
+.score-btn.ag{border-color:var(--ok-line);background:var(--ok-mist)}.score-btn.ag .sl{color:var(--ok)}
+.score-btn.ar{border-color:var(--risk-line);background:var(--risk-mist)}.score-btn.ar .sl{color:var(--risk)}
+
+/* ================= FORM ELEMENTS ================= */
+label{font-size:12px;font-weight:600;color:var(--ink-600);display:block;margin-bottom:6px;letter-spacing:-.005em}
+select,input[type=text],input[type=email],input[type=date],input[type=time],textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);font-size:13px;color:var(--ink);background:var(--paper);outline:none;transition:border-color .15s,background .15s;font-family:var(--sans)}
+select:focus,input[type=text]:focus,input[type=email]:focus,input[type=date]:focus,input[type=time]:focus,textarea:focus{border-color:var(--brand);background:var(--surface);box-shadow:0 0 0 3px var(--brand-mist)}
 select{cursor:pointer}
 textarea{resize:vertical;font-family:inherit}
-.divider{border:none;border-top:1px solid #F1F5F9;margin:18px 0}
 .fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .ff{grid-column:1/-1}
 .fgrp{display:flex;flex-direction:column}
-.op{background:#fff;border-radius:12px;border:1px solid #E2E8F0;padding:22px;display:flex;flex-direction:column;gap:14px}
-.tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
-.tg{background:#EAFAF1;color:#1A7A3C}.tr{background:#FDECEA;color:#A00000}.tb{background:#E8F0FE;color:#1A4A8A}
-.tn{font-size:15px;font-weight:600;color:#1A1A2E;margin-top:4px}
-.td{font-size:12px;color:#64748B;margin-top:2px}
-.ob{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:18px;font-size:13.5px;line-height:1.75;color:#1A1A2E;white-space:pre-wrap;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:200px;flex:1}
+
+/* ================= BUTTONS ================= */
+.cb{flex:1;padding:12px;font-size:13.5px;font-weight:700;border-radius:var(--r-sm);border:none;background:var(--brand);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,transform .1s;letter-spacing:-.005em}
+.cb:hover{background:var(--brand-deep)}
+.cb:active{transform:scale(.98)}
+.cb.copied{background:var(--ok)}
+.clr{padding:12px 16px;font-size:13px;font-weight:600;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--surface);color:var(--ink-600);cursor:pointer;transition:background .15s,border-color .15s}
+.clr:hover{background:var(--paper);border-color:var(--line-strong)}
 .acts{display:flex;gap:10px}
-.cb{flex:1;padding:12px;font-size:14px;font-weight:600;border-radius:10px;border:none;background:#1A56A0;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s}
-.cb:hover{background:#1A4A8A}.cb.copied{background:#1A7A3C}
-.clr{padding:12px 16px;font-size:13px;border-radius:10px;border:1px solid #E2E8F0;background:#F8FAFC;color:#64748B;cursor:pointer;transition:all .15s}
-.clr:hover{background:#F1F5F9}
-.sl2{font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.sn{width:18px;height:18px;border-radius:50%;background:#1A56A0;color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
 .br{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.translate-box{background:#fff;border-radius:12px;border:1px solid #E2E8F0;padding:20px;margin-bottom:20px}
-.translate-box h3{font-size:13px;font-weight:700;color:#1A56A0;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.translate-result{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:12px;font-size:13px;line-height:1.6;color:#444;min-height:80px;margin-top:10px;white-space:pre-wrap;font-style:italic}
-.translate-btn{padding:10px 16px;font-size:13px;font-weight:600;border-radius:8px;border:none;background:#2E75B6;color:#fff;cursor:pointer;transition:all .15s;margin-top:10px;width:100%}
-.translate-btn:hover{background:#1A56A0}
-.translate-btn.loading{background:#94A3B8;cursor:not-allowed}
-.pt-summary{background:#FFFDE7;border:1px solid #F0C040;border-radius:10px;padding:14px 16px;font-size:13px;line-height:1.65;color:#444;margin-top:4px}
-.pt-summary-title{font-size:11px;font-weight:700;color:#7B5800;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
-.prod-wrap{max-width:1100px;margin:0 auto;padding:28px 20px}
+
+/* ================= TAGS ================= */
+.tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.02em;padding:4px 11px;border-radius:20px}
+.tg{background:var(--ok-mist);color:var(--ok)}.tr{background:var(--risk-mist);color:var(--risk)}.tb{background:var(--signal-mist);color:var(--signal)}
+.tn{font-size:15px;font-weight:700;color:var(--ink);margin-top:5px;letter-spacing:-.01em}
+.td{font-size:12px;color:var(--ink-400);margin-top:3px;line-height:1.5}
+
+/* ================= OUTPUT DOCUMENT ================= */
+.ob{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);padding:19px;font-size:13.5px;line-height:1.7;color:var(--ink);white-space:pre-wrap;font-family:var(--sans);min-height:200px;flex:1}
+.pt-summary{background:var(--signal-mist);border:1px solid var(--signal-line);border-radius:var(--r-md);padding:14px 16px;font-size:13px;line-height:1.65;color:var(--ink-600)}
+.pt-summary-title{font-size:10.5px;font-weight:700;color:var(--signal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
+
+/* ================= TRANSLATE BOX ================= */
+.translate-box{background:var(--surface);border-radius:var(--r-lg);border:1px solid var(--line);padding:20px;margin-bottom:18px;box-shadow:var(--shadow-sm)}
+.translate-box h3{font-size:12.5px;font-weight:700;color:var(--brand-deep);margin-bottom:12px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.04em}
+.translate-result{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-sm);padding:12px;font-size:13px;line-height:1.6;color:var(--ink-600);min-height:80px;margin-top:10px;white-space:pre-wrap;font-style:italic}
+.translate-btn{padding:10px 16px;font-size:13px;font-weight:700;border-radius:var(--r-sm);border:none;background:var(--brand-deep);color:#fff;cursor:pointer;transition:background .15s;margin-top:10px;width:100%}
+.translate-btn:hover{background:var(--brand)}
+.translate-btn.loading{background:var(--ink-200);cursor:not-allowed}
+
+/* ================= PRODUCTS VIEW ================= */
+.prod-wrap{max-width:1120px;margin:0 auto;padding:26px 20px 40px}
 .prod-search-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
 .prod-search{flex:1;min-width:240px;position:relative}
-.prod-search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:17px;height:17px;stroke:#94A3B8}
-.prod-search input{width:100%;padding:13px 14px 13px 42px;background:#fff;border:1px solid #E2E8F0;border-radius:10px;font-size:14px;outline:none;transition:.15s}
-.prod-search input:focus{border-color:#1A56A0;box-shadow:0 0 0 3px rgba(26,86,160,.1)}
-.prod-count{font-size:13px;color:#64748B;background:#fff;padding:11px 16px;border-radius:10px;border:1px solid #E2E8F0;white-space:nowrap;display:flex;align-items:center}
-.prod-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
-.chip{padding:7px 14px;background:#fff;border:1px solid #E2E8F0;color:#64748B;border-radius:20px;font-size:12.5px;cursor:pointer;transition:.15s;user-select:none;white-space:nowrap}
-.chip:hover{border-color:#1A56A0;color:#1A56A0}
-.chip.active{background:#1A56A0;color:#fff;border-color:#1A56A0;font-weight:600}
-.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
-.pcard{background:#fff;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden;transition:.2s;animation:pfade .35s ease both}
-.pcard:hover{border-color:#CBD5E1;box-shadow:0 2px 12px rgba(0,0,0,.05)}
-@keyframes pfade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.pcard-head{padding:17px 19px;cursor:pointer;display:flex;align-items:flex-start;gap:13px}
-.pcard-head:hover{background:#F8FAFC}
+.prod-search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--ink-400)}
+.prod-search input{width:100%;padding:12px 14px 12px 42px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);font-size:13.5px;outline:none;transition:border-color .15s,box-shadow .15s}
+.prod-search input:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-mist)}
+.prod-count{font-size:12.5px;color:var(--ink-400);font-weight:600;background:var(--surface);padding:11px 16px;border-radius:var(--r-md);border:1px solid var(--line);white-space:nowrap;display:flex;align-items:center}
+.prod-filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px}
+.chip{padding:6px 13px;background:var(--surface);border:1px solid var(--line);color:var(--ink-600);border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;transition:.15s;user-select:none;white-space:nowrap}
+.chip:hover{border-color:var(--brand);color:var(--brand)}
+.chip.active{background:var(--brand-deep);color:#fff;border-color:var(--brand-deep);font-weight:700}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;transition:border-color .15s,box-shadow .15s;animation:pfade .35s ease both}
+.pcard:hover{border-color:var(--line-strong);box-shadow:var(--shadow-md)}
+@keyframes pfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.pcard-head{padding:16px 18px;cursor:pointer;display:flex;align-items:flex-start;gap:13px}
+.pcard-head:hover{background:var(--paper)}
 .pcard-main{flex:1;min-width:0}
-.pcard-name{font-size:16px;font-weight:700;letter-spacing:-.01em;margin-bottom:6px;color:#1A1A2E}
+.pcard-name{font-size:15.5px;font-weight:700;letter-spacing:-.01em;margin-bottom:7px;color:var(--ink)}
 .pcard-tags{display:flex;gap:6px;flex-wrap:wrap}
-.ptag{font-size:11px;padding:3px 9px;border-radius:6px;font-weight:500}
-.ptag-formato{background:#E8F0FE;color:#1A4A8A}
-.ptag-empresa{background:#F1F5F9;color:#64748B;border:1px solid #E2E8F0}
-.ptag-nicho{background:#EAFAF1;color:#1A7A3C}
-.pquick{display:flex;gap:16px;margin-top:11px;padding-top:11px;border-top:1px solid #F1F5F9}
+.ptag{font-size:10.5px;padding:3px 9px;border-radius:6px;font-weight:600}
+.ptag-formato{background:var(--brand-mist);color:var(--brand-deep)}
+.ptag-empresa{background:var(--paper);color:var(--ink-400);border:1px solid var(--line)}
+.ptag-nicho{background:var(--ok-mist);color:var(--ok)}
+.pquick{display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
 .pquick-item{font-size:12px;min-width:0}
-.pquick-item .lbl{color:#94A3B8;display:block;margin-bottom:1px;font-size:10px;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
-.pquick-item .val{color:#334155;font-weight:600;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pchevron{width:20px;height:20px;stroke:#94A3B8;transition:transform .25s;flex-shrink:0;margin-top:2px}
+.pquick-item .lbl{color:var(--ink-400);display:block;margin-bottom:1px;font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+.pquick-item .val{color:var(--ink-600);font-weight:700;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--mono);font-size:11.5px}
+.pchevron{width:19px;height:19px;stroke:var(--ink-400);transition:transform .25s;flex-shrink:0;margin-top:2px}
 .pcard.open .pchevron{transform:rotate(180deg)}
 .pcard-body{max-height:0;overflow:hidden;transition:max-height .35s ease;background:#FBFCFE}
 .pcard.open .pcard-body{max-height:4000px}
-.pcard-body-inner{padding:4px 19px 19px;border-top:1px solid #F1F5F9}
-.palert{display:flex;gap:9px;padding:11px 13px;border-radius:9px;margin:13px 0;font-size:12.5px;line-height:1.5}
-.palert.warn{background:#FFFBEB;border:1px solid #FCD34D}
-.palert.danger{background:#FEF2F2;border:1px solid #FCA5A5}
+.pcard-body-inner{padding:2px 18px 18px;border-top:1px solid var(--line)}
+.palert{display:flex;gap:9px;padding:11px 13px;border-radius:var(--r-sm);margin:13px 0;font-size:12.5px;line-height:1.5}
+.palert.warn{background:var(--signal-mist);border:1px solid var(--signal-line)}
+.palert.danger{background:var(--risk-mist);border:1px solid var(--risk-line)}
 .palert svg{width:15px;height:15px;flex-shrink:0;margin-top:2px}
-.palert.warn svg{stroke:#B45309}
-.palert.danger svg{stroke:#B91C1C}
-.palert b{color:#1A1A2E}
-.palert.warn b{color:#92400E}
-.palert.danger b{color:#991B1B}
+.palert.warn svg{stroke:var(--signal)}.palert.danger svg{stroke:var(--risk)}
+.palert b{color:var(--ink)}.palert.warn b{color:var(--signal)}.palert.danger b{color:var(--risk)}
 .pfield{margin-top:14px}
-.pfield-lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:#94A3B8;margin-bottom:3px;font-weight:700}
-.pfield-val{font-size:13.5px;color:#334155;white-space:pre-line;line-height:1.55}
-.pfield-val a{color:#1A56A0;text-decoration:none;word-break:break-all}
+.pfield-lbl{font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-400);margin-bottom:3px;font-weight:700}
+.pfield-val{font-size:13.5px;color:var(--ink-600);white-space:pre-line;line-height:1.55}
+.pfield-val a{color:var(--brand);text-decoration:none;word-break:break-all}
 .pfield-val a:hover{text-decoration:underline}
 .pfield-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.psection{margin:18px 0 2px;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:#1A56A0;font-weight:700}
-.pempty{text-align:center;padding:70px 20px;color:#64748B;grid-column:1/-1}
-.pempty svg{width:44px;height:44px;stroke:#CBD5E1;margin-bottom:12px}
-.psync{font-size:11px;color:#94A3B8;text-align:center;margin-top:28px;padding-top:18px;border-top:1px solid #E2E8F0}
-.psync .live{color:#1A7A3C;font-weight:600}
-.ploading{text-align:center;padding:60px;color:#64748B;font-size:14px}
-.pspinner{width:28px;height:28px;border:3px solid #E2E8F0;border-top-color:#1A56A0;border-radius:50%;animation:pspin .8s linear infinite;margin:0 auto 14px}
+.psection{margin:18px 0 2px;font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);font-weight:700}
+.pempty{text-align:center;padding:70px 20px;color:var(--ink-400);grid-column:1/-1}
+.pempty svg{width:40px;height:40px;stroke:var(--ink-200);margin-bottom:12px}
+.psync{font-size:11px;color:var(--ink-400);text-align:center;margin-top:28px;padding-top:18px;border-top:1px solid var(--line)}
+.psync .live{color:var(--ok);font-weight:700}
+.ploading{text-align:center;padding:60px;color:var(--ink-400);font-size:13.5px}
+.pspinner{width:26px;height:26px;border:3px solid var(--line);border-top-color:var(--brand);border-radius:50%;animation:pspin .8s linear infinite;margin:0 auto 14px}
 @keyframes pspin{to{transform:rotate(360deg)}}
 
-/* ===== COMPROVANTE (nova aba) ===== */
-.comp-wrap{max-width:1100px;margin:0 auto;padding:28px 20px;display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start}
-.comp-callout{grid-column:1/-1;background:#FFFBEB;border:1px solid #FCD34D;border-radius:10px;padding:13px 16px;font-size:12.5px;line-height:1.6;color:#92400E}
-.comp-callout b{color:#7B3F00}
+/* ================= COMPROVANTE ================= */
+.comp-wrap{max-width:1120px;margin:0 auto;padding:26px 20px 40px;display:grid;grid-template-columns:360px 1fr;gap:18px;align-items:start}
+.comp-callout{grid-column:1/-1;background:var(--signal-mist);border:1px solid var(--signal-line);border-radius:var(--r-md);padding:13px 16px;font-size:12.5px;line-height:1.6;color:#6B4A0E}
+.comp-callout b{color:var(--signal)}
 .field-block{margin-bottom:13px}
-.field-block.req label::after{content:" *";color:#A00000}
-.req-note{font-size:11px;color:#A00000;margin-top:4px;display:none}
-.field-block.invalid input{border-color:#FCA5A5;background:#FEF2F2}
+.field-block.req label::after{content:" *";color:var(--risk)}
+.req-note{font-size:11px;color:var(--risk);margin-top:4px;display:none}
+.field-block.invalid input{border-color:var(--risk-line);background:var(--risk-mist)}
 .field-block.invalid .req-note{display:block}
-.hint{font-weight:400;color:#94A3B8}
+.hint{font-weight:400;color:var(--ink-400)}
 .comp-actions{display:flex;gap:10px;margin-top:8px}
-.comp-btn{flex:1;padding:12px;font-size:14px;font-weight:600;border-radius:10px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s}
-.comp-btn.primary{background:#1A56A0;color:#fff}.comp-btn.primary:hover{background:#1A4A8A}
-.comp-btn.ghost{background:#F8FAFC;color:#1A56A0;border:1px solid #1A56A0}.comp-btn.ghost:hover{background:#EAF1FA}
-.comp-preview-label{font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
-.comp-stage{position:sticky;top:80px}
+.comp-btn{flex:1;padding:12px;font-size:13.5px;font-weight:700;border-radius:var(--r-sm);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s}
+.comp-btn.primary{background:var(--brand);color:#fff}.comp-btn.primary:hover{background:var(--brand-deep)}
+.comp-btn.ghost{background:var(--surface);color:var(--brand);border:1px solid var(--brand)}.comp-btn.ghost:hover{background:var(--brand-mist)}
+.comp-preview-label{font-size:10.5px;font-weight:700;color:var(--ink-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.comp-stage{position:sticky;top:76px}
 .comp-scroll{overflow:auto}
 
-.receipt{width:600px;max-width:100%;margin:0 auto;background:#fff;border:1px solid #E2E8F0;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(20,40,80,.1)}
-.r-head{background:#1A56A0;color:#fff;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.receipt{width:600px;max-width:100%;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--shadow-lg)}
+.r-head{background:linear-gradient(135deg,var(--brand-deep) 0%,var(--brand) 100%);color:#fff;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .r-logo{display:flex;align-items:center;gap:11px}
-.r-logo img{height:32px;display:block}
+.r-logo img{height:30px;display:block}
 .r-logo .fb{font-weight:800;font-size:19px;letter-spacing:.3px}
 .r-logo .fb span{opacity:.7;font-weight:600}
-.r-doctype{text-align:right;font-size:11px;line-height:1.4;opacity:.95}
-.r-doctype b{display:block;font-size:13px;font-weight:700;letter-spacing:.4px}
+.r-doctype{text-align:right;font-size:10.5px;line-height:1.4;opacity:.9;font-family:var(--mono);letter-spacing:.04em}
+.r-doctype b{display:block;font-size:13px;font-weight:700;letter-spacing:.6px;font-family:var(--sans)}
 .r-title{padding:22px 28px 6px}
-.r-title h2{font-size:18px;font-weight:800;color:#1A1A2E;margin:0}
-.r-title p{font-size:12.5px;color:#64748B;margin-top:3px}
-.r-amount{margin:14px 28px 0;background:#EAFAF1;border:1px solid #CFE9D8;border-radius:12px;padding:17px 20px;display:flex;align-items:center;justify-content:space-between}
-.r-amount .lbl{font-size:11px;font-weight:700;color:#1A7A3C;text-transform:uppercase;letter-spacing:.5px}
-.r-amount .val{font-size:28px;font-weight:800;color:#1A7A3C;letter-spacing:-.5px;margin-top:2px}
-.r-amount .stat{font-size:11px;font-weight:700;color:#fff;background:#1A7A3C;padding:5px 11px;border-radius:20px;white-space:nowrap}
+.r-title h2{font-size:18px;font-weight:800;color:var(--ink);margin:0;letter-spacing:-.01em}
+.r-title p{font-size:12.5px;color:var(--ink-400);margin-top:3px}
+.r-amount{margin:14px 28px 0;background:var(--ok-mist);border:1px solid var(--ok-line);border-radius:var(--r-md);padding:17px 20px;display:flex;align-items:center;justify-content:space-between}
+.r-amount .lbl{font-size:10.5px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.06em}
+.r-amount .val{font-size:27px;font-weight:800;color:var(--ok);letter-spacing:-.5px;margin-top:2px;font-family:var(--mono)}
+.r-amount .stat{font-size:10.5px;font-weight:700;color:#fff;background:var(--ok);padding:5px 11px;border-radius:20px;white-space:nowrap;letter-spacing:.03em}
 .r-details{padding:18px 28px 4px}
-.r-dr{display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid #F1F5F9;font-size:13px}
+.r-dr{display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
 .r-dr:last-child{border-bottom:none}
-.r-dr .k{color:#64748B;font-weight:500;flex-shrink:0}
-.r-dr .v{color:#1A1A2E;font-weight:600;text-align:right;word-break:break-word}
-.r-dr .v.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px}
-.r-verify{margin:14px 28px 0;border:1px dashed #1A56A0;background:#EAF1FA;border-radius:12px;padding:15px 17px}
-.r-verify .vt{font-size:11px;font-weight:700;color:#1A56A0;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;display:flex;align-items:center;gap:7px}
-.r-verify .vid{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:15px;font-weight:700;color:#1A1A2E;word-break:break-all;margin-bottom:7px}
-.r-verify .vhow{font-size:11.5px;color:#33506F;line-height:1.5}
-.r-foot{margin-top:18px;padding:18px 28px;background:#F8FAFC;border-top:1px solid #E2E8F0;font-size:11.5px;color:#64748B;line-height:1.55}
-.r-foot .company{font-weight:700;color:#1A1A2E;font-size:13px;margin-bottom:3px}
-.r-foot .ref{margin-top:9px;font-size:10.5px;color:#94A3B8}
-.r-foot .ref b{color:#64748B;font-weight:600}
-.comp-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1A1A2E;color:#fff;padding:12px 20px;border-radius:10px;font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.r-dr .k{color:var(--ink-400);font-weight:500;flex-shrink:0}
+.r-dr .v{color:var(--ink);font-weight:700;text-align:right;word-break:break-word}
+.r-dr .v.mono{font-family:var(--mono);font-size:12.5px;font-weight:600}
+.r-verify{margin:14px 28px 0;border:1px dashed var(--brand);background:var(--brand-mist);border-radius:var(--r-md);padding:15px 17px}
+.r-verify .vt{font-size:10.5px;font-weight:700;color:var(--brand-deep);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.r-verify .vid{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink);word-break:break-all;margin-bottom:7px}
+.r-verify .vhow{font-size:11.5px;color:var(--ink-600);line-height:1.5}
+.r-foot{margin-top:18px;padding:18px 28px;background:var(--paper);border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-400);line-height:1.55}
+.r-foot .company{font-weight:700;color:var(--ink);font-size:13px;margin-bottom:3px}
+.r-foot .ref{margin-top:9px;font-size:10px;color:var(--ink-200);font-family:var(--mono)}
+.r-foot .ref b{color:var(--ink-400);font-weight:600;font-family:var(--sans)}
+.comp-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:var(--r-sm);font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:50;box-shadow:var(--shadow-lg)}
 .comp-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-@media(max-width:700px){.container{grid-template-columns:1fr}.fg{grid-template-columns:1fr}.ff{grid-column:1}.navtabs{padding:0 16px}.navtab{padding:14px 14px}header span.sub{display:none}.pfield-grid{grid-template-columns:1fr}.comp-wrap{grid-template-columns:1fr}.comp-stage{position:static}}
-#ls{position:fixed;top:0;left:0;width:100%;height:100%;background:#F5F7FA;display:flex;align-items:center;justify-content:center;z-index:9999}
+/* ================= RESPONSIVE ================= */
+@media(max-width:700px){
+  .container{grid-template-columns:1fr}
+  .fg{grid-template-columns:1fr}
+  .ff{grid-column:1}
+  .navtabs{padding:0 16px}
+  .navtab{padding:13px 13px}
+  header span.sub{display:none}
+  .pfield-grid{grid-template-columns:1fr}
+  .comp-wrap{grid-template-columns:1fr}
+  .comp-stage{position:static}
+}
+
+/* ================= LOGIN GATE ================= */
+#ls{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(160deg,var(--paper) 0%,var(--brand-mist) 100%);display:flex;align-items:center;justify-content:center;z-index:9999}
 #as{display:none}
-.lc{background:#fff;border-radius:16px;border:1px solid #E2E8F0;padding:40px 36px;width:100%;max-width:380px;text-align:center}
-.ll{width:48px;height:48px;background:#1A56A0;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
-.lt{font-size:20px;font-weight:700;color:#1A1A2E;margin-bottom:6px}
-.ls2{font-size:13px;color:#64748B;margin-bottom:28px}
-.li{width:100%;padding:11px 14px;border:1px solid #E2E8F0;border-radius:8px;font-size:14px;color:#1A1A2E;background:#F8FAFC;outline:none;margin-bottom:12px;text-align:center;letter-spacing:2px}
-.li:focus{border-color:#1A56A0;background:#fff}
-.lb{width:100%;padding:12px;background:#1A56A0;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
-.lb:hover{background:#1A4A8A}
-.le{font-size:12px;color:#A00000;margin-top:8px;display:none}
+.lc{background:var(--surface);border-radius:var(--r-xl);border:1px solid var(--line);padding:42px 36px;width:100%;max-width:380px;text-align:center;box-shadow:var(--shadow-lg)}
+.ll{width:52px;height:52px;background:linear-gradient(135deg,var(--brand-deep),var(--brand));border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 6px 18px rgba(14,56,104,.28);overflow:hidden}
+.ll img{width:30px;height:30px;object-fit:contain}
+.lt{font-size:20px;font-weight:800;color:var(--ink);margin-bottom:6px;letter-spacing:-.01em}
+.ls2{font-size:13px;color:var(--ink-400);margin-bottom:28px;line-height:1.5}
+.li{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r-sm);font-size:14px;color:var(--ink);background:var(--paper);outline:none;margin-bottom:12px;text-align:center;letter-spacing:2px}
+.li:focus{border-color:var(--brand);background:var(--surface);box-shadow:0 0 0 3px var(--brand-mist)}
+.lb{width:100%;padding:12px;background:var(--brand);color:#fff;border:none;border-radius:var(--r-sm);font-size:14px;font-weight:700;cursor:pointer;transition:background .15s}
+.lb:hover{background:var(--brand-deep)}
+.le{font-size:12px;color:var(--risk);margin-top:8px;display:none}
+
 </style>
 </head>
 <body>
-<div id="ls"><div class="lc"><div class="ll"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7v10l10 5 10-5V7L12 2z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg></div><div class="lt">PagAmerican CS</div><div class="ls2">Ferramenta de uso interno — equipe de Customer Support</div><input class="li" type="password" id="pi" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')chk()"><button class="lb" onclick="chk()">Entrar</button><div class="le" id="le">Senha incorreta.</div></div></div>
+<div id="ls"><div class="lc"><div class="ll"><img src="https://assets.pagamerican.net/logo-white.png" alt="PagAmerican" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="display:none"><path d="M12 2L2 7v10l10 5 10-5V7L12 2z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg></div><div class="lt">PagAmerican CS</div><div class="ls2">Ferramenta de uso interno — equipe de Customer Support</div><input class="li" type="password" id="pi" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')chk()"><button class="lb" onclick="chk()">Entrar</button><div class="le" id="le">Senha incorreta.</div></div></div>
 <div id="as">
 <header>
-  <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="8" fill="#fff" fill-opacity=".15"/><path d="M7 14h14M14 7v14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
+  <div class="logo-lockup">
+    <img src="https://assets.pagamerican.net/logo-white.png" alt="PagAmerican" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="logo-fallback"><svg width="16" height="16" viewBox="0 0 28 28" fill="none"><path d="M7 14h14M14 7v14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+  </div>
   <h1>PagAmerican — CS Tools</h1>
-  <span class="ver">v4.1</span>
+  <span class="ver">v5.2</span>
   <span class="sub">Customer Support · Uso Interno</span>
 </header>
 <div class="navtabs">
@@ -394,7 +456,7 @@ textarea{resize:vertical;font-family:inherit}
         <div class="r-foot">
           <div class="company">PagAmerican LLC</div>
           <div>11870 62nd St. N, Largo, FL 33773 · United States</div>
-          <div>The refunded amount will be returned via the same payment method used at the time of purchase. Processing time is 5 to 15 business days and may vary depending on the customer's financial institution.</div>
+          <div>The refunded amount will be returned via the same payment method used at the time of purchase. Processing time is 10 to 15 calendar days and may vary depending on the customer's financial institution.</div>
           <div class="ref"><b>Internal Reference:</b> <span id="cp-ref">RB-0000-0000</span> · generated for PagAmerican's records (does not replace the processor ID above).</div>
         </div>
       </div>
@@ -424,18 +486,26 @@ const FL={
   customerName:"Nome do cliente",orderNumber:"Número do pedido",
   purchaseDate:"Data da compra (DD/MM/AAAA)",productName:"Nome do produto",orderTotal:"Valor total ($)",
   cityState:"Cidade, Estado",orderStatus:"Status do pedido",quantity:"Qtd de itens",
-  amount:"Valor total pago ($)",shippingAmount:"Frete ($)",coupon:"Cupom de desconto",
-  fee:"Taxa aplicada",shippingAddress:"Endereço de entrega",trackingCode:"Código de rastreio",
+  amount:"Valor total pago ($)",shippingAmount:"Frete ($) — só se Gabriel pedir detalhamento",coupon:"Cupom de desconto — só se Gabriel pedir detalhamento",
+  fee:"Taxa aplicada — só se Gabriel pedir detalhamento",shippingAddress:"Endereço de entrega",trackingCode:"Código de rastreio",
   trackingLink:"Link de rastreio",refundDate:"Data do reembolso",refundAmount:"Valor reembolsado ($)",
   order1Number:"Número do pedido 1",order1Product:"Produto 1",order1Total:"Valor pedido 1 ($)",
   order2Number:"Número do pedido 2",order2Product:"Produto 2",order2Total:"Valor pedido 2 ($)",
   productName2:"Produto adicional (opcional)",productName3:"Terceiro produto (opcional)",
-  discPercent:"Desconto oferecido % (27/33/37/43 conforme Risk Score)",
+  discPercent:"Desconto (%)",
   mainProduct:"Produto do pedido principal",mainAmount:"Valor do pedido principal ($)",
   upsellProduct:"1º item adicional (upsell)",upsellAmount:"Valor do 1º item adicional ($)",
   upsellProduct2:"2º item adicional (upsell 2, opcional)",upsellAmount2:"Valor do 2º item adicional ($, opcional)",
 };
 const CF=["customerName","orderNumber","purchaseDate","productName","orderTotal","cityState","orderStatus"];
+
+/* Tabela de desconto por Risk Score — só muda com autorização explícita do Gabriel */
+const DISCOUNT_OPTIONS=[
+  {value:"27",label:"27% — Risk Score 0–25"},
+  {value:"33",label:"33% — Risk Score 26–50"},
+  {value:"37",label:"37% — Risk Score 51–75"},
+  {value:"43",label:"43% — Risk Score 76–100"},
+];
 
 function hdr(f){
   let extraProduct="";
@@ -444,7 +514,7 @@ function hdr(f){
   return `Hello ${f.customerName},\n\nMy name is ${AGENT_NAME}, and I'll be assisting you with your case today on behalf of PagAmerican. We process payments for the merchant, and I'll do my best to help resolve this for you as quickly as possible.\n\nI was able to locate the following order in our system:\n\nOrder Details\n• Order Number: ${f.orderNumber}\n• Purchase Date: ${fmtDate(f.purchaseDate)}\n• Product: ${f.productName}${extraProduct}\n• Total Amount: $${f.orderTotal}\n• Shipping Address: ${f.cityState}\n• Current Status: ${f.orderStatus}\n\n`;
 }
 const sign=()=>`\nBest regards,\n${AGENT_NAME}\nPagAmerican Support Team`;
-const guarantee=`\nAlso, please don't worry — your order is still covered under the merchant's 60-day money-back guarantee.`;
+const guarantee=`\n\nAlso, please don't worry — your order is still covered under the merchant's 60-day money-back guarantee.`;
 
 const T={
   low:[
@@ -456,9 +526,16 @@ const T={
      pt:"O agente informa que não encontrou o pedido e pede nome completo, email usado na compra e número do pedido. Sugere também enviar print do email de confirmação.",
      gen:(f)=>`Hello ${f.customerName},\n\nMy name is ${AGENT_NAME}, and I'll be assisting you today on behalf of PagAmerican.\n\nI searched our system using the information provided, but I was unable to locate an order associated with your details.\n\nCould you please provide us with the following information so I can look further into this?\n\n• Full name\n• Email address used at the time of purchase\n• Order number (if available)\n\nIf it's easier, you can send us a screenshot of the confirmation email, which will help us locate your order.\n\nI look forward to your reply so we can proceed.`+sign()},
 
-    {id:"t02",label:"Detalhes do pedido",tag:"tg",tl:"Fluxo padrão",desc:"Cliente solicita informações detalhadas sobre o pedido. Use 'Produto adicional' quando houver 2 ou 3 itens (ex: upsell) no mesmo pedido.",fields:["customerName","orderNumber","purchaseDate","productName","productName2","productName3","orderTotal","cityState","orderStatus","quantity","amount","shippingAmount","coupon","fee","shippingAddress"],
-     pt:"O agente compartilha todos os detalhes do pedido: quantidade, valores pagos, frete, cupom, taxas e endereço de entrega. Se houver um segundo produto no pedido (upsell), ele aparece logo abaixo do produto principal. Se coloca à disposição para dúvidas.",
-     gen:(f)=>hdr(f)+`As requested, here are the full details of your order:\n\nOrder Information\n• Number of Items: ${f.quantity}\n\nAmounts\n• Total Amount Paid: $${f.amount}\n• Shipping Fee: $${f.shippingAmount}\n• Discount Coupon: ${f.coupon}\n• Applied Fees: ${f.fee}\n• Delivery Address: ${f.shippingAddress}\n\nIf you have any questions or need further information, I'm here to help.`+sign()},
+    {id:"t02",label:"Detalhes do pedido",tag:"tg",tl:"Fluxo padrão",desc:"Cliente solicita informações detalhadas sobre o pedido. Por padrão mostra só o valor total pago — NÃO detalha frete/cupom/taxa. Só preencha esses 3 campos se o Gabriel pedir explicitamente o detalhamento financeiro.",fields:["customerName","orderNumber","purchaseDate","productName","productName2","productName3","orderTotal","cityState","orderStatus","quantity","amount","shippingAmount","coupon","fee","shippingAddress"],
+     pt:"O agente compartilha a quantidade de itens, o valor total pago e o endereço de entrega. Por padrão, NÃO detalha frete, cupom ou taxas separadamente — só o valor final. O detalhamento financeiro só aparece se os campos de frete/cupom/taxa forem preenchidos, o que só deve acontecer com pedido explícito do Gabriel.",
+     gen:(f)=>{
+       const lines=[`Order Information`,`• Number of Items: ${f.quantity}`,``,`Amounts`,`• Total Amount Paid: $${f.amount}`];
+       if(f.shippingAmount)lines.push(`• Shipping Fee: $${f.shippingAmount}`);
+       if(f.coupon)lines.push(`• Discount Coupon: ${f.coupon}`);
+       if(f.fee)lines.push(`• Applied Fees: ${f.fee}`);
+       lines.push(`• Delivery Address: ${f.shippingAddress}`);
+       return hdr(f)+`As requested, here are the details of your order:\n\n${lines.join("\n")}\n\nIf you have any questions or need further information, I'm here to help.`+sign();
+     }},
 
     {id:"t03",label:"Status de entrega",tag:"tg",tl:"Fluxo padrão",desc:"Cliente quer saber onde está o pedido.",fields:[...CF,"trackingCode","trackingLink"],
      pt:"O agente informa o código e link de rastreamento e confirma que o pedido está dentro do prazo estimado de entrega.",
@@ -470,7 +547,15 @@ const T={
 
     {id:"t04",label:"Atraso na entrega",tag:"tg",tl:"Fluxo padrão",desc:"Pedido passou do prazo estimado de entrega.",fields:[...CF],
      pt:"O agente pede desculpas pelo atraso, informa que já contatou a transportadora e que o prazo final estimado é de até 7 dias úteis adicionais. Aplica desconto de cortesia de 15% no valor total, processado em até 5 dias úteis.",
-     gen:(f)=>hdr(f)+`I sincerely apologize for the delay with your order. I've already contacted the carrier to request that this be resolved as soon as possible.\n\nWe've aligned a final estimated delivery timeframe of up to 7 additional business days.\n\nAs a courtesy for the inconvenience, I've applied a 15% discount to your total purchase amount. This will be reflected on your original payment method within up to 5 business days.\n\nI'll continue to closely monitor your case. If you need anything in the meantime, please don't hesitate to reach out.`+sign()},
+     gen:(f)=>hdr(f)+`I sincerely apologize for the delay with your order. I've already contacted the carrier to request that this be resolved as soon as possible.\n\nWe've aligned a final estimated delivery timeframe of up to 7 additional business days.\n\nAs a courtesy for the inconvenience, I've applied a 15% discount to your total purchase amount. This will be reflected on your original payment method within 10 to 15 calendar days.\n\nI'll continue to closely monitor your case. If you need anything in the meantime, please don't hesitate to reach out.`+sign()},
+
+    {id:"t05",label:"Correção de endereço — pedido em trânsito",tag:"tg",tl:"Fluxo padrão",desc:"Cliente errou o endereço de entrega e o pedido já está em trânsito. Não é possível redirecionar.",fields:[...CF,"trackingCode","trackingLink"],
+     pt:"O agente informa que não é possível redirecionar o pedido nesta fase. Orienta o cliente a pedir que alguém no endereço cadastrado recuse a entrega assim que ela chegar; após o retorno ao armazém, o reenvio será feito para o endereço correto. Fornece código e link de rastreio para acompanhamento.",
+     gen:(f)=>hdr(f)+`Unfortunately, at this stage it is not possible to redirect your shipment to a new address.\n\nHere's what I recommend: please ask someone at the registered address to refuse the delivery when it arrives. Once the package is returned to our warehouse, I'll arrange a new shipment to your correct address right away.\n\nCould you please monitor the tracking and let me know as soon as the return is registered?\n\nTracking Code: ${f.trackingCode}\nTracking Link: ${f.trackingLink}`+sign()},
+
+    {id:"t06",label:"Correção de endereço — pedido já entregue",tag:"tg",tl:"Fluxo padrão",desc:"Cliente errou o endereço e o pedido já foi entregue no endereço cadastrado.",fields:[...CF],
+     pt:"O agente confirma que a entrega foi concluída no endereço registrado no momento da compra. Sugere que o cliente verifique com moradores/vizinhos daquele endereço. Informa que, nesse caso, o reembolso pode não ser garantido, e oferece escalar o caso se necessário.",
+     gen:(f)=>hdr(f)+`I can see that the package was marked as delivered to the address provided at the time of purchase.\n\nIn most cases involving an incorrect address, deliveries are refused before completion. However, in this case, the delivery was completed to the registered address.\n\nI'd recommend checking with anyone at that address to see if the package can be recovered.\n\nIf that's not possible, please let me know and I'll escalate this for further review. Since the delivery was completed to the registered address, a refund may not be guaranteed — but I'll do my best to help find a solution.\n\nHow would you like to proceed?`+sign()},
 
     {id:"t07",label:"Item faltante / incorreto — solicitar evidência",tag:"tg",tl:"Fluxo padrão",desc:"Cliente alega item errado ou faltando.",fields:[...CF],
      pt:"O agente pede desculpas e solicita duas fotos: uma da embalagem (exterior) e uma dos itens recebidos. Assim que receber, avançará imediatamente com a resolução.",
@@ -532,19 +617,19 @@ const T={
 
     {id:"t11",label:"Cancelamento — aceitou o desconto",tag:"tg",tl:"Fluxo padrão",desc:"Cliente aceitou a oferta de desconto.",fields:[...CF,"discPercent"],
      pt:"O agente confirma que o desconto de cortesia (% conforme Risk Score) foi aplicado e será processado no método de pagamento original em até 5 dias úteis. Pergunta se pode considerar o caso encerrado.",
-     gen:(f)=>hdr(f)+`That's great — I'm glad we were able to find a solution that works for you!\n\nI've gone ahead and applied the ${f.discPercent}% courtesy discount to your order. The refund will be processed to your original payment method within up to 5 business days.${guarantee}\n\nBased on this agreement, may I consider your case resolved? Please don't hesitate to reach out if you need anything else.`+sign()},
+     gen:(f)=>hdr(f)+`That's great — I'm glad we were able to find a solution that works for you!\n\nI've gone ahead and applied the ${f.discPercent}% courtesy discount to your order. The refund will be processed to your original payment method within 10 to 15 calendar days.${guarantee}\n\nBased on this agreement, may I consider your case resolved? Please don't hesitate to reach out if you need anything else.`+sign()},
 
     {id:"t12",label:"Cancelamento — reembolso integral / vai devolver",tag:"tg",tl:"Fluxo padrão",desc:"Cliente recusou desconto. Enviar instruções de devolução.",fields:[...CF],
      pt:"O agente confirma o reembolso integral e passa as instruções de devolução. Endereço: 11870 62nd St. N, Largo, FL 33773 – USA. Frete por conta do cliente. Reembolso apenas para itens lacrados, em até 15 dias após recebimento. Solicita foto dos itens e do comprovante.",
-     gen:(f)=>hdr(f)+`No problem at all — I'll move forward with the full refund process for your order.\n\nReturn Instructions\nPlease ship the sealed, unopened items to:\n11870 62nd St. N, Largo, FL 33773 – USA\n\nImportant points:\n• Shipping costs are the customer's responsibility.\n• The refund applies only to sealed, unopened items.\n• Once received and inspected, the refund will be issued to your original payment method within up to 15 days.\n\nPlease send us two photos to proceed:\n1. A photo showing the sealed packages\n2. A clear photo of the shipping receipt\n\nAlso, please let us know if any packaging has been opened, so I can flag this in advance.\n\nI look forward to your reply with the proof of shipment.`+sign()},
+     gen:(f)=>hdr(f)+`No problem at all — I'll move forward with the full refund process for your order.\n\nReturn Instructions\nPlease ship the sealed, unopened items to:\n11870 62nd St. N, Largo, FL 33773 – USA\n\nImportant points:\n• Shipping costs are the customer's responsibility.\n• The refund applies only to sealed, unopened items.\n• Once received and inspected, the refund will be issued to your original payment method within 10 to 15 calendar days.\n\nPlease send us two photos to proceed:\n1. A photo showing the sealed packages\n2. A clear photo of the shipping receipt\n\nAlso, please let us know if any packaging has been opened, so I can flag this in advance.\n\nI look forward to your reply with the proof of shipment.`+sign()},
 
     {id:"t13",label:"Cancelamento — comprovante recebido",tag:"tg",tl:"Fluxo padrão",desc:"Cliente enviou comprovante de devolução.",fields:[...CF],
      pt:"O agente confirma o recebimento do comprovante e informa que a equipe foi notificada. Reembolso em até 15 dias úteis após recebimento, no mesmo método de pagamento. Se o produto estiver íntegro, reembolso automático.",
-     gen:(f)=>hdr(f)+`Thank you for sending the proof of shipment — everything looks good on our end.\n\nI've already notified the relevant team, and as soon as the package is received and inspected, we'll proceed with your refund.\n\n• Refund deadline: up to 15 business days after product receipt.\n• Refund method: same payment method used at the time of purchase.\n\nIf the factory confirms the product's integrity, the refund will be processed automatically. If any issues are found, I'll get back to you right away.\n\nBased on this arrangement, may I consider your request resolved?\n\nIf you need anything else, I remain at your disposal.`+sign()},
+     gen:(f)=>hdr(f)+`Thank you for sending the proof of shipment — everything looks good on our end.\n\nI've already notified the relevant team, and as soon as the package is received and inspected, we'll proceed with your refund.\n\n• Refund deadline: 10 to 15 calendar days after product receipt.\n• Refund method: same payment method used at the time of purchase.\n\nOnce our team confirms the items arrived sealed and unopened, the refund will be processed automatically. If any issues are found, I'll get back to you right away.\n\nBased on this arrangement, may I consider your request resolved?\n\nIf you need anything else, I'm here to help.`+sign()},
 
     {id:"t13b",label:"Produto recusado na entrega — chegou na empresa",tag:"tg",tl:"Fluxo padrão",desc:"Cliente recusou entrega, produto já retornou ao armazém.",fields:[...CF],
      pt:"O agente confirma o recebimento do produto no armazém e informa que o reembolso já foi solicitado. Prazo: até 15 dias úteis no mesmo método de pagamento. Cliente não precisa fazer mais nada.",
-     gen:(f)=>hdr(f)+`Thank you for refusing the delivery and for letting us know.\n\nI'm pleased to confirm that the package has been received at our warehouse. I've already submitted the refund request on your behalf.\n\n• Refund deadline: up to 15 business days after product receipt.\n• Refund method: same payment method used at the time of purchase.\n\nYou don't need to take any further action on your end.\n\nBased on this arrangement, may I consider your request resolved? Please don't hesitate to reach out if you need anything else.`+sign()},
+     gen:(f)=>hdr(f)+`Thank you for refusing the delivery and for letting us know.\n\nI'm pleased to confirm that the package has been received at our warehouse. I've already submitted the refund request on your behalf.\n\n• Refund deadline: 10 to 15 calendar days after product receipt.\n• Refund method: same payment method used at the time of purchase.\n\nYou don't need to take any further action on your end.\n\nBased on this arrangement, may I consider your request resolved? Please don't hesitate to reach out if you need anything else.`+sign()},
 
     {id:"t13c",label:"Produto recusado na entrega — ainda não chegou na empresa",tag:"tg",tl:"Fluxo padrão",desc:"Cliente recusou entrega mas produto ainda não retornou ao armazém.",fields:[...CF,"trackingCode","trackingLink"],
      pt:"O agente confirma que a recusa foi registrada e que o produto está a caminho do armazém. Fornece código e link de rastreio para acompanhar o retorno. Assim que chegar e ser inspecionado, o reembolso será processado.",
@@ -552,11 +637,11 @@ const T={
 
     {id:"t13d",label:"Reembolso já realizado — orientar aguardar",tag:"tg",tl:"Fluxo padrão",desc:"Reembolso já foi processado. Orientar cliente a aguardar.",fields:[...CF,"refundDate","refundAmount"],
      pt:"O agente informa que o reembolso já foi processado, informando data e valor. Orienta aguardar de 5 a 15 dias úteis para o valor aparecer na conta, dependendo do banco.",
-     gen:(f)=>hdr(f)+`I want to let you know that your refund has already been processed on our end.\n\n• Refund Date: ${fmtDate(f.refundDate)}\n• Refund Amount: $${f.refundAmount}\n• Refund Method: same payment method used at the time of purchase.\n\nPlease allow 5 to 15 business days for the amount to be reflected on your account, as processing times may vary depending on your bank or card issuer.\n\nIf you have any further questions in the meantime, feel free to reach out — we're here to help.`+sign()},
+     gen:(f)=>hdr(f)+`I want to let you know that your refund has already been processed on our end.\n\n• Refund Date: ${fmtDate(f.refundDate)}\n• Refund Amount: $${f.refundAmount}\n• Refund Method: same payment method used at the time of purchase.\n\nPlease allow 10 to 15 calendar days for the amount to be reflected on your account, as processing times may vary depending on your bank or card issuer.\n\nIf you have any further questions in the meantime, feel free to reach out — we're here to help.`+sign()},
 
     {id:"t13e",label:"Reembolso total feito + produto a caminho — orientar recusar",tag:"tg",tl:"Fluxo padrão",desc:"Reembolso já processado mas produto ainda está a caminho. Orientar recusar entrega.",fields:[...CF,"refundDate"],
      pt:"O agente confirma que o reembolso total já foi processado e será devolvido de 5 a 15 dias úteis. Como o produto ainda está a caminho, orienta o cliente a recusar a entrega para que o produto retorne automaticamente sem custo.",
-     gen:(f)=>hdr(f)+`That's great — I'm glad we were able to find a solution that works for you.\n\nThe full refund was processed on ${fmtDate(f.refundDate)}. The amount will be returned to your original payment method within 5 to 15 business days, depending on your bank or card issuer's processing time.\n\nSince the order is already on its way, we kindly ask that you refuse the package at the time of delivery. This way, the product will automatically be returned to the company at no cost to you.\n\nBased on this agreement, may I consider your case resolved? Please don't hesitate to reach out if you need anything else.`+sign()},
+     gen:(f)=>hdr(f)+`That's great — I'm glad we were able to find a solution that works for you.\n\nThe full refund was processed on ${fmtDate(f.refundDate)}. The amount will be returned to your original payment method within 10 to 15 calendar days, depending on your bank or card issuer's processing time.\n\nSince the order is already on its way, we kindly ask that you refuse the package at the time of delivery. This way, the product will automatically be returned to the company at no cost to you.\n\nBased on this agreement, may I consider your case resolved? Please don't hesitate to reach out if you need anything else.`+sign()},
 
     {id:"t13f",label:"Garantia vencida — solicitar reembolso",tag:"tg",tl:"Fluxo padrão",desc:"Cliente solicita reembolso mas garantia de 60 dias já venceu.",fields:[...CF,"discPercent"],
      pt:"O agente informa que o prazo de garantia de 60 dias já expirou. Porém, como exceção, o fabricante autorizou um reembolso de cortesia (% conforme direcionamento) do valor total. Pergunta se o cliente aceita esta oferta.",
@@ -575,12 +660,12 @@ const T={
      gen:(f)=>hdr(f)+`Thank you for bringing this to our attention. I'd like to make sure we get this sorted out for you.\n\nCould you please let us know which charge(s) you identified as incorrect?\n\nI'll review the situation to understand what may have caused this discrepancy and get back to you with a full analysis.\n\nI kindly ask for up to 3 business days to look into this and come back with a solution. We're treating this as a priority.`+sign()},
 
     {id:"t16",label:"Pagamento recusado",tag:"tg",tl:"Fluxo padrão",desc:"Cliente informa que o pagamento foi recusado.",fields:["customerName"],
-     pt:"O agente explica que o pagamento recusado pode ter ocorrido por restrições do banco, dados incorretos ou limite insuficiente. Sugere verificar dados, contatar o banco ou usar outro método. Oferece encaminhar para o time de vendas.",
-     gen:(f)=>`Hello ${f.customerName},\n\nMy name is ${AGENT_NAME}, and I'll be assisting you today on behalf of PagAmerican.\n\nI'm sorry to hear your payment was declined. This can happen due to restrictions from your bank, incorrect payment details, or insufficient available credit.\n\nHere are a few things you can try:\n• Double-check the payment information entered\n• Ensure you have sufficient available credit or balance\n• Contact your bank to confirm no authorization is required\n• Try using a different payment method\n\nIf you'd like, I can also forward your case to our sales team so they can reach out to you directly.\n\nPlease confirm your preferred phone number and the best time to contact you.`+sign()},
+     pt:"O agente explica que o pagamento recusado pode ter ocorrido por restrições do banco, dados incorretos ou limite insuficiente. Sugere verificar dados, contatar o banco ou usar outro método, e reforça que pode tentar novamente pelo link de checkout quando quiser. Não oferece ligação — a PagAmerican não faz contato telefônico.",
+     gen:(f)=>`Hello ${f.customerName},\n\nMy name is ${AGENT_NAME}, and I'll be assisting you today on behalf of PagAmerican.\n\nI'm sorry to hear your payment was declined. This can happen due to restrictions from your bank, incorrect payment details, or insufficient available credit.\n\nHere are a few things you can try:\n• Double-check the payment information entered\n• Ensure you have sufficient available credit or balance\n• Contact your bank to confirm no authorization is required\n• Try using a different payment method\n\nYou're welcome to try completing your purchase again whenever you're ready. If the issue continues, just reply here and I'll be happy to help you sort it out.`+sign()},
 
     {id:"t18",label:"🏥 Alegação médica",tag:"tb",tl:"Fluxo médico",desc:"Cliente alega contraindicação ou reação adversa (score < 80).",fields:[...CF],
      pt:"O agente demonstra empatia com a situação médica e informa que o caso foi escalado para reembolso integral. Solicita devolução dos itens lacrados para o endereço do armazém. Frete por conta do cliente. Reembolso em até 15 dias. Nunca oferecer desconto.",
-     gen:(f)=>hdr(f)+`I completely understand, and your health and well-being are our top priority.\n\nGiven the medical circumstances you've shared, I've escalated your case directly and we'll proceed with a full refund for your order.\n\nReturn Instructions\nPlease ship any sealed, unopened items to:\n11870 62nd St. N, Largo, FL 33773 – USA\n\nImportant points:\n• Shipping costs are the customer's responsibility.\n• The refund applies only to sealed, unopened items.\n• Once received and inspected, the refund will be issued within up to 15 days.\n\nPlease send us two photos to proceed:\n1. A photo showing the sealed packages\n2. A clear photo of the shipping receipt\n\nI look forward to your reply and I'm here to support you through this process.`+sign()},
+     gen:(f)=>hdr(f)+`I completely understand, and your health and well-being are our top priority.\n\nGiven the medical circumstances you've shared, I've escalated your case directly and we'll proceed with a full refund for your order.\n\nReturn Instructions\nPlease ship any sealed, unopened items to:\n11870 62nd St. N, Largo, FL 33773 – USA\n\nImportant points:\n• Shipping costs are the customer's responsibility.\n• The refund applies only to sealed, unopened items.\n• Once received and inspected, the refund will be issued within 10 to 15 calendar days.\n\nPlease send us two photos to proceed:\n1. A photo showing the sealed packages\n2. A clear photo of the shipping receipt\n\nAlso, please let us know if any packaging has been opened, so I can flag this in advance.\n\nI look forward to your reply and I'm here to support you through this process.`+sign()},
 
     {id:"t20",label:"Encerramento — cliente agradece mas reclama do processo",tag:"tg",tl:"Fluxo padrão",desc:"Caso já resolvido (reembolso confirmado). Cliente agradece mas comenta sobre o esforço/demora até a resolução.",fields:["customerName","refundAmount"],
      pt:"O agente agradece a paciência do cliente, reconhece com empatia que o processo exigiu mais idas e vindas do que deveria e pede desculpas por isso. Confirma novamente o valor do reembolso já processado e encerra o caso de forma cordial.",
@@ -589,11 +674,11 @@ const T={
   high:[
     {id:"t17",label:"Reembolso direto — qualquer motivo",tag:"tr",tl:"Anti-chargeback",desc:"Score 80+. Resolver rápido, sem fricção.",fields:[...CF],
      pt:"O agente tranquiliza o cliente e informa que o reembolso integral já foi iniciado. O valor será devolvido em até 5 dias úteis no método de pagamento original. Solicita gentilmente (e de forma opcional) a devolução dos itens lacrados.",
-     gen:(f)=>hdr(f)+`I've reviewed your case and I want to make sure this is resolved for you as quickly as possible.\n\nPlease don't worry — I've gone ahead and initiated a full refund for your order. The amount of $${f.orderTotal} will be returned to your original payment method within up to 5 business days.\n\nIf you have any sealed, unopened items, we kindly ask that you return them to:\n11870 62nd St. N, Largo, FL 33773 – USA\n\nThis is entirely optional, but greatly appreciated.\n\nIs there anything else I can help you with?`+sign()},
+     gen:(f)=>hdr(f)+`I've reviewed your case and I want to make sure this is resolved for you as quickly as possible.\n\nPlease don't worry — I've gone ahead and initiated a full refund for your order. The amount of $${f.orderTotal} will be returned to your original payment method within 10 to 15 calendar days.\n\nIf you have any sealed, unopened items, we kindly ask that you return them to:\n11870 62nd St. N, Largo, FL 33773 – USA\n\nThis is entirely optional, but greatly appreciated.\n\nIs there anything else I can help you with?`+sign()},
 
     {id:"t17b",label:"Chargeback ativo — acalmar + produto em trânsito",tag:"tr",tl:"Anti-chargeback",desc:"Cliente abriu chargeback. Acalmar e orientar recusar entrega.",fields:[...CF,"trackingCode","trackingLink"],
      pt:"O agente tranquiliza o cliente, informa que o reembolso integral já foi iniciado e será processado em até 5 dias úteis. Como o produto ainda está a caminho, orienta recusar a entrega para retorno automático sem custo. Fornece código e link de rastreio.",
-     gen:(f)=>hdr(f)+`Please don't worry — I completely understand your concern and I'm here to make sure this gets resolved for you as quickly as possible.\n\nI've already initiated a full refund for your order. The amount of $${f.orderTotal} will be returned to your original payment method within up to 5 business days.\n\nSince your order is currently on its way to you, we kindly ask that you refuse the package at the time of delivery. This way, the product will automatically be returned to us at no cost to you.\n\nYou can track your order here:\n• Tracking Code: ${f.trackingCode}\n• Tracking Link: ${f.trackingLink}\n\nYou don't need to take any further action. We've got everything covered on our end.\n\nThank you for your patience, and please feel free to reach out if you have any questions.`+sign()},
+     gen:(f)=>hdr(f)+`Please don't worry — I completely understand your concern and I'm here to make sure this gets resolved for you as quickly as possible.\n\nI've already initiated a full refund for your order. The amount of $${f.orderTotal} will be returned to your original payment method within 10 to 15 calendar days.\n\nSince your order is currently on its way to you, we kindly ask that you refuse the package at the time of delivery. This way, the product will automatically be returned to us at no cost to you.\n\nYou can track your order here:\n• Tracking Code: ${f.trackingCode}\n• Tracking Link: ${f.trackingLink}\n\nYou don't need to take any further action. We've got everything covered on our end.\n\nThank you for your patience, and please feel free to reach out if you have any questions.`+sign()},
 
     {id:"t17c",label:"Chargeback já registrado no banco — orientar contato com o banco",tag:"tr",tl:"Anti-chargeback",desc:"Cliente já abriu a disputa/chargeback diretamente com o banco. Não processar reembolso paralelo.",fields:["customerName","orderNumber"],
      pt:"O agente confirma que a disputa (chargeback) já está registrada junto ao banco do cliente. Explica que, enquanto ela estiver ativa, a PagAmerican não pode processar um reembolso paralelo (geraria crédito duplicado) — a resolução segue diretamente com a instituição financeira. Se a disputa for retirada ou resolvida, o caso pode ser revisto.",
@@ -601,7 +686,7 @@ const T={
 
     {id:"t19",label:"🏥 Alegação médica — score alto",tag:"tb",tl:"Fluxo médico",desc:"Score 80+. Reembolso imediato sem exigir devolução.",fields:[...CF],
      pt:"O agente prioriza o bem-estar do cliente e confirma que o reembolso integral já foi iniciado imediatamente. Valor devolvido em até 5 dias úteis. Não solicita devolução — resolução total sem fricção.",
-     gen:(f)=>hdr(f)+`I completely understand, and your health and well-being are our absolute priority.\n\nGiven the medical circumstances you've described, I've gone ahead and initiated a full refund for your order immediately.\n\nThe amount of $${f.orderTotal} will be returned to your original payment method within up to 5 business days.\n\nYou don't need to take any further action on your end.\n\nPlease take care of yourself, and don't hesitate to reach out if there's anything else I can help with.`+sign()},
+     gen:(f)=>hdr(f)+`I completely understand, and your health and well-being are our absolute priority.\n\nGiven the medical circumstances you've described, I've gone ahead and initiated a full refund for your order immediately.\n\nThe amount of $${f.orderTotal} will be returned to your original payment method within 10 to 15 calendar days.\n\nYou don't need to take any further action on your end.\n\nPlease take care of yourself, and don't hesitate to reach out if there's anything else I can help with.`+sign()},
   ]
 };
 
@@ -615,6 +700,31 @@ function setScore(s){
 function populateReasons(){
   document.getElementById("reason").innerHTML=T[score].map((t,i)=>`<option value="${i}">${t.label}</option>`).join("");
 }
+function fieldHTML(f){
+  if(f==="discPercent"){
+    const opts=DISCOUNT_OPTIONS.map(o=>`<option value="${o.value}">${o.label}</option>`).join("");
+    return `<div class="fgrp ff">
+      <label for="f_discPercent">${FL[f]||f}</label>
+      <select id="f_discPercent" onchange="onDiscPercentChange()">
+        <option value="" selected disabled>— selecione o % pelo Risk Score —</option>
+        ${opts}
+        <option value="custom">Outro % (somente com autorização do Gabriel)</option>
+      </select>
+      <input type="text" id="f_discPercent_custom" placeholder="Digite o % autorizado" style="display:none;margin-top:8px" oninput="genTpl()">
+    </div>`;
+  }
+  const long=["shippingAddress","trackingLink","order1Product","order2Product"].includes(f);
+  return `<div class="fgrp${long?" ff":""}"><label for="f_${f}">${FL[f]||f}</label><input type="text" id="f_${f}" placeholder="${FL[f]||f}" oninput="genTpl()"></div>`;
+}
+function onDiscPercentChange(){
+  const sel=document.getElementById("f_discPercent");
+  const custom=document.getElementById("f_discPercent_custom");
+  if(sel&&custom){
+    custom.style.display=sel.value==="custom"?"block":"none";
+    if(sel.value!=="custom")custom.value="";
+  }
+  genTpl();
+}
 function updateFields(){
   const idx=parseInt(document.getElementById("reason").value)||0;
   tpl=T[score][idx];
@@ -622,20 +732,29 @@ function updateFields(){
   document.getElementById("tdesc").textContent=tpl.desc;
   const tag=document.getElementById("flow-tag");
   tag.className="tag "+tpl.tag;tag.textContent=tpl.tl;
-  document.getElementById("fields-grid").innerHTML=tpl.fields.map(f=>{
-    const long=["shippingAddress","trackingLink","order1Product","order2Product"].includes(f);
-    return `<div class="fgrp${long?" ff":""}"><label for="f_${f}">${FL[f]||f}</label><input type="text" id="f_${f}" placeholder="${FL[f]||f}" oninput="genTpl()"></div>`;
-  }).join("");
+  document.getElementById("fields-grid").innerHTML=tpl.fields.map(fieldHTML).join("");
   genTpl();
 }
-const OPTIONAL_EMPTY=["productName2","productName3","upsellProduct2","upsellAmount2"];
+const OPTIONAL_EMPTY=["productName2","productName3","upsellProduct2","upsellAmount2","shippingAmount","coupon","fee"];
 function getF(){
   const o={};
   tpl.fields.forEach(f=>{
-    const el=document.getElementById("f_"+f);
-    const v=el&&el.value.trim();
+    let v;
+    if(f==="discPercent"){
+      const sel=document.getElementById("f_discPercent");
+      if(sel&&sel.value==="custom"){
+        const custom=document.getElementById("f_discPercent_custom");
+        v=custom&&custom.value.trim();
+      }else{
+        v=sel&&sel.value;
+      }
+    }else{
+      const el=document.getElementById("f_"+f);
+      v=el&&el.value.trim();
+    }
     if(v){o[f]=v;}
     else if(OPTIONAL_EMPTY.includes(f)){o[f]="";}
+    else if(f==="discPercent"){o[f]="[SELECIONE_O_DESCONTO]";}
     else{o[f]=`[${(FL[f]||f).toUpperCase().replace(/ /g,"_")}]`;}
   });
   return o;
@@ -659,7 +778,20 @@ function copyTpl(){
     setTimeout(resetBtn,2000);
   });
 }
-function clearFields(){tpl.fields.forEach(f=>{const el=document.getElementById("f_"+f);if(el)el.value="";});genTpl();}
+function clearFields(){
+  tpl.fields.forEach(f=>{
+    if(f==="discPercent"){
+      const sel=document.getElementById("f_discPercent");
+      const custom=document.getElementById("f_discPercent_custom");
+      if(sel)sel.value="";
+      if(custom){custom.value="";custom.style.display="none";}
+    }else{
+      const el=document.getElementById("f_"+f);
+      if(el)el.value="";
+    }
+  });
+  genTpl();
+}
 
 async function translateText(){
   const input=document.getElementById("translate-input").value.trim();
