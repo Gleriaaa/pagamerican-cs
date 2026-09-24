@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PagAmerican — CS Tools v5.3</title>
+<title>PagAmerican — CS Tools v5.4</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -283,6 +283,46 @@ textarea{resize:vertical;font-family:inherit}
 .lbl-lb-title{position:absolute;top:22px;left:24px;color:#fff;font-size:15px;font-weight:700}
 @media(max-width:700px){.lbl-lb-title{display:none}}
 
+
+/* ================= ALTERAÇÃO DE ENDEREÇO ================= */
+.end-sec{margin:18px 0 10px;font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);font-weight:700}
+.end-sec-hint{text-transform:none;letter-spacing:0;font-weight:500}
+.end-import{margin-bottom:6px;border:1px dashed var(--line-strong);border-radius:var(--r-sm);padding:10px 12px;background:var(--paper)}
+.end-import summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--brand)}
+.end-import textarea{margin-top:10px;font-family:var(--mono);font-size:12px}
+.end-prow{display:grid;grid-template-columns:1fr 78px auto 28px;gap:6px;align-items:center;margin-bottom:6px}
+.end-prow input[type=number]{width:100%;padding:10px 8px;border:1px solid var(--line);border-radius:var(--r-sm);font-size:13px;background:var(--paper);color:var(--ink);outline:none}
+.end-prow input[type=number]:focus{border-color:var(--brand);background:var(--surface);box-shadow:0 0 0 3px var(--brand-mist)}
+.end-prow .ups{font-size:11px;color:var(--ink-600);display:flex;align-items:center;gap:4px;margin:0;white-space:nowrap;font-weight:600}
+.end-prow .rm{border:none;background:none;color:var(--ink-400);font-size:18px;cursor:pointer;line-height:1;padding:4px}
+.end-prow .rm:hover{color:var(--risk)}
+.end-add{border:none;background:none;color:var(--brand);font-size:12px;font-weight:700;cursor:pointer;padding:2px 0}
+.end-add:hover{text-decoration:underline}
+.field-block.invalid select,.field-block.invalid textarea{border-color:var(--risk-line);background:var(--risk-mist)}
+.end-warn{display:none;margin:-2px 0 13px;padding:10px 12px;border-radius:var(--r-sm);font-size:12px;line-height:1.55;background:var(--signal-mist);border:1px solid var(--signal-line);color:#6B4A0E}
+.end-warn.show{display:block}
+.end-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);overflow:hidden}
+.end-card-head{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.end-card-head b{font-size:13px;color:var(--ink);letter-spacing:.02em}
+.end-proto{font-family:var(--mono);font-size:11.5px;color:var(--ink-600);background:var(--paper);border:1px solid var(--line);padding:3px 9px;border-radius:20px;white-space:nowrap}
+.end-rows{padding:6px 18px 12px}
+.end-row{display:grid;grid-template-columns:170px 1fr;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.end-row:last-child{border-bottom:none}
+.end-row .k{color:var(--ink-400);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding-top:1px}
+.end-row .v{color:var(--ink);white-space:pre-line;word-break:break-word}
+.end-row .v.empty{color:var(--ink-200)}
+.end-foot{font-size:11px;color:var(--ink-400);margin-top:10px;line-height:1.5}
+.end-conn{margin-top:12px;font-size:11.5px;color:var(--ink-400);display:flex;align-items:center;gap:7px}
+.end-conn .dot{width:8px;height:8px;border-radius:50%;background:var(--signal);flex-shrink:0}
+.end-conn.on .dot{background:var(--ok)}
+.end-result{display:none;margin-top:12px;padding:12px 14px;border-radius:var(--r-sm);font-size:12.5px;line-height:1.6}
+.end-result.show{display:block}
+.end-result.ok{background:var(--ok-mist);border:1px solid var(--ok-line);color:#0F5334}
+.end-result.alert{background:var(--signal-mist);border:1px solid var(--signal-line);color:#6B4A0E}
+.end-result.err{background:var(--risk-mist);border:1px solid var(--risk-line);color:#7A1C16}
+.comp-btn:disabled{opacity:.55;cursor:not-allowed}
+.field-block.req .end-prow label::after{content:none}
+@media(max-width:700px){.navtabs{overflow-x:auto}.navtab{white-space:nowrap;flex-shrink:0}.end-row{grid-template-columns:1fr;gap:2px}.end-prow{grid-template-columns:1fr 64px 28px}.end-prow .ups{grid-column:1/2}}
 </style>
 </head>
 <body>
@@ -294,7 +334,7 @@ textarea{resize:vertical;font-family:inherit}
     <div class="logo-fallback"><svg width="16" height="16" viewBox="0 0 28 28" fill="none"><path d="M7 14h14M14 7v14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></div>
   </div>
   <h1>PagAmerican — CS Tools</h1>
-  <span class="ver">v5.3</span>
+  <span class="ver">v5.4</span>
   <span class="sub">Customer Support · Uso Interno</span>
 </header>
 <div class="navtabs">
@@ -315,6 +355,10 @@ textarea{resize:vertical;font-family:inherit}
   <div class="navtab" data-view="comprovante" onclick="switchView('comprovante')">
     <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 13l2 2 4-4"/></svg>
     Comprovante
+  </div>
+  <div class="navtab" data-view="endereco" onclick="switchView('endereco')">
+    <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    Troca de Endereço
   </div>
 </div>
 
@@ -514,6 +558,160 @@ textarea{resize:vertical;font-family:inherit}
 
 </div>
 </div>
+<div class="view" id="view-endereco">
+<div class="comp-wrap">
+
+  <div class="comp-callout">
+    <b>Alteração de endereço — substitui a mensagem no Slack.</b> Preencha e clique em <b>Enviar para a planilha</b>: a solicitação entra direto na planilha de trocas com protocolo, e o sistema já confere se o novo endereço existe e se o pedido não foi enviado antes. Dica: cole o endereço inteiro no campo <b>“Colar endereço”</b> que ele se divide sozinho.
+  </div>
+
+  <div class="panel">
+    <div class="sl2"><span class="sn">✓</span> Dados da alteração</div>
+
+    <details class="end-import">
+      <summary>Tem a mensagem no formato antigo do Slack? Cole aqui</summary>
+      <textarea id="ea-import" rows="5" placeholder="ORDER NUMBER: 197616&#10;EMPRESA: ...&#10;DATA DA ORDER: 23/09/2026 ás 00:58&#10;..."></textarea>
+      <button class="comp-btn ghost" style="margin-top:8px;width:100%" onclick="endImport()">Preencher campos a partir da mensagem</button>
+    </details>
+
+    <div class="end-sec">Atendimento</div>
+    <div class="fg">
+      <div class="fgrp field-block req" id="ef-agent">
+        <label for="ea-agent">Agente</label>
+        <input type="text" id="ea-agent" list="ea-agents" placeholder="Seu nome" oninput="endRender()" onchange="endRememberAgent()" autocomplete="off">
+        <div class="req-note">Obrigatório.</div>
+      </div>
+      <div class="fgrp field-block req" id="ef-origin">
+        <label for="ea-origin">Origem</label>
+        <select id="ea-origin" onchange="endRender()">
+          <option value="Ticket">Ticket (Zendesk)</option>
+          <option value="Telefone">Telefone</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-block" id="ef-ticket">
+      <label for="ea-ticket">Nº do ticket <span class="hint">(opcional)</span></label>
+      <input type="text" id="ea-ticket" placeholder="Ex: 49152" oninput="endRender()">
+    </div>
+    <datalist id="ea-agents">
+      <option value="Anna Júlia"><option value="Cristina Miranda"><option value="Eduardo Silva"><option value="Fernanda Ferreira">
+      <option value="Gabriel Gleria"><option value="Guilherme Rocha"><option value="Herica Veronica"><option value="Izabelly Macedo">
+      <option value="Jonathan Reis"><option value="Luanna Ferreira"><option value="Rebeka Silva"><option value="Victor Silva">
+    </datalist>
+
+    <div class="end-sec">Pedido</div>
+    <div class="fg">
+      <div class="fgrp field-block req" id="ef-order">
+        <label for="ea-order">Order number</label>
+        <input type="text" id="ea-order" inputmode="numeric" placeholder="Ex: 197616" oninput="endRender()">
+        <div class="req-note">Obrigatório.</div>
+      </div>
+      <div class="fgrp field-block req" id="ef-company">
+        <label for="ea-company">Empresa</label>
+        <input type="text" id="ea-company" list="ea-companies" placeholder="Ex: Blue Global Enterprises" oninput="endRender();endFillProducts()" autocomplete="off">
+        <div class="req-note">Obrigatório.</div>
+      </div>
+    </div>
+    <datalist id="ea-companies"></datalist>
+    <div class="fg">
+      <div class="fgrp field-block req" id="ef-orderDate">
+        <label for="ea-orderDate">Data da order</label>
+        <input type="date" id="ea-orderDate" oninput="endRender()">
+        <div class="req-note">Obrigatório.</div>
+      </div>
+      <div class="fgrp field-block">
+        <label for="ea-orderTime">Horário <span class="hint">(opcional)</span></label>
+        <input type="time" id="ea-orderTime" oninput="endRender()">
+      </div>
+    </div>
+    <div class="field-block req" id="ef-email">
+      <label for="ea-email">E-mail do cliente <span class="hint">(da order)</span></label>
+      <input type="email" id="ea-email" placeholder="cliente@email.com" oninput="endRender()">
+      <div class="req-note">Informe um e-mail válido.</div>
+    </div>
+
+    <div class="field-block req" id="ef-products">
+      <label>Produtos e quantidades</label>
+      <div id="ea-products"></div>
+      <datalist id="ea-productList"></datalist>
+      <button class="end-add" type="button" onclick="endAddProduct()">+ adicionar produto (upsell)</button>
+      <div class="req-note">Informe ao menos um produto com a quantidade.</div>
+    </div>
+
+    <div class="end-sec">Endereço atual <span class="hint end-sec-hint">(como está na order)</span></div>
+    <div class="field-block req" id="ef-oldAddress">
+      <textarea id="ea-oldAddress" rows="2" placeholder="Ex: 9203 Hyden Ave., Lubbock TX 79424, US" oninput="endRender()"></textarea>
+      <div class="req-note">Obrigatório.</div>
+    </div>
+
+    <div class="end-sec">Endereço corrigido</div>
+    <div class="field-block">
+      <label for="ea-paste">Colar endereço <span class="hint">(divide automaticamente nos campos abaixo)</span></label>
+      <input type="text" id="ea-paste" placeholder="Ex: 3802 21st St, Suite A, Lubbock TX 79410" oninput="endParsePaste()">
+    </div>
+    <div class="field-block req" id="ef-line1">
+      <label for="ea-line1">Rua e número</label>
+      <input type="text" id="ea-line1" placeholder="Ex: 3802 21st St" oninput="endRender()">
+      <div class="req-note">Obrigatório.</div>
+    </div>
+    <div class="field-block">
+      <label for="ea-line2">Complemento <span class="hint">(Apt, Suite, Unit — opcional)</span></label>
+      <input type="text" id="ea-line2" placeholder="Ex: Suite A" oninput="endRender()">
+    </div>
+    <div class="fg">
+      <div class="fgrp field-block req" id="ef-city">
+        <label for="ea-city">Cidade</label>
+        <input type="text" id="ea-city" placeholder="Ex: Lubbock" oninput="endRender()">
+        <div class="req-note">Obrigatório.</div>
+      </div>
+      <div class="fgrp field-block req" id="ef-state">
+        <label for="ea-state">Estado</label>
+        <input type="text" id="ea-state" maxlength="2" placeholder="Ex: TX" oninput="this.value=this.value.toUpperCase();endRender()">
+        <div class="req-note">Sigla de 2 letras.</div>
+      </div>
+    </div>
+    <div class="fg">
+      <div class="fgrp field-block req" id="ef-zip">
+        <label for="ea-zip">ZIP code</label>
+        <input type="text" id="ea-zip" placeholder="Ex: 79410" oninput="endRender()">
+        <div class="req-note">5 dígitos (ou 12345-6789).</div>
+      </div>
+      <div class="fgrp field-block req" id="ef-country">
+        <label for="ea-country">País</label>
+        <input type="text" id="ea-country" value="US" oninput="endRender()">
+        <div class="req-note">Obrigatório.</div>
+      </div>
+    </div>
+    <div class="end-warn" id="ea-warn"></div>
+
+    <div class="field-block">
+      <label for="ea-note">Observações <span class="hint">(opcional)</span></label>
+      <textarea id="ea-note" rows="2" placeholder="Ex: cliente confirmou por telefone; entregar aos cuidados de..." oninput="endRender()"></textarea>
+    </div>
+
+    <div class="comp-actions">
+      <button class="comp-btn ghost" onclick="endClear()">Limpar</button>
+      <button class="comp-btn primary" id="ea-send" onclick="endSend()">Enviar para a planilha</button>
+    </div>
+    <div class="end-result" id="ea-result"></div>
+    <div class="end-conn" id="ea-conn"><span class="dot"></span><span id="ea-conn-txt"></span></div>
+  </div>
+
+  <div class="comp-stage">
+    <div class="comp-preview-label">👁 Como a solicitação vai chegar</div>
+    <div class="end-card">
+      <div class="end-card-head"><b id="ea-title">ALTERAÇÃO DE ENDEREÇO</b><span class="end-proto" id="ea-proto"></span></div>
+      <div class="end-rows" id="ea-preview"></div>
+    </div>
+    <div class="comp-actions">
+      <button class="comp-btn ghost" onclick="endCopyText()">Copiar no formato Slack</button>
+      <button class="comp-btn ghost" onclick="endCopyRow()" title="Copia em colunas, pronto para colar numa linha da planilha">Copiar linha p/ planilha</button>
+    </div>
+    <div class="end-foot">Os botões de cópia são plano B, caso o envio falhe. Nada fica salvo neste site: os dados vão direto para a planilha.</div>
+  </div>
+
+</div>
+</div>
 <div class="view" id="view-labels">
 <div class="lbl-wrap">
   <div class="lbl-search-row">
@@ -549,6 +747,7 @@ function switchView(v){
   document.querySelectorAll('.view').forEach(el=>el.classList.toggle('active',el.id==='view-'+v));
   if(v==='produtos'&&!window.__prodLoaded){window.__prodLoaded=true;prodLoad();}
   if(v==='labels'&&!window.__lblLoaded){window.__lblLoaded=true;lblLoad();}
+  if(v==='endereco'){if(!window.__prodLoaded){window.__prodLoaded=true;prodLoad().then(endFillCompanies);}else endFillCompanies();}
 }
 
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -1320,6 +1519,277 @@ function lblOpen(i){
 function lblClose(){document.getElementById("lblLightbox").classList.remove("open");lblLbIndex=null;}
 document.addEventListener("keydown",e=>{if(e.key==="Escape")lblClose();});
 
+</script>
+
+<script>
+/* ===== ALTERAÇÃO DE ENDEREÇO =====
+   Envia a solicitação direto para a planilha (Google Apps Script — ver apps-script/README.md).
+   Nada é salvo neste site: o único dado guardado no navegador é o nome do agente. */
+const END_API_URL="https://script.google.com/macros/s/AKfycbyunzO4mXlAxvMKvo4on6ElZMjCbym4m54STjPB_SGfV8-08nvIjJmfLY3rEZzCyVUC/exec";  /* Web App da planilha TROCA DE ENDEREÇOS - CS */
+const END_API_KEY="pa-end-2DSb0x-_Vd1wvjd22wN95PiH";  /* mesma chave de CHAVE no Apps Script */
+
+const END_MERCHANTS=["ClickVault","Instituto Experience","Drumser","Maiver","Grupo FEG","BHEVER","Blue Global Enterprises","Z&N Global Partners","WIT Digital","Sparck Reach Central","Insider X","States Media"];
+/* Colunas na mesma ordem da aba "Entrada" da planilha */
+const END_COLS=["Protocolo","Recebido em","Origem","Agente","Ticket","Order Number","Empresa","Data da Order","E-mail do cliente","Produtos","Quantidades","Endereço atual","Endereço corrigido","Rua e número","Complemento","Cidade","Estado","ZIP","País","Observações"];
+/* Faixa dos 3 primeiros dígitos do ZIP por estado — usada só como aviso */
+const END_ZIP3=[[5,5,"NY"],[6,7,"PR"],[9,9,"PR"],[10,27,"MA"],[28,29,"RI"],[30,38,"NH"],[39,49,"ME"],[50,54,"VT"],[55,55,"MA"],[56,59,"VT"],[60,69,"CT"],[70,89,"NJ"],[100,149,"NY"],[150,196,"PA"],[197,199,"DE"],[200,200,"DC"],[201,201,"VA"],[202,205,"DC"],[206,219,"MD"],[220,246,"VA"],[247,268,"WV"],[270,289,"NC"],[290,299,"SC"],[300,319,"GA"],[320,349,"FL"],[350,369,"AL"],[370,385,"TN"],[386,397,"MS"],[398,399,"GA"],[400,427,"KY"],[430,459,"OH"],[460,479,"IN"],[480,499,"MI"],[500,528,"IA"],[530,549,"WI"],[550,567,"MN"],[569,569,"DC"],[570,577,"SD"],[580,588,"ND"],[590,599,"MT"],[600,629,"IL"],[630,658,"MO"],[660,679,"KS"],[680,693,"NE"],[700,714,"LA"],[716,729,"AR"],[730,732,"OK"],[733,733,"TX"],[734,749,"OK"],[750,799,"TX"],[800,816,"CO"],[820,831,"WY"],[832,838,"ID"],[840,847,"UT"],[850,865,"AZ"],[870,884,"NM"],[885,885,"TX"],[889,898,"NV"],[900,961,"CA"],[967,968,"HI"],[970,979,"OR"],[980,994,"WA"],[995,999,"AK"]];
+const END_STATE_NAMES={"alabama":"AL","alaska":"AK","arizona":"AZ","arkansas":"AR","california":"CA","colorado":"CO","connecticut":"CT","delaware":"DE","district of columbia":"DC","florida":"FL","georgia":"GA","hawaii":"HI","idaho":"ID","illinois":"IL","indiana":"IN","iowa":"IA","kansas":"KS","kentucky":"KY","louisiana":"LA","maine":"ME","maryland":"MD","massachusetts":"MA","michigan":"MI","minnesota":"MN","mississippi":"MS","missouri":"MO","montana":"MT","nebraska":"NE","nevada":"NV","new hampshire":"NH","new jersey":"NJ","new mexico":"NM","new york":"NY","north carolina":"NC","north dakota":"ND","ohio":"OH","oklahoma":"OK","oregon":"OR","pennsylvania":"PA","puerto rico":"PR","rhode island":"RI","south carolina":"SC","south dakota":"SD","tennessee":"TN","texas":"TX","utah":"UT","vermont":"VT","virginia":"VA","washington":"WA","west virginia":"WV","wisconsin":"WI","wyoming":"WY"};
+const END_UNIT=/^(apt|apartment|suite|ste|unit|#|fl|floor|bldg|building|rm|room|lot|trlr|spc|space|dept)\b\.?\s*#?\s*[\w-]+|^#\s*[\w-]+/i;
+const END_SUFFIX=/^(st|street|ave|avenue|av|rd|road|blvd|boulevard|dr|drive|ln|lane|way|ct|court|pl|place|hwy|highway|pkwy|parkway|cir|circle|ter|terrace|trl|trail|loop|sq|square|pike|run|path|xing|row)\.?,?$/i;
+
+let END_PROTO="",endProducts=[],endSending=false;
+const $e=id=>document.getElementById("ea-"+id);
+const endV=id=>($e(id).value||"").trim();
+const endIsUS=()=>/^(us|usa|u\.s\.a?\.?|united states( of america)?|eua|estados unidos)$/i.test(endV("country"));
+
+function endGenProto(){
+  const d=new Date(),p=n=>String(n).padStart(2,"0");
+  const rnd=Math.random().toString(36).slice(2,6).toUpperCase();
+  END_PROTO=`END-${String(d.getFullYear()).slice(2)}${p(d.getMonth()+1)}${p(d.getDate())}-${rnd}`;
+}
+function endEsc(s){return String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]))}
+
+/* ---------- produtos ---------- */
+function endAddProduct(p){
+  endProducts.push(Object.assign({name:"",qty:"",upsell:endProducts.length>0},p||{}));
+  endRenderProducts();endRender();
+}
+function endRemoveProduct(i){endProducts.splice(i,1);if(!endProducts.length)endProducts.push({name:"",qty:"",upsell:false});endRenderProducts();endRender();}
+function endSetProduct(i,k,v){endProducts[i][k]=v;endRender();}
+function endRenderProducts(){
+  $e("products").innerHTML=endProducts.map((p,i)=>`<div class="end-prow">
+    <input type="text" list="ea-productList" placeholder="Produto" value="${endEsc(p.name)}" oninput="endSetProduct(${i},'name',this.value)" autocomplete="off">
+    <input type="number" min="1" placeholder="Qtd" value="${endEsc(p.qty)}" oninput="endSetProduct(${i},'qty',this.value)" title="Quantidade de bottles/units">
+    <label class="ups"><input type="checkbox" ${p.upsell?"checked":""} onchange="endSetProduct(${i},'upsell',this.checked)"> Upsell</label>
+    <button class="rm" type="button" onclick="endRemoveProduct(${i})" title="Remover">&times;</button>
+  </div>`).join("");
+}
+function endProdText(){return endProducts.filter(p=>p.name.trim()).map(p=>p.name.trim()+(p.upsell?" (Upsell)":"")).join(" + ")}
+function endQtyText(){return endProducts.filter(p=>p.name.trim()).map(p=>(p.qty||"?")+" units").join(" + ")}
+
+/* ---------- listas de empresa e produto (vêm da aba Produtos) ---------- */
+function endProdList(){try{return PRODUCTS||[]}catch(e){return[]}}
+function endFillCompanies(){
+  const set=new Set(END_MERCHANTS);
+  endProdList().forEach(p=>{if(p.empresa)set.add(p.empresa)});
+  $e("companies").innerHTML=[...set].sort((a,b)=>a.localeCompare(b)).map(c=>`<option value="${endEsc(c)}">`).join("");
+  endFillProducts();
+}
+function endFillProducts(){
+  const c=endV("company").toLowerCase(),all=endProdList();
+  const list=c?all.filter(p=>(p.empresa||"").toLowerCase().includes(c)||c.includes((p.empresa||"").toLowerCase())):all;
+  const names=[...new Set((list.length?list:all).map(p=>p.nome))].sort();
+  $e("productList").innerHTML=names.map(n=>`<option value="${endEsc(n)}">`).join("");
+}
+function endMatchMerchant(raw){
+  const n=s=>s.toLowerCase().replace(/[^a-z0-9&]/g,"");
+  const r=n(raw);if(!r)return raw;
+  const hit=END_MERCHANTS.find(m=>r.includes(n(m))||n(m).includes(r));
+  return hit||raw;
+}
+
+/* ---------- endereço colado → campos ---------- */
+function endParseAddress(str){
+  const out={line1:"",line2:"",city:"",state:"",zip:"",country:""};
+  let s=(str||"").replace(/\s+/g," ").trim();if(!s)return out;
+  const cm=s.match(/[,\s]+(usa|us|u\.s\.a?\.?|united states(?: of america)?)\.?\s*$/i);
+  if(cm){out.country="US";s=s.slice(0,cm.index).trim();}
+  const zm=s.match(/[,\s]*(\d{5}(?:-\d{4})?)\s*$/);
+  if(zm){out.zip=zm[1];s=s.slice(0,zm.index).trim();}
+  const sm=s.match(/[,\s]+([A-Za-z]{2})\.?\s*,?\s*$/);
+  if(sm){out.state=sm[1].toUpperCase();s=s.slice(0,sm.index).trim();}
+  else{
+    const low=s.toLowerCase();
+    for(const[name,ab]of Object.entries(END_STATE_NAMES)){
+      if(low.endsWith(" "+name)||low.endsWith(","+name)){out.state=ab;s=s.slice(0,s.length-name.length).trim();break;}
+    }
+  }
+  s=s.replace(/,\s*$/,"");
+  let seg=s.split(",").map(x=>x.trim()).filter(Boolean);
+  if(seg.length>1&&/^\d+[a-z]?$/i.test(seg[0])){seg.splice(0,2,seg[0]+" "+seg[1]);}
+  const units=[];
+  if(seg.length>=2){
+    let last=seg.pop();
+    const um=last.match(END_UNIT);
+    if(um){units.push(um[0].trim());last=last.slice(um[0].length).trim();}
+    out.city=last;
+    out.line1=seg.shift();
+    seg.forEach(x=>units.push(x));
+  }else{
+    const tk=(seg[0]||"").split(" ");
+    let idx=-1;for(let i=1;i<tk.length;i++)if(END_SUFFIX.test(tk[i]))idx=i;
+    if(idx>0&&idx<tk.length-1){
+      out.line1=tk.slice(0,idx+1).join(" ").replace(/,$/,"");
+      let rest=tk.slice(idx+1).join(" ");
+      const um=rest.match(END_UNIT);
+      if(um){units.push(um[0].trim());rest=rest.slice(um[0].length).trim();}
+      out.city=rest;
+    }else out.line1=seg[0]||"";
+  }
+  const inl=out.line1.match(/\s+((?:apt|apartment|suite|ste|unit|#)\b.*)$/i);
+  if(inl){units.unshift(inl[1].trim());out.line1=out.line1.slice(0,inl.index).trim();}
+  out.line2=units.join(", ");
+  out.city=out.city.replace(/[.,]+$/,"");
+  return out;
+}
+function endParsePaste(){
+  const a=endParseAddress($e("paste").value);
+  ["line1","line2","city","state","zip"].forEach(k=>{$e(k).value=a[k]});
+  if(a.country)$e("country").value=a.country;
+  endRender();
+}
+
+/* ---------- importar mensagem antiga do Slack ---------- */
+function endImport(){
+  const txt=$e("import").value;if(!txt.trim()){compToast("Cole a mensagem primeiro.");return;}
+  const norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase().trim();
+  const clean=s=>s.replace(/\((editado|edited)\)/ig,"").trim();
+  let names=[],qtys=[],found=0;
+  txt.split(/\r?\n/).forEach(line=>{
+    const ag=line.match(/^\s*(.+?)\s+\[\d{1,2}h\d{2}\]/);
+    if(ag&&!endV("agent")){$e("agent").value=ag[1].trim();}
+    const i=line.indexOf(":");if(i<0)return;
+    const k=norm(line.slice(0,i)),v=clean(line.slice(i+1));
+    if(!v)return;
+    if(/ORDER NUMBER|NUMERO DO PEDIDO|N. DO PEDIDO|PEDIDO$/.test(k)){$e("order").value=v.replace(/[^\w-]/g,"");found++;}
+    else if(/^EMPRESA|MERCHANT|COMPANY/.test(k)){$e("company").value=endMatchMerchant(v);found++;}
+    else if(/DATA DA ORDER|DATA DO PEDIDO|ORDER DATE/.test(k)){
+      const m=v.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\D+(\d{1,2}):(\d{2}))?/);
+      if(m){$e("orderDate").value=`${m[3]}-${m[2].padStart(2,"0")}-${m[1].padStart(2,"0")}`;if(m[4])$e("orderTime").value=`${m[4].padStart(2,"0")}:${m[5]}`;found++;}
+    }
+    else if(/ENDERECO ATUAL|ENDERECO ANTIGO|CURRENT ADDRESS/.test(k)){$e("oldAddress").value=v;found++;}
+    else if(/ENDERECO CORRIGIDO|NOVO ENDERECO|ENDERECO NOVO|NEW ADDRESS/.test(k)){$e("paste").value=v;endParsePaste();found++;}
+    else if(/E-?MAIL/.test(k)){$e("email").value=v;found++;}
+    else if(/PRODUTO/.test(k)){names=v.split("+").map(x=>x.trim()).filter(Boolean);found++;}
+    else if(/QUANTIDADE|QTD|BOTTLES|UNIT/.test(k)){qtys=v.split("+").map(x=>(x.match(/\d+/)||[""])[0]);found++;}
+  });
+  if(names.length){
+    endProducts=names.map((n,i)=>({name:n.replace(/\(\s*upsell\s*\)/i,"").trim(),qty:qtys[i]||"",upsell:/upsell/i.test(n)||i>0}));
+    endRenderProducts();
+  }
+  endFillProducts();endRender();
+  compToast(found?`${found} campo(s) preenchido(s) — confira antes de enviar.`:"Não reconheci campos nessa mensagem.");
+}
+
+/* ---------- validação e avisos ---------- */
+function endNewAddress(){
+  const l2=endV("line2");
+  return `${endV("line1")}${l2?", "+l2:""}, ${endV("city")} ${endV("state")} ${endV("zip")}, ${endV("country")}`.replace(/^,\s*/,"").replace(/\s+/g," ").trim();
+}
+function endOrderDateText(){
+  const d=endV("orderDate");if(!d)return"";
+  const[y,m,dd]=d.split("-");const t=endV("orderTime");
+  return `${dd}/${m}/${y}${t?" "+t:""}`;
+}
+function endChecks(){
+  const bad={},us=endIsUS();
+  ["agent","order","company","orderDate","oldAddress","line1","city","state","zip","country"].forEach(k=>{if(!endV(k))bad[k]=1});
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(endV("email")))bad.email=1;
+  if(us&&endV("state")&&!/^[A-Z]{2}$/.test(endV("state")))bad.state=1;
+  if(us&&endV("zip")&&!/^\d{5}(-\d{4})?$/.test(endV("zip")))bad.zip=1;
+  if(!endProducts.some(p=>p.name.trim()&&Number(p.qty)>0)||endProducts.some(p=>p.name.trim()&&!(Number(p.qty)>0)))bad.products=1;
+  const warn=[];
+  if(us&&/^\d{5}/.test(endV("zip"))&&/^[A-Z]{2}$/.test(endV("state"))){
+    const z=parseInt(endV("zip").slice(0,3),10),hit=END_ZIP3.find(r=>z>=r[0]&&z<=r[1]);
+    if(hit&&hit[2]!==endV("state"))warn.push(`O ZIP <b>${endEsc(endV("zip"))}</b> é de <b>${hit[2]}</b>, mas o estado informado é <b>${endEsc(endV("state"))}</b>. Confira com o cliente.`);
+  }
+  const od=endV("orderDate");
+  if(od){
+    const days=(Date.now()-new Date(od+"T12:00:00"))/864e5;
+    if(days>3)warn.push(`A order tem <b>${Math.floor(days)} dias</b> — pode já ter sido despachada. Confira o status antes de enviar.`);
+    if(days<-1)warn.push("A data da order está no futuro.");
+  }
+  const n=s=>s.toLowerCase().replace(/[^a-z0-9]/g,"");
+  if(endV("line1")&&endV("oldAddress")&&n(endV("oldAddress")).startsWith(n(endV("line1")))&&n(endV("oldAddress")).includes(n(endV("zip"))))
+    warn.push("O endereço corrigido parece igual ao endereço atual.");
+  return{bad,warn};
+}
+
+/* ---------- pré-visualização ---------- */
+function endData(){
+  return{
+    protocolo:END_PROTO,origem:endV("origin"),agente:endV("agent"),ticket:endV("ticket"),
+    orderNumber:endV("order"),empresa:endV("company"),orderDate:endOrderDateText(),email:endV("email"),
+    produtos:endProdText(),quantidades:endQtyText(),enderecoAtual:endV("oldAddress"),
+    enderecoCorrigido:(endV("line1")||endV("city"))?endNewAddress():"",
+    line1:endV("line1"),line2:endV("line2"),city:endV("city"),state:endV("state"),zip:endV("zip"),country:endV("country"),
+    observacoes:endV("note")
+  };
+}
+function endRender(){
+  const d=endData(),{warn}=endChecks();
+  const today=new Date().toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+  $e("title").textContent=`ALTERAÇÃO DE ENDEREÇO - ${today}`;
+  $e("proto").textContent=END_PROTO;
+  const rows=[["Order number",d.orderNumber],["Empresa",d.empresa],["Data da order",d.orderDate],["Endereço atual",d.enderecoAtual],["Endereço corrigido",d.enderecoCorrigido],["E-mail do cliente",d.email],["Nome do produto",d.produtos],["Quantidade",d.quantidades],["Origem",d.origem+(d.ticket?` · ticket #${d.ticket.replace(/^#/,"")}`:"")],["Agente",d.agente],["Observações",d.observacoes]];
+  $e("preview").innerHTML=rows.map(([k,v])=>`<div class="end-row"><div class="k">${k}</div><div class="v${v?"":" empty"}">${v?endEsc(v):"—"}</div></div>`).join("");
+  const w=$e("warn");w.innerHTML=warn.map(x=>"⚠ "+x).join("<br>");w.classList.toggle("show",warn.length>0);
+}
+function endValidate(){
+  const{bad}=endChecks();
+  document.querySelectorAll("#view-endereco .field-block[id^='ef-']").forEach(el=>el.classList.toggle("invalid",!!bad[el.id.slice(3)]));
+  const ok=!Object.keys(bad).length;
+  if(!ok)compToast("Preencha os campos obrigatórios marcados em vermelho.");
+  return ok;
+}
+
+/* ---------- cópia (plano B) ---------- */
+function endSlackText(){
+  const d=endData(),today=new Date().toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+  return `ALTERAÇÃO DE ENDEREÇO - ${today}\nPROTOCOLO: ${d.protocolo}\nORDER NUMBER: ${d.orderNumber}\nEMPRESA: ${d.empresa}\nDATA DA ORDER: ${d.orderDate}\nENDEREÇO ATUAL: ${d.enderecoAtual}\nENDEREÇO CORRIGIDO: ${d.enderecoCorrigido}\nEMAIL DO CLIENTE (DA ORDER): ${d.email}\nNOME DO PRODUTO: ${d.produtos}\nQUANTIDADE DE BOTTLES/UNITIES: ${d.quantidades}`+(d.observacoes?`\nOBS: ${d.observacoes}`:"");
+}
+function endRowValues(){
+  const d=endData(),now=new Date().toLocaleString("pt-BR");
+  return[d.protocolo,now,d.origem,d.agente,d.ticket,d.orderNumber,d.empresa,d.orderDate,d.email,d.produtos,d.quantidades,d.enderecoAtual,d.enderecoCorrigido,d.line1,d.line2,d.city,d.state,d.zip,d.country,d.observacoes];
+}
+async function endCopy(txt,msg){
+  try{await navigator.clipboard.writeText(txt);compToast(msg);}
+  catch(e){const t=document.createElement("textarea");t.value=txt;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove();compToast(msg);}
+}
+function endCopyText(){if(!endValidate())return;endCopy(endSlackText(),"Resumo copiado ✓");}
+function endCopyRow(){if(!endValidate())return;endCopy(endRowValues().map(v=>String(v).replace(/[\t\r\n]+/g," ")).join("\t"),"Linha copiada — cole na 1ª coluna livre da planilha ✓");}
+
+/* ---------- envio ---------- */
+function endShowResult(kind,html){const r=$e("result");r.className="end-result show "+kind;r.innerHTML=html;}
+async function endSend(){
+  if(endSending)return;
+  if(!endValidate())return;
+  if(!END_API_URL){endShowResult("err","A integração com a planilha ainda não foi configurada neste site. Use <b>Copiar linha p/ planilha</b> por enquanto.");return;}
+  endSending=true;const btn=$e("send");btn.disabled=true;btn.textContent="Enviando…";
+  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),30000);
+  try{
+    const res=await fetch(END_API_URL,{method:"POST",body:JSON.stringify(Object.assign({chave:END_API_KEY},endData())),signal:ctrl.signal});
+    const j=await res.json();
+    if(!j.ok)throw new Error(j.erro||"Erro desconhecido");
+    const alerts=[];
+    if(j.duplicado)alerts.push("⚠ "+endEsc(j.duplicado));
+    if(j.checagem&&j.checagem.status!=="OK")alerts.push("⚠ Endereço: "+endEsc(j.checagem.mensagem)+(j.checagem.sugerido?`<br>Google sugere: <b>${endEsc(j.checagem.sugerido)}</b>`:""));
+    endShowResult(alerts.length?"alert":"ok",`<b>✓ Enviado — protocolo ${endEsc(j.protocolo)}</b>`+(j.checagem&&j.checagem.status==="OK"?"<br>Endereço confirmado pelo Google Maps.":"")+(alerts.length?"<br>"+alerts.join("<br>")+"<br>Se precisar corrigir, avise o supervisor informando o protocolo.":""));
+    endClear(true);
+  }catch(e){
+    console.error(e);
+    endShowResult("err",`Não foi possível enviar (${endEsc(e.name==="AbortError"?"tempo esgotado":e.message)}). Seus dados continuam no formulário — tente de novo ou use <b>Copiar linha p/ planilha</b>.`);
+  }finally{clearTimeout(timer);endSending=false;btn.disabled=false;btn.textContent="Enviar para a planilha";}
+}
+
+/* ---------- limpar / iniciar ---------- */
+function endClear(keepResult){
+  ["ticket","order","company","orderDate","orderTime","email","oldAddress","paste","line1","line2","city","state","zip","note","import"].forEach(k=>{$e(k).value=""});
+  $e("country").value="US";
+  endProducts=[{name:"",qty:"",upsell:false}];endRenderProducts();
+  document.querySelectorAll("#view-endereco .field-block.invalid").forEach(el=>el.classList.remove("invalid"));
+  if(!keepResult)$e("result").className="end-result";
+  endGenProto();endFillProducts();endRender();
+}
+function endRememberAgent(){try{localStorage.setItem("end_agent",endV("agent"))}catch(e){}}
+(function endInit(){
+  try{const a=localStorage.getItem("end_agent");if(a)$e("agent").value=a;}catch(e){}
+  endProducts=[{name:"",qty:"",upsell:false}];endRenderProducts();
+  endGenProto();endFillCompanies();endRender();
+  const c=$e("conn");c.classList.toggle("on",!!END_API_URL);
+  $e("conn-txt").textContent=END_API_URL?"Conectado à planilha de trocas de endereço":"Planilha ainda não conectada — use os botões de cópia";
+  $e("send").disabled=!END_API_URL;
+})();
 </script>
 
 </body>
