@@ -1947,7 +1947,7 @@ function endRememberAgent(){try{localStorage.setItem("end_agent",endV("agent"))}
 /* ===== REENVIO =====
    Envia a solicitação para a aba "Reenvios" da planilha (Google Apps Script — ver apps-script/reenvio.gs).
    Reaproveita os utilitários da aba de endereço (endParseAddress, endEsc, END_ZIP3, endCopy, compToast). */
-const RS_API_URL="";  /* TODO: colar aqui a URL /exec do Web App publicado a partir de apps-script/reenvio.gs */
+const RS_API_URL="https://script.google.com/macros/s/AKfycbxuBShT1XbzZ9-pVbpdJ2VY1DCTBFWDIHpoyX2wJTa74dcRsAw9ARi45ZsD1huCeDgW/exec";  /* Web App da aba Reenvios */
 const RS_API_KEY="pa-rs-7Kq2vN9xLw4Tz8Hc3Fy6";  /* mesma chave de CHAVE no Apps Script */
 const RS_FACTORIES=["EagleLabs","RedRock","Shipoffers","Fullstack"];
 
