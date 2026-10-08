@@ -720,7 +720,7 @@ textarea{resize:vertical;font-family:inherit}
 <div class="comp-wrap">
 
   <div class="comp-callout">
-    <b>Solicitação de reenvio.</b> Preencha e clique em <b>Enviar para a planilha</b>: a linha entra direto na aba <b>Reenvios</b> com protocolo, e o sistema avisa se essa order já tem um reenvio registrado. Dica: cole o endereço inteiro em <b>“Colar endereço”</b> que ele se divide sozinho.
+    <b>Solicitação de reenvio.</b> Preencha e clique em <b>Enviar para a planilha</b>: a linha entra direto na aba <b>Reenvios</b> com protocolo, e o sistema avisa se essa order já tem um reenvio registrado. O endereço vai para a planilha exatamente como foi colado.
   </div>
 
   <div class="panel">
@@ -795,42 +795,10 @@ textarea{resize:vertical;font-family:inherit}
     </div>
 
     <div class="end-sec">Endereço de envio</div>
-    <div class="field-block">
-      <label for="rs-paste">Colar endereço <span class="hint">(divide automaticamente nos campos abaixo)</span></label>
-      <input type="text" id="rs-paste" placeholder="Ex: 1707 West River Road, Mount Pleasant, Michigan 48858" oninput="rsParsePaste()">
-    </div>
-    <div class="field-block req" id="rf-line1">
-      <label for="rs-line1">Rua e número</label>
-      <input type="text" id="rs-line1" placeholder="Ex: 1707 West River Road" oninput="rsRender()">
+    <div class="field-block req" id="rf-address">
+      <label for="rs-address">Endereço completo <span class="hint">(cole como veio: rua, complemento, cidade, estado e ZIP)</span></label>
+      <input type="text" id="rs-address" placeholder="Ex: 1707 West River Road, Mount Pleasant, Michigan 48858" oninput="rsRender()">
       <div class="req-note">Obrigatório.</div>
-    </div>
-    <div class="field-block">
-      <label for="rs-line2">Complemento <span class="hint">(Apt, Suite, Unit — opcional)</span></label>
-      <input type="text" id="rs-line2" placeholder="Ex: Apt 3" oninput="rsRender()">
-    </div>
-    <div class="fg">
-      <div class="fgrp field-block req" id="rf-city">
-        <label for="rs-city">Cidade</label>
-        <input type="text" id="rs-city" placeholder="Ex: Mount Pleasant" oninput="rsRender()">
-        <div class="req-note">Obrigatório.</div>
-      </div>
-      <div class="fgrp field-block req" id="rf-state">
-        <label for="rs-state">Estado</label>
-        <input type="text" id="rs-state" maxlength="2" placeholder="Ex: MI" oninput="this.value=this.value.toUpperCase();rsRender()">
-        <div class="req-note">Sigla de 2 letras.</div>
-      </div>
-    </div>
-    <div class="fg">
-      <div class="fgrp field-block req" id="rf-zip">
-        <label for="rs-zip">ZIP code</label>
-        <input type="text" id="rs-zip" placeholder="Ex: 48858" oninput="rsRender()">
-        <div class="req-note">5 dígitos (ou 12345-6789).</div>
-      </div>
-      <div class="fgrp field-block req" id="rf-country">
-        <label for="rs-country">País</label>
-        <input type="text" id="rs-country" value="US" oninput="rsRender()">
-        <div class="req-note">Obrigatório.</div>
-      </div>
     </div>
     <div class="end-warn" id="rs-warn"></div>
 
@@ -1954,7 +1922,6 @@ const RS_FACTORIES=["EagleLabs","RedRock","Shipoffers","Fullstack"];
 let RS_PROTO="",rsProducts=[],rsSending=false;
 const $r=id=>document.getElementById("rs-"+id);
 const rsV=id=>($r(id).value||"").trim();
-const rsIsUS=()=>/^(us|usa|u\.s\.a?\.?|united states( of america)?|eua|estados unidos)$/i.test(rsV("country"));
 
 function rsGenProto(){
   const d=new Date(),p=n=>String(n).padStart(2,"0");
@@ -1976,18 +1943,8 @@ const rsFilled=()=>rsProducts.filter(p=>p.name.trim());
 const rsProdText=()=>rsFilled().map(p=>p.name.trim()).join(" + ");
 const rsQtyText=()=>rsFilled().map(p=>p.qty||"?").join(" + ");
 
-/* ---------- endereço ---------- */
-function rsParsePaste(){
-  const a=endParseAddress($r("paste").value);
-  ["line1","line2","city","state","zip"].forEach(k=>{$r(k).value=a[k]});
-  if(a.country)$r("country").value=a.country;
-  rsRender();
-}
-function rsAddress(){
-  if(!rsV("line1")&&!rsV("city"))return"";
-  const l2=rsV("line2"),c=rsV("country");
-  return `${rsV("line1")}${l2?", "+l2:""}, ${rsV("city")}, ${rsV("state")} ${rsV("zip")}${c&&!rsIsUS()?", "+c:""}`.replace(/^,\s*/,"").replace(/\s+/g," ").trim();
-}
+/* ---------- endereço (uma linha só, gravado como foi colado) ---------- */
+const rsAddress=()=>rsV("address").replace(/\s+/g," ");
 function rsMatchFactory(raw){
   const n=s=>s.toLowerCase().replace(/[^a-z0-9]/g,""),r=n(raw);
   return RS_FACTORIES.find(f=>n(f)===r)||raw;
@@ -2004,7 +1961,7 @@ function rsImport(){
     if(!v)return;
     if(/ORDER|PEDIDO/.test(k)&&!/DATA|DATE/.test(k)){$r("order").value=v.replace(/[^\w-]/g,"");found++;}
     else if(/FABRICA|FACTORY|FULFILL|CENTRO/.test(k)){$r("factory").value=rsMatchFactory(v);found++;}
-    else if(/ENDERECO|ADDRESS/.test(k)){$r("paste").value=v;rsParsePaste();found++;}
+    else if(/ENDERECO|ADDRESS/.test(k)){$r("address").value=v;found++;}
     else if(/E-?MAIL/.test(k)){$r("email").value=v;found++;}
     else if(/PRODUT|PRODUCT/.test(k)){names=v.split("+").map(x=>x.trim()).filter(Boolean);found++;}
     else if(/QUANTIDADE|QTD|QUANTITY|BOTTLES|UNIT/.test(k)){qtys=v.split("+").map(x=>(x.match(/\d+/)||[""])[0]);found++;}
@@ -2017,16 +1974,18 @@ function rsImport(){
 
 /* ---------- validação ---------- */
 function rsChecks(){
-  const bad={},us=rsIsUS();
-  ["agent","reason","order","factory","line1","city","state","zip","country"].forEach(k=>{if(!rsV(k))bad[k]=1});
+  const bad={};
+  ["agent","reason","order","factory","address"].forEach(k=>{if(!rsV(k))bad[k]=1});
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rsV("email")))bad.email=1;
-  if(us&&rsV("state")&&!/^[A-Z]{2}$/.test(rsV("state")))bad.state=1;
-  if(us&&rsV("zip")&&!/^\d{5}(-\d{4})?$/.test(rsV("zip")))bad.zip=1;
   if(!rsFilled().length||rsFilled().some(p=>!(Number(p.qty)>0)))bad.products=1;
   const warn=[];
-  if(us&&/^\d{5}/.test(rsV("zip"))&&/^[A-Z]{2}$/.test(rsV("state"))){
-    const z=parseInt(rsV("zip").slice(0,3),10),hit=END_ZIP3.find(r=>z>=r[0]&&z<=r[1]);
-    if(hit&&hit[2]!==rsV("state"))warn.push(`O ZIP <b>${endEsc(rsV("zip"))}</b> é de <b>${hit[2]}</b>, mas o estado informado é <b>${endEsc(rsV("state"))}</b>. Confira com o cliente.`);
+  if(rsV("address")){
+    const a=endParseAddress(rsV("address"));
+    if(!a.zip)warn.push("Não encontrei o <b>ZIP code</b> no endereço. Confira se ele foi colado completo.");
+    else if(a.state){
+      const z=parseInt(a.zip.slice(0,3),10),hit=END_ZIP3.find(r=>z>=r[0]&&z<=r[1]);
+      if(hit&&hit[2]!==a.state)warn.push(`O ZIP <b>${endEsc(a.zip)}</b> é de <b>${hit[2]}</b>, mas o estado no endereço é <b>${endEsc(a.state)}</b>. Confira com o cliente.`);
+    }
   }
   return{bad,warn};
 }
@@ -2092,8 +2051,7 @@ async function rsSend(){
 
 /* ---------- limpar / iniciar ---------- */
 function rsClear(keepResult){
-  ["ticket","reason","order","factory","email","paste","line1","line2","city","state","zip","note","import"].forEach(k=>{$r(k).value=""});
-  $r("country").value="US";
+  ["ticket","reason","order","factory","email","address","note","import"].forEach(k=>{$r(k).value=""});
   rsProducts=[{name:"",qty:""}];rsRenderProducts();
   document.querySelectorAll("#view-reenvio .field-block.invalid").forEach(el=>el.classList.remove("invalid"));
   if(!keepResult)$r("result").className="end-result";
