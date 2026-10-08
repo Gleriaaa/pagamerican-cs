@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PagAmerican — CS Tools v5.4</title>
+<title>PagAmerican — CS Tools v5.5</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -334,7 +334,7 @@ textarea{resize:vertical;font-family:inherit}
     <div class="logo-fallback"><svg width="16" height="16" viewBox="0 0 28 28" fill="none"><path d="M7 14h14M14 7v14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></div>
   </div>
   <h1>PagAmerican — CS Tools</h1>
-  <span class="ver">v5.4</span>
+  <span class="ver">v5.5</span>
   <span class="sub">Customer Support · Uso Interno</span>
 </header>
 <div class="navtabs">
@@ -359,6 +359,10 @@ textarea{resize:vertical;font-family:inherit}
   <div class="navtab" data-view="endereco" onclick="switchView('endereco')">
     <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
     Troca de Endereço
+  </div>
+  <div class="navtab" data-view="reenvio" onclick="switchView('reenvio')">
+    <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
+    Reenvio
   </div>
 </div>
 
@@ -712,6 +716,152 @@ textarea{resize:vertical;font-family:inherit}
 
 </div>
 </div>
+<div class="view" id="view-reenvio">
+<div class="comp-wrap">
+
+  <div class="comp-callout">
+    <b>Solicitação de reenvio.</b> Preencha e clique em <b>Enviar para a planilha</b>: a linha entra direto na aba <b>Reenvios</b> com protocolo, e o sistema avisa se essa order já tem um reenvio registrado. Dica: cole o endereço inteiro em <b>“Colar endereço”</b> que ele se divide sozinho.
+  </div>
+
+  <div class="panel">
+    <div class="sl2"><span class="sn">✓</span> Dados do reenvio</div>
+
+    <details class="end-import">
+      <summary>Tem a solicitação em texto (Slack)? Cole aqui</summary>
+      <textarea id="rs-import" rows="5" placeholder="Order Number: 183156&#10;Produto: SodaPeak&#10;Quantidade: 18 bottles&#10;Endereço de envio: 1707 West River Road, Mount Pleasant, Michigan 48858&#10;Customer email: cliente@gmail.com&#10;Nome da fábrica: Eaglelabs"></textarea>
+      <button class="comp-btn ghost" style="margin-top:8px;width:100%" onclick="rsImport()">Preencher campos a partir da mensagem</button>
+    </details>
+
+    <div class="end-sec">Atendimento</div>
+    <div class="fg">
+      <div class="fgrp field-block req" id="rf-agent">
+        <label for="rs-agent">Agente</label>
+        <input type="text" id="rs-agent" list="ea-agents" placeholder="Seu nome" oninput="rsRender()" onchange="rsRememberAgent()" autocomplete="off">
+        <div class="req-note">Obrigatório.</div>
+      </div>
+      <div class="fgrp field-block req" id="rf-reason">
+        <label for="rs-reason">Motivo do reenvio</label>
+        <select id="rs-reason" onchange="rsRender()">
+          <option value="">— selecione —</option>
+          <option>Item faltante</option>
+          <option>Item incorreto</option>
+          <option>Item quebrado / danificado</option>
+          <option>Pedido extraviado / não recebido</option>
+          <option>Devolvido ao remetente</option>
+          <option>Outro</option>
+        </select>
+        <div class="req-note">Obrigatório.</div>
+      </div>
+    </div>
+    <div class="fg">
+      <div class="fgrp field-block">
+        <label for="rs-origin">Origem</label>
+        <select id="rs-origin" onchange="rsRender()">
+          <option value="Ticket">Ticket (Zendesk)</option>
+          <option value="Telefone">Telefone</option>
+        </select>
+      </div>
+      <div class="fgrp field-block">
+        <label for="rs-ticket">Nº do ticket <span class="hint">(opcional)</span></label>
+        <input type="text" id="rs-ticket" placeholder="Ex: 49152" oninput="rsRender()">
+      </div>
+    </div>
+
+    <div class="end-sec">Pedido</div>
+    <div class="fg">
+      <div class="fgrp field-block req" id="rf-order">
+        <label for="rs-order">Order number</label>
+        <input type="text" id="rs-order" inputmode="numeric" placeholder="Ex: 183156" oninput="rsRender()">
+        <div class="req-note">Obrigatório.</div>
+      </div>
+      <div class="fgrp field-block req" id="rf-factory">
+        <label for="rs-factory">Nome da fábrica</label>
+        <input type="text" id="rs-factory" list="rs-factories" placeholder="Ex: EagleLabs" oninput="rsRender()" autocomplete="off">
+        <div class="req-note">Obrigatório.</div>
+      </div>
+    </div>
+    <datalist id="rs-factories"><option value="EagleLabs"><option value="RedRock"><option value="Shipoffers"><option value="Fullstack"></datalist>
+    <div class="field-block req" id="rf-email">
+      <label for="rs-email">E-mail do cliente <span class="hint">(da order)</span></label>
+      <input type="email" id="rs-email" placeholder="cliente@email.com" oninput="rsRender()">
+      <div class="req-note">Informe um e-mail válido.</div>
+    </div>
+
+    <div class="field-block req" id="rf-products">
+      <label>Produto e quantidade <span class="hint">(bottles/units a reenviar)</span></label>
+      <div id="rs-products"></div>
+      <button class="end-add" type="button" onclick="rsAddProduct()">+ adicionar produto</button>
+      <div class="req-note">Informe ao menos um produto com a quantidade.</div>
+    </div>
+
+    <div class="end-sec">Endereço de envio</div>
+    <div class="field-block">
+      <label for="rs-paste">Colar endereço <span class="hint">(divide automaticamente nos campos abaixo)</span></label>
+      <input type="text" id="rs-paste" placeholder="Ex: 1707 West River Road, Mount Pleasant, Michigan 48858" oninput="rsParsePaste()">
+    </div>
+    <div class="field-block req" id="rf-line1">
+      <label for="rs-line1">Rua e número</label>
+      <input type="text" id="rs-line1" placeholder="Ex: 1707 West River Road" oninput="rsRender()">
+      <div class="req-note">Obrigatório.</div>
+    </div>
+    <div class="field-block">
+      <label for="rs-line2">Complemento <span class="hint">(Apt, Suite, Unit — opcional)</span></label>
+      <input type="text" id="rs-line2" placeholder="Ex: Apt 3" oninput="rsRender()">
+    </div>
+    <div class="fg">
+      <div class="fgrp field-block req" id="rf-city">
+        <label for="rs-city">Cidade</label>
+        <input type="text" id="rs-city" placeholder="Ex: Mount Pleasant" oninput="rsRender()">
+        <div class="req-note">Obrigatório.</div>
+      </div>
+      <div class="fgrp field-block req" id="rf-state">
+        <label for="rs-state">Estado</label>
+        <input type="text" id="rs-state" maxlength="2" placeholder="Ex: MI" oninput="this.value=this.value.toUpperCase();rsRender()">
+        <div class="req-note">Sigla de 2 letras.</div>
+      </div>
+    </div>
+    <div class="fg">
+      <div class="fgrp field-block req" id="rf-zip">
+        <label for="rs-zip">ZIP code</label>
+        <input type="text" id="rs-zip" placeholder="Ex: 48858" oninput="rsRender()">
+        <div class="req-note">5 dígitos (ou 12345-6789).</div>
+      </div>
+      <div class="fgrp field-block req" id="rf-country">
+        <label for="rs-country">País</label>
+        <input type="text" id="rs-country" value="US" oninput="rsRender()">
+        <div class="req-note">Obrigatório.</div>
+      </div>
+    </div>
+    <div class="end-warn" id="rs-warn"></div>
+
+    <div class="field-block">
+      <label for="rs-note">Observações <span class="hint">(opcional)</span></label>
+      <textarea id="rs-note" rows="2" placeholder="Ex: cliente enviou fotos do item quebrado no ticket" oninput="rsRender()"></textarea>
+    </div>
+
+    <div class="comp-actions">
+      <button class="comp-btn ghost" onclick="rsClear()">Limpar</button>
+      <button class="comp-btn primary" id="rs-send" onclick="rsSend()">Enviar para a planilha</button>
+    </div>
+    <div class="end-result" id="rs-result"></div>
+    <div class="end-conn" id="rs-conn"><span class="dot"></span><span id="rs-conn-txt"></span></div>
+  </div>
+
+  <div class="comp-stage">
+    <div class="comp-preview-label">👁 Como a solicitação vai chegar</div>
+    <div class="end-card">
+      <div class="end-card-head"><b id="rs-title">REENVIO</b><span class="end-proto" id="rs-proto"></span></div>
+      <div class="end-rows" id="rs-preview"></div>
+    </div>
+    <div class="comp-actions">
+      <button class="comp-btn ghost" onclick="rsCopyText()">Copiar no formato Slack</button>
+      <button class="comp-btn ghost" onclick="rsCopyRow()" title="Copia em colunas, na ordem da aba Reenvios">Copiar linha p/ planilha</button>
+    </div>
+    <div class="end-foot">Os botões de cópia são plano B, caso o envio falhe. Nada fica salvo neste site: os dados vão direto para a planilha.</div>
+  </div>
+
+</div>
+</div>
 <div class="view" id="view-labels">
 <div class="lbl-wrap">
   <div class="lbl-search-row">
@@ -748,6 +898,7 @@ function switchView(v){
   if(v==='produtos'&&!window.__prodLoaded){window.__prodLoaded=true;prodLoad();}
   if(v==='labels'&&!window.__lblLoaded){window.__lblLoaded=true;lblLoad();}
   if(v==='endereco'){if(!window.__prodLoaded){window.__prodLoaded=true;prodLoad().then(endFillCompanies);}else endFillCompanies();}
+  if(v==='reenvio'){if(!window.__prodLoaded){window.__prodLoaded=true;prodLoad().then(rsRenderProducts);}else rsRenderProducts();}
 }
 
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -1792,5 +1943,171 @@ function endRememberAgent(){try{localStorage.setItem("end_agent",endV("agent"))}
 })();
 </script>
 
+<script>
+/* ===== REENVIO =====
+   Envia a solicitação para a aba "Reenvios" da planilha (Google Apps Script — ver apps-script/reenvio.gs).
+   Reaproveita os utilitários da aba de endereço (endParseAddress, endEsc, END_ZIP3, endCopy, compToast). */
+const RS_API_URL="";  /* TODO: colar aqui a URL /exec do Web App publicado a partir de apps-script/reenvio.gs */
+const RS_API_KEY="pa-rs-7Kq2vN9xLw4Tz8Hc3Fy6";  /* mesma chave de CHAVE no Apps Script */
+const RS_FACTORIES=["EagleLabs","RedRock","Shipoffers","Fullstack"];
+
+let RS_PROTO="",rsProducts=[],rsSending=false;
+const $r=id=>document.getElementById("rs-"+id);
+const rsV=id=>($r(id).value||"").trim();
+const rsIsUS=()=>/^(us|usa|u\.s\.a?\.?|united states( of america)?|eua|estados unidos)$/i.test(rsV("country"));
+
+function rsGenProto(){
+  const d=new Date(),p=n=>String(n).padStart(2,"0");
+  RS_PROTO=`REE-${String(d.getFullYear()).slice(2)}${p(d.getMonth()+1)}${p(d.getDate())}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
+}
+
+/* ---------- produtos ---------- */
+function rsAddProduct(p){rsProducts.push(Object.assign({name:"",qty:""},p||{}));rsRenderProducts();rsRender();}
+function rsRemoveProduct(i){rsProducts.splice(i,1);if(!rsProducts.length)rsProducts.push({name:"",qty:""});rsRenderProducts();rsRender();}
+function rsSetProduct(i,k,v){rsProducts[i][k]=v;rsRender();}
+function rsRenderProducts(){
+  $r("products").innerHTML=rsProducts.map((p,i)=>`<div class="end-prow" style="grid-template-columns:1fr 78px 28px">
+    <input type="text" list="rs-productList" placeholder="Produto" value="${endEsc(p.name)}" oninput="rsSetProduct(${i},'name',this.value)" autocomplete="off">
+    <input type="number" min="1" placeholder="Qtd" value="${endEsc(p.qty)}" oninput="rsSetProduct(${i},'qty',this.value)" title="Quantidade de bottles/units">
+    <button class="rm" type="button" onclick="rsRemoveProduct(${i})" title="Remover">&times;</button>
+  </div>`).join("")+`<datalist id="rs-productList">${[...new Set(endProdList().map(p=>p.nome))].sort().map(n=>`<option value="${endEsc(n)}">`).join("")}</datalist>`;
+}
+const rsFilled=()=>rsProducts.filter(p=>p.name.trim());
+const rsProdText=()=>rsFilled().map(p=>p.name.trim()).join(" + ");
+const rsQtyText=()=>rsFilled().map(p=>p.qty||"?").join(" + ");
+
+/* ---------- endereço ---------- */
+function rsParsePaste(){
+  const a=endParseAddress($r("paste").value);
+  ["line1","line2","city","state","zip"].forEach(k=>{$r(k).value=a[k]});
+  if(a.country)$r("country").value=a.country;
+  rsRender();
+}
+function rsAddress(){
+  if(!rsV("line1")&&!rsV("city"))return"";
+  const l2=rsV("line2"),c=rsV("country");
+  return `${rsV("line1")}${l2?", "+l2:""}, ${rsV("city")}, ${rsV("state")} ${rsV("zip")}${c&&!rsIsUS()?", "+c:""}`.replace(/^,\s*/,"").replace(/\s+/g," ").trim();
+}
+function rsMatchFactory(raw){
+  const n=s=>s.toLowerCase().replace(/[^a-z0-9]/g,""),r=n(raw);
+  return RS_FACTORIES.find(f=>n(f)===r)||raw;
+}
+
+/* ---------- importar texto ---------- */
+function rsImport(){
+  const txt=$r("import").value;if(!txt.trim()){compToast("Cole a mensagem primeiro.");return;}
+  const norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase().trim();
+  let names=[],qtys=[],found=0;
+  txt.split(/\r?\n/).forEach(line=>{
+    const i=line.indexOf(":");if(i<0)return;
+    const k=norm(line.slice(0,i)),v=line.slice(i+1).replace(/\((editado|edited)\)/ig,"").trim();
+    if(!v)return;
+    if(/ORDER|PEDIDO/.test(k)&&!/DATA|DATE/.test(k)){$r("order").value=v.replace(/[^\w-]/g,"");found++;}
+    else if(/FABRICA|FACTORY|FULFILL|CENTRO/.test(k)){$r("factory").value=rsMatchFactory(v);found++;}
+    else if(/ENDERECO|ADDRESS/.test(k)){$r("paste").value=v;rsParsePaste();found++;}
+    else if(/E-?MAIL/.test(k)){$r("email").value=v;found++;}
+    else if(/PRODUT|PRODUCT/.test(k)){names=v.split("+").map(x=>x.trim()).filter(Boolean);found++;}
+    else if(/QUANTIDADE|QTD|QUANTITY|BOTTLES|UNIT/.test(k)){qtys=v.split("+").map(x=>(x.match(/\d+/)||[""])[0]);found++;}
+    else if(/MOTIVO|REASON/.test(k)){const o=[...$r("reason").options].find(o=>o.value&&norm(o.value).includes(norm(v).split(" ")[0]));if(o){$r("reason").value=o.value;found++;}}
+  });
+  if(names.length){rsProducts=names.map((n,i)=>({name:n,qty:qtys[i]||""}));rsRenderProducts();}
+  rsRender();
+  compToast(found?`${found} campo(s) preenchido(s) — confira antes de enviar.`:"Não reconheci campos nessa mensagem.");
+}
+
+/* ---------- validação ---------- */
+function rsChecks(){
+  const bad={},us=rsIsUS();
+  ["agent","reason","order","factory","line1","city","state","zip","country"].forEach(k=>{if(!rsV(k))bad[k]=1});
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rsV("email")))bad.email=1;
+  if(us&&rsV("state")&&!/^[A-Z]{2}$/.test(rsV("state")))bad.state=1;
+  if(us&&rsV("zip")&&!/^\d{5}(-\d{4})?$/.test(rsV("zip")))bad.zip=1;
+  if(!rsFilled().length||rsFilled().some(p=>!(Number(p.qty)>0)))bad.products=1;
+  const warn=[];
+  if(us&&/^\d{5}/.test(rsV("zip"))&&/^[A-Z]{2}$/.test(rsV("state"))){
+    const z=parseInt(rsV("zip").slice(0,3),10),hit=END_ZIP3.find(r=>z>=r[0]&&z<=r[1]);
+    if(hit&&hit[2]!==rsV("state"))warn.push(`O ZIP <b>${endEsc(rsV("zip"))}</b> é de <b>${hit[2]}</b>, mas o estado informado é <b>${endEsc(rsV("state"))}</b>. Confira com o cliente.`);
+  }
+  return{bad,warn};
+}
+function rsValidate(){
+  const{bad}=rsChecks();
+  document.querySelectorAll("#view-reenvio .field-block[id^='rf-']").forEach(el=>el.classList.toggle("invalid",!!bad[el.id.slice(3)]));
+  const ok=!Object.keys(bad).length;
+  if(!ok)compToast("Preencha os campos obrigatórios marcados em vermelho.");
+  return ok;
+}
+
+/* ---------- dados / pré-visualização ---------- */
+function rsData(){
+  return{
+    protocolo:RS_PROTO,agente:rsV("agent"),origem:rsV("origin"),ticket:rsV("ticket"),motivo:rsV("reason"),
+    orderNumber:rsV("order"),produto:rsProdText(),quantidade:rsQtyText(),endereco:rsAddress(),
+    email:rsV("email"),fabrica:rsV("factory"),observacoes:rsV("note")
+  };
+}
+function rsRender(){
+  const d=rsData(),{warn}=rsChecks();
+  $r("title").textContent=`REENVIO - ${new Date().toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}`;
+  $r("proto").textContent=RS_PROTO;
+  const rows=[["Order number",d.orderNumber],["Produto",d.produto],["Quantidade",d.quantidade],["Endereço de envio",d.endereco],["Customer email",d.email],["Nome da fábrica",d.fabrica],["Motivo",d.motivo],["Origem",d.origem+(d.ticket?` · ticket #${d.ticket.replace(/^#/,"")}`:"")],["Agente",d.agente],["Observações",d.observacoes]];
+  $r("preview").innerHTML=rows.map(([k,v])=>`<div class="end-row"><div class="k">${k}</div><div class="v${v?"":" empty"}">${v?endEsc(v):"—"}</div></div>`).join("");
+  const w=$r("warn");w.innerHTML=warn.map(x=>"⚠ "+x).join("<br>");w.classList.toggle("show",warn.length>0);
+}
+
+/* ---------- cópia (plano B) ---------- */
+function rsSlackText(){
+  const d=rsData();
+  return `REENVIO - ${new Date().toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}\nPROTOCOLO: ${d.protocolo}\nOrder Number: ${d.orderNumber}\nProduto: ${d.produto}\nQuantidade: ${d.quantidade} bottles\nEndereço de envio: ${d.endereco}\nCustomer email: ${d.email}\nNome da fábrica: ${d.fabrica}\nMotivo: ${d.motivo}`+(d.observacoes?`\nOBS: ${d.observacoes}`:"");
+}
+/* mesma ordem das colunas da aba Reenvios: as 5 originais primeiro, depois as que o script acrescenta */
+function rsRowValues(){
+  const d=rsData();
+  return[d.orderNumber,d.produto,d.quantidade,d.endereco,d.email,d.fabrica,d.protocolo,new Date().toLocaleString("pt-BR"),d.agente,d.origem,d.ticket,d.motivo,d.observacoes];
+}
+function rsCopyText(){if(!rsValidate())return;endCopy(rsSlackText(),"Resumo copiado ✓");}
+function rsCopyRow(){if(!rsValidate())return;endCopy(rsRowValues().map(v=>String(v).replace(/[\t\r\n]+/g," ")).join("\t"),"Linha copiada — cole na 1ª coluna livre da aba Reenvios ✓");}
+
+/* ---------- envio ---------- */
+function rsShowResult(kind,html){const r=$r("result");r.className="end-result show "+kind;r.innerHTML=html;}
+async function rsSend(){
+  if(rsSending||!rsValidate())return;
+  if(!RS_API_URL){rsShowResult("err","A integração com a planilha ainda não foi configurada neste site. Use <b>Copiar linha p/ planilha</b> por enquanto.");return;}
+  rsSending=true;const btn=$r("send");btn.disabled=true;btn.textContent="Enviando…";
+  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),30000);
+  try{
+    const res=await fetch(RS_API_URL,{method:"POST",body:JSON.stringify(Object.assign({chave:RS_API_KEY},rsData())),signal:ctrl.signal});
+    const j=await res.json();
+    if(!j.ok)throw new Error(j.erro||"Erro desconhecido");
+    const alerts=[];
+    if(j.duplicado)alerts.push("⚠ "+endEsc(j.duplicado));
+    if(j.checagem&&j.checagem.status!=="OK")alerts.push("⚠ Endereço: "+endEsc(j.checagem.mensagem)+(j.checagem.sugerido?`<br>Google sugere: <b>${endEsc(j.checagem.sugerido)}</b>`:""));
+    rsShowResult(alerts.length?"alert":"ok",`<b>✓ Enviado — protocolo ${endEsc(j.protocolo)}</b>`+(j.checagem&&j.checagem.status==="OK"?"<br>Endereço confirmado pelo Google Maps.":"")+(alerts.length?"<br>"+alerts.join("<br>")+"<br>Se precisar corrigir, avise o supervisor informando o protocolo.":""));
+    rsClear(true);
+  }catch(e){
+    console.error(e);
+    rsShowResult("err",`Não foi possível enviar (${endEsc(e.name==="AbortError"?"tempo esgotado":e.message)}). Seus dados continuam no formulário — tente de novo ou use <b>Copiar linha p/ planilha</b>.`);
+  }finally{clearTimeout(timer);rsSending=false;btn.disabled=!RS_API_URL;btn.textContent="Enviar para a planilha";}
+}
+
+/* ---------- limpar / iniciar ---------- */
+function rsClear(keepResult){
+  ["ticket","reason","order","factory","email","paste","line1","line2","city","state","zip","note","import"].forEach(k=>{$r(k).value=""});
+  $r("country").value="US";
+  rsProducts=[{name:"",qty:""}];rsRenderProducts();
+  document.querySelectorAll("#view-reenvio .field-block.invalid").forEach(el=>el.classList.remove("invalid"));
+  if(!keepResult)$r("result").className="end-result";
+  rsGenProto();rsRender();
+}
+function rsRememberAgent(){try{localStorage.setItem("end_agent",rsV("agent"))}catch(e){}}
+(function rsInit(){
+  try{const a=localStorage.getItem("end_agent");if(a)$r("agent").value=a;}catch(e){}
+  rsProducts=[{name:"",qty:""}];rsRenderProducts();
+  rsGenProto();rsRender();
+  $r("conn").classList.toggle("on",!!RS_API_URL);
+  $r("conn-txt").textContent=RS_API_URL?"Conectado à aba Reenvios da planilha":"Planilha ainda não conectada — use os botões de cópia";
+  $r("send").disabled=!RS_API_URL;
+})();
+</script>
 </body>
 </html>
