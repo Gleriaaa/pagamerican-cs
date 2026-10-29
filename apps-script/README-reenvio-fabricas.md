@@ -6,14 +6,16 @@ O que ele faz:
 
 - **Consulta.** O site (aba Reenvio, cartão "Acompanhar reenvio") busca pelo order number e mostra a fábrica, o status, o tracking, a data de envio, o produto, o protocolo e o ticket.
   - E-mail e endereço do cliente **nunca** saem da planilha por aqui.
-- **Registro.** Depois que um reenvio é gravado na aba Reenvios, o site manda a mesma linha para a planilha da fábrica certa, com status "Enviado à fábrica" e a data do dia.
+- **Registro.** Depois que um reenvio é gravado na aba Reenvios, o site manda a mesma linha para a planilha da fábrica certa, com status "Sent to factory" e a data do dia.
   - Fullstack ainda não tem planilha: o site só avisa.
 
 ## Colunas esperadas (em qualquer ordem, nas 5 primeiras linhas)
 
-Order Number · Product (ou Produto) · Quantity (ou Quantidade) · Shipping Address (ou Endereço de envio) · Customer Email · Protocolo · Ticket · Data do envio à fábrica · Tracking do reenvio · Status · Observações
+Order Number · Product · Quantity · Shipping Address · Customer Email · Protocol · Ticket · Date sent to factory · Reshipment tracking · Status · Notes
 
-A fábrica preenche **Tracking do reenvio** e **Status**. Quando o status contém "Entregue", o site mostra o selo em verde. Quando contém "Problema", "Devolvido", "Cancelado" ou "Extraviado", mostra em vermelho.
+Os nomes em português (Produto, Protocolo, Data do envio à fábrica, Tracking do reenvio, Observações…) também funcionam.
+
+A fábrica preenche **Reshipment tracking** e **Status**. Quando o status contém "Delivered" (ou "Entregue"), o site mostra o selo em verde. Quando contém "Problem", "Returned", "Lost", "Cancelled" ou os equivalentes em português, mostra em vermelho.
 
 ## Como publicar (uma vez)
 
