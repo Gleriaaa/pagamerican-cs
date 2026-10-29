@@ -320,6 +320,18 @@ textarea{resize:vertical;font-family:inherit}
 .end-result.ok{background:var(--ok-mist);border:1px solid var(--ok-line);color:#0F5334}
 .end-result.alert{background:var(--signal-mist);border:1px solid var(--signal-line);color:#6B4A0E}
 .end-result.err{background:var(--risk-mist);border:1px solid var(--risk-line);color:#7A1C16}
+.rs-trk{margin-top:18px}
+.rs-trk-form{display:grid;grid-template-columns:1fr auto;gap:8px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.rs-trk-out{padding:0 18px 14px}
+.rs-trk-out .end-result{margin-top:14px}
+.rs-trk-item{padding:10px 0 4px;border-bottom:1px dashed var(--line)}
+.rs-trk-item:last-child{border-bottom:none}
+.rs-trk-item .end-row{grid-template-columns:130px 1fr}
+.rs-trk-track{font-family:var(--mono);font-weight:700}
+.rs-badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid var(--line);background:var(--paper);color:var(--ink-600)}
+.rs-badge.ok{background:var(--ok-mist);border-color:var(--ok-line);color:#0F5334}
+.rs-badge.wait{background:var(--signal-mist);border-color:var(--signal-line);color:#6B4A0E}
+.rs-badge.bad{background:var(--risk-mist);border-color:var(--risk-line);color:#7A1C16}
 .comp-btn:disabled{opacity:.55;cursor:not-allowed}
 .field-block.req .end-prow label::after{content:none}
 @media(max-width:700px){.navtabs{overflow-x:auto}.navtab{white-space:nowrap;flex-shrink:0}.end-row{grid-template-columns:1fr;gap:2px}.end-prow{grid-template-columns:1fr 64px 28px}.end-prow .ups{grid-column:1/2}}
@@ -826,6 +838,15 @@ textarea{resize:vertical;font-family:inherit}
       <button class="comp-btn ghost" onclick="rsCopyRow()" title="Copia em colunas, na ordem da aba Reenvios">Copiar linha p/ planilha</button>
     </div>
     <div class="end-foot">Os botões de cópia são plano B, caso o envio falhe. Nada fica salvo neste site: os dados vão direto para a planilha.</div>
+
+    <div class="end-card rs-trk">
+      <div class="end-card-head"><b>ACOMPANHAR REENVIO</b><span class="end-proto">EagleLabs · ShipOffers · RedRock</span></div>
+      <div class="rs-trk-form">
+        <input type="text" id="rs-trk-order" inputmode="numeric" placeholder="Order number, ex: 183156" onkeydown="if(event.key==='Enter')rsTrack()">
+        <button class="comp-btn primary" id="rs-trk-btn" onclick="rsTrack()">Consultar</button>
+      </div>
+      <div class="rs-trk-out" id="rs-trk-out"><div class="end-foot">Busca o tracking e o status que a fábrica preencheu na planilha de acompanhamento.</div></div>
+    </div>
   </div>
 
 </div>
@@ -1918,6 +1939,8 @@ function endRememberAgent(){try{localStorage.setItem("end_agent",endV("agent"))}
 const RS_API_URL="https://script.google.com/macros/s/AKfycbxuBShT1XbzZ9-pVbpdJ2VY1DCTBFWDIHpoyX2wJTa74dcRsAw9ARi45ZsD1huCeDgW/exec";  /* Web App da aba Reenvios */
 const RS_API_KEY="pa-rs-7Kq2vN9xLw4Tz8Hc3Fy6";  /* mesma chave de CHAVE no Apps Script */
 const RS_FACTORIES=["EagleLabs","RedRock","Shipoffers","Fullstack"];
+const RS_TRK_URL="";  /* Web App das planilhas das fábricas (apps-script/reenvio-fabricas.gs); vazio = ainda não publicado */
+const RS_TRK_KEY="pa-trk-sbkaevI2NaUoIYQ1nsHi";  /* mesma chave de CHAVE em reenvio-fabricas.gs */
 
 let RS_PROTO="",rsProducts=[],rsSending=false;
 const $r=id=>document.getElementById("rs-"+id);
@@ -2029,24 +2052,70 @@ function rsCopyRow(){if(!rsValidate())return;endCopy(rsRowValues().map(v=>String
 
 /* ---------- envio ---------- */
 function rsShowResult(kind,html){const r=$r("result");r.className="end-result show "+kind;r.innerHTML=html;}
+/* Copia o reenvio para a planilha da fábrica. Falha aqui não desfaz o envio principal: só avisa. */
+async function rsSendFactory(d){
+  if(!RS_TRK_URL)return"";
+  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),30000);
+  try{
+    const res=await fetch(RS_TRK_URL,{method:"POST",body:JSON.stringify(Object.assign({chave:RS_TRK_KEY,acao:"adicionar"},d)),signal:ctrl.signal});
+    const j=await res.json();
+    if(j.ok)return`<br>Também registrado na planilha da <b>${endEsc(j.fabrica)}</b>${j.jaExistia?" (já estava lá)":""}.`;
+    if(j.semPlanilha)return`<br>${endEsc(j.erro)}`;
+    throw new Error(j.erro||"Erro desconhecido");
+  }catch(e){
+    console.error(e);
+    return`<br>⚠ Não consegui registrar na planilha da fábrica (${endEsc(e.name==="AbortError"?"tempo esgotado":e.message)}). Avise o supervisor informando o protocolo.`;
+  }finally{clearTimeout(timer);}
+}
 async function rsSend(){
   if(rsSending||!rsValidate())return;
   if(!RS_API_URL){rsShowResult("err","A integração com a planilha ainda não foi configurada neste site. Use <b>Copiar linha p/ planilha</b> por enquanto.");return;}
   rsSending=true;const btn=$r("send");btn.disabled=true;btn.textContent="Enviando…";
   const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),30000);
   try{
-    const res=await fetch(RS_API_URL,{method:"POST",body:JSON.stringify(Object.assign({chave:RS_API_KEY},rsData())),signal:ctrl.signal});
+    const d=rsData();
+    const res=await fetch(RS_API_URL,{method:"POST",body:JSON.stringify(Object.assign({chave:RS_API_KEY},d)),signal:ctrl.signal});
     const j=await res.json();
     if(!j.ok)throw new Error(j.erro||"Erro desconhecido");
+    const fab=await rsSendFactory(Object.assign({},d,{protocolo:j.protocolo||d.protocolo}));
     const alerts=[];
     if(j.duplicado)alerts.push("⚠ "+endEsc(j.duplicado));
     if(j.checagem&&j.checagem.status!=="OK")alerts.push("⚠ Endereço: "+endEsc(j.checagem.mensagem)+(j.checagem.sugerido?`<br>Google sugere: <b>${endEsc(j.checagem.sugerido)}</b>`:""));
-    rsShowResult(alerts.length?"alert":"ok",`<b>✓ Enviado — protocolo ${endEsc(j.protocolo)}</b>`+(j.checagem&&j.checagem.status==="OK"?"<br>Endereço confirmado pelo Google Maps.":"")+(alerts.length?"<br>"+alerts.join("<br>")+"<br>Se precisar corrigir, avise o supervisor informando o protocolo.":""));
+    rsShowResult(alerts.length?"alert":"ok",`<b>✓ Enviado — protocolo ${endEsc(j.protocolo)}</b>`+(j.checagem&&j.checagem.status==="OK"?"<br>Endereço confirmado pelo Google Maps.":"")+(alerts.length?"<br>"+alerts.join("<br>")+"<br>Se precisar corrigir, avise o supervisor informando o protocolo.":"")+fab);
     rsClear(true);
   }catch(e){
     console.error(e);
     rsShowResult("err",`Não foi possível enviar (${endEsc(e.name==="AbortError"?"tempo esgotado":e.message)}). Seus dados continuam no formulário — tente de novo ou use <b>Copiar linha p/ planilha</b>.`);
   }finally{clearTimeout(timer);rsSending=false;btn.disabled=!RS_API_URL;btn.textContent="Enviar para a planilha";}
+}
+
+/* ---------- acompanhar (tracking nas planilhas das fábricas) ---------- */
+function rsBadge(st){
+  const n=(st||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+  const k=/entregue|delivered/.test(n)?"ok":/problema|devolvid|cancel|extravi|erro/.test(n)?"bad":n?"wait":"";
+  return`<span class="rs-badge ${k}">${endEsc(st||"Sem status")}</span>`;
+}
+async function rsTrack(){
+  const out=document.getElementById("rs-trk-out"),btn=document.getElementById("rs-trk-btn");
+  const order=(document.getElementById("rs-trk-order").value||"").replace(/[^\w-]/g,"");
+  const msg=(kind,html)=>{out.innerHTML=`<div class="end-result show ${kind}">${html}</div>`;};
+  if(!order){compToast("Informe o order number.");return;}
+  if(!RS_TRK_URL){msg("err","A consulta às planilhas das fábricas ainda não foi configurada neste site.");return;}
+  btn.disabled=true;btn.textContent="Buscando…";
+  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),30000);
+  try{
+    const res=await fetch(`${RS_TRK_URL}?chave=${encodeURIComponent(RS_TRK_KEY)}&order=${encodeURIComponent(order)}`,{signal:ctrl.signal});
+    const j=await res.json();
+    if(!j.ok)throw new Error(j.erro||"Erro desconhecido");
+    if(!j.resultados.length){msg("alert",`Nenhum reenvio da order <b>${endEsc(order)}</b> nas planilhas das fábricas.`);return;}
+    out.innerHTML=j.resultados.map(r=>{
+      const rows=[["Fábrica",endEsc(r.fabrica)],["Status",rsBadge(r.status)],["Tracking",r.tracking?`<span class="rs-trk-track">${endEsc(r.tracking)}</span>`:""],["Enviado à fábrica",endEsc(r.dataEnvio)],["Produto",endEsc([r.produto,r.quantidade&&`(${r.quantidade})`].filter(Boolean).join(" "))],["Protocolo",endEsc(r.protocolo)],["Ticket",endEsc(r.ticket)],["Observações",endEsc(r.observacoes)]];
+      return`<div class="rs-trk-item">${rows.map(([k,v])=>`<div class="end-row"><div class="k">${k}</div><div class="v${v?"":" empty"}">${v||(k==="Tracking"?"Aguardando a fábrica":"—")}</div></div>`).join("")}</div>`;
+    }).join("");
+  }catch(e){
+    console.error(e);
+    msg("err",`Não foi possível consultar (${endEsc(e.name==="AbortError"?"tempo esgotado":e.message)}).`);
+  }finally{clearTimeout(timer);btn.disabled=false;btn.textContent="Consultar";}
 }
 
 /* ---------- limpar / iniciar ---------- */
