@@ -2092,7 +2092,7 @@ async function rsSend(){
 /* ---------- acompanhar (tracking nas planilhas das fábricas) ---------- */
 function rsBadge(st){
   const n=(st||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
-  const k=/entregue|delivered/.test(n)?"ok":/problema|devolvid|cancel|extravi|erro/.test(n)?"bad":n?"wait":"";
+  const k=/problem|devolvid|return|cancel|extravi|lost|issue|erro|undeliver|not deliver|nao entregue/.test(n)?"bad":/entregue|deliver/.test(n)?"ok":n?"wait":"";
   return`<span class="rs-badge ${k}">${endEsc(st||"Sem status")}</span>`;
 }
 async function rsTrack(){
