@@ -26,7 +26,7 @@ const COLS = {
   order:      ["ordernumber", "order", "pedido"],
   produto:    ["produto", "product"],
   quantidade: ["quantidade", "qtd", "quantity"],
-  endereco:   ["enderecodeenvio", "endereco", "address"],
+  endereco:   ["enderecodeenvio", "shippingaddress", "endereco", "address"],
   email:      ["customeremail", "email"],
   protocolo:  ["protocolo"],
   ticket:     ["ticket"],
@@ -46,7 +46,11 @@ function json_(o) {
 function orderKey_(s) { return String(s == null ? "" : s).replace(/[^0-9a-z-]/gi, "").toLowerCase(); }
 
 function aba_(f) {
-  const ss = SpreadsheetApp.openById(f.id);
+  let ss;
+  try { ss = SpreadsheetApp.openById(f.id); }
+  catch (err) {
+    throw new Error("Não consegui abrir a planilha da " + f.nome + ". Se ela ainda for um arquivo Excel (.xlsx), abra e use Arquivo → Salvar como Planilhas Google, e coloque o ID novo no script.");
+  }
   return f.aba ? ss.getSheetByName(f.aba) : ss.getSheets()[0];
 }
 

@@ -11,13 +11,13 @@ O que ele faz:
 
 ## Colunas esperadas (em qualquer ordem, nas 5 primeiras linhas)
 
-Order Number · Produto · Quantidade · Endereço de envio · Customer email · Protocolo · Ticket · Data do envio à fábrica · Tracking do reenvio · Status · Observações
+Order Number · Product (ou Produto) · Quantity (ou Quantidade) · Shipping Address (ou Endereço de envio) · Customer Email · Protocolo · Ticket · Data do envio à fábrica · Tracking do reenvio · Status · Observações
 
 A fábrica preenche **Tracking do reenvio** e **Status**. Quando o status contém "Entregue", o site mostra o selo em verde. Quando contém "Problema", "Devolvido", "Cancelado" ou "Extraviado", mostra em vermelho.
 
 ## Como publicar (uma vez)
 
-1. Suba os 3 arquivos no Google Drive e abra cada um como **Planilha Google**.
+1. Suba os 3 arquivos no Google Drive, abra cada um e use **Arquivo → Salvar como Planilhas Google**. O script não abre arquivo .xlsx: o ID que vale é o da versão Planilhas Google.
 2. Copie o ID de cada planilha: é o trecho do link entre `/d/` e `/edit`.
 3. Em <https://script.google.com>, crie um **Novo projeto**, apague o conteúdo e cole o `reenvio-fabricas.gs`.
 4. Troque os 3 `COLE_O_ID_DA_PLANILHA_...` pelos IDs. Se os dados não estiverem na primeira aba, preencha `aba` com o nome dela.
