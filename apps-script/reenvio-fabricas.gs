@@ -263,3 +263,22 @@ function instalarLembrete() {
   ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === "lembreteDiario").forEach(t => ScriptApp.deleteTrigger(t));
   ScriptApp.newTrigger("lembreteDiario").timeBased().everyDays(1).atHour(LEMBRETE_HORA).inTimezone(LEMBRETE_FUSO).create();
 }
+
+/* Rode pelo editor para conferir os avisos: libera a permissão de enviar e-mail (na 1ª vez),
+   manda para VOCÊ um exemplo do aviso e mostra no registro quem recebe em cada fábrica. */
+function testarAviso() {
+  const eu = Session.getEffectiveUser().getEmail();
+  Object.keys(FABRICAS).forEach(k => {
+    const f = FABRICAS[k];
+    try { console.log(f.nome + " → recebem: " + (destinatarios_(aba_(f)).join(", ") || "ninguém (compartilhe a planilha como Editor)")); }
+    catch (err) { console.log(f.nome + " → erro: " + err); }
+  });
+  const f = FABRICAS.redrock;
+  const exemplo = { orderNumber: "TEST-0001", produto: "Sample product", quantidade: "1", protocolo: "REE-TEST" };
+  MailApp.sendEmail(eu, "[TEST] New reshipment request – Order TEST-0001 (" + f.nome + ")",
+    "Teste do aviso de reenvio. Se este e-mail chegou, o envio de avisos está funcionando.",
+    { name: ASSINATURA, htmlBody: "<p><b>Teste do aviso de reenvio.</b> Se este e-mail chegou, o envio de avisos está funcionando.</p><hr>" +
+      "<p>Order Number: <b>" + exemplo.orderNumber + "</b><br>Product: <b>" + exemplo.produto + "</b><br>Protocol: <b>" + exemplo.protocolo + "</b></p>" +
+      "<p><a href='" + linkPlanilha_(f) + "'>Open the " + f.nome + " reshipment sheet</a></p>" });
+  console.log("E-mail de teste enviado para " + eu + ". Cotas restantes hoje: " + MailApp.getRemainingDailyQuota());
+}
