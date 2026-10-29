@@ -19,21 +19,21 @@ const FABRICAS = {
   redrock:    { nome: "RedRock",    id: "1PLXauG7pAx_Qszf0RnmfWeFI3g9Tw7qLS983DWb0QVc",    aba: "" }
 };
 
-const STATUS_INICIAL = "Enviado à fábrica";
+const STATUS_INICIAL = "Sent to factory";
 
-/* Cabeçalhos procurados (sem acento, minúsculo, só letras e números). */
+/* Cabeçalhos procurados, em português ou inglês (sem acento, minúsculo, só letras e números). */
 const COLS = {
   order:      ["ordernumber", "order", "pedido"],
   produto:    ["produto", "product"],
   quantidade: ["quantidade", "qtd", "quantity"],
   endereco:   ["enderecodeenvio", "shippingaddress", "endereco", "address"],
   email:      ["customeremail", "email"],
-  protocolo:  ["protocolo"],
+  protocolo:  ["protocolo", "protocol"],
   ticket:     ["ticket"],
-  dataEnvio:  ["datadoenvioafabrica", "dataenvio", "data"],
-  tracking:   ["trackingdoreenvio", "tracking", "rastreio"],
+  dataEnvio:  ["datadoenvioafabrica", "datesenttofactory", "dataenvio", "datesent", "data", "date"],
+  tracking:   ["trackingdoreenvio", "reshipmenttracking", "trackingnumber", "tracking", "rastreio"],
   status:     ["status"],
-  obs:        ["observacoes", "obs"]
+  obs:        ["observacoes", "notes", "obs", "note"]
 };
 
 function norm_(s) {
