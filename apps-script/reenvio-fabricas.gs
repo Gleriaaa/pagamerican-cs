@@ -148,16 +148,21 @@ function doPost(e) {
 
     const row = new Array(m.ncols).fill("");
     const put = (c, v) => { if (m.idx[c] >= 0) row[m.idx[c]] = v == null ? "" : String(v); };
-    put("order", d.orderNumber);
+    /* apóstrofo = gravar como texto, igual às linhas que já existem (senão vira número/data) */
+    put("order", d.orderNumber ? "'" + d.orderNumber : "");
     put("produto", d.produto);
     put("quantidade", d.quantidade);
     put("endereco", d.endereco);
     put("email", d.email);
     put("protocolo", d.protocolo);
-    put("ticket", d.ticket);
-    put("dataEnvio", Utilities.formatDate(new Date(), "America/Sao_Paulo", "dd/MM/yyyy"));
+    put("ticket", d.ticket ? "'" + d.ticket : "");
+    put("dataEnvio", "'" + Utilities.formatDate(new Date(), "America/Sao_Paulo", "dd/MM/yyyy"));
     put("status", STATUS_INICIAL);
     sh.appendRow(row);
+    /* a linha nova herda cores e bordas da linha de cima */
+    const nova = sh.getLastRow();
+    if (nova > m.linha + 1)
+      sh.getRange(nova - 1, 1, 1, m.ncols).copyTo(sh.getRange(nova, 1, 1, m.ncols), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
     let avisados = 0;
     try { avisados = avisarNovo_(f, sh, d); } catch (err) { console.error("Aviso por e-mail falhou: " + err); }
     return json_({ ok: true, fabrica: f.nome, avisados: avisados });
