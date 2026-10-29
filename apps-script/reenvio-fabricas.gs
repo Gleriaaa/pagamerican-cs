@@ -14,9 +14,9 @@ const CHAVE = "pa-trk-sbkaevI2NaUoIYQ1nsHi";
 /* Uma entrada por fábrica: o ID é o trecho do link da planilha entre /d/ e /edit.
    "aba" vazio = primeira aba da planilha. */
 const FABRICAS = {
-  eaglelabs:  { nome: "EagleLabs",  id: "COLE_O_ID_DA_PLANILHA_EAGLELABS",  aba: "" },
-  shipoffers: { nome: "ShipOffers", id: "COLE_O_ID_DA_PLANILHA_SHIPOFFERS", aba: "" },
-  redrock:    { nome: "RedRock",    id: "COLE_O_ID_DA_PLANILHA_REDROCK",    aba: "" }
+  eaglelabs:  { nome: "EagleLabs",  id: "1pLsXlK9vMCcrKqcjpCoRxzYb0Ql-MAJOzKn6lrwdxRY",  aba: "" },
+  shipoffers: { nome: "ShipOffers", id: "1j5IWjp2yUqwox8tnfiyl4wGYLydSC-LowAvqqg9Fcp8", aba: "" },
+  redrock:    { nome: "RedRock",    id: "1PLXauG7pAx_Qszf0RnmfWeFI3g9Tw7qLS983DWb0QVc",    aba: "" }
 };
 
 const STATUS_INICIAL = "Enviado à fábrica";
