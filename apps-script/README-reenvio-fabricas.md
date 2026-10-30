@@ -11,7 +11,7 @@ O que ele faz:
 
 ## Colunas esperadas (em qualquer ordem, nas 5 primeiras linhas)
 
-Order Number · Product · Quantity · Shipping Address · Customer Email · Protocol · Ticket · Date sent to factory · Reshipment tracking · Status · Notes
+Order Number · Product · Quantity · Shipping Address · Customer Email · Customer Name · Account / Vendor · Protocol · Ticket · Date sent to factory · Reshipment tracking · Status · Notes
 
 Os nomes em português (Produto, Protocolo, Data do envio à fábrica, Tracking do reenvio, Observações…) também funcionam.
 

@@ -798,6 +798,19 @@ textarea{resize:vertical;font-family:inherit}
       <input type="email" id="rs-email" placeholder="cliente@email.com" oninput="rsRender()">
       <div class="req-note">Informe um e-mail válido.</div>
     </div>
+    <div class="fg">
+      <div class="fgrp field-block req" id="rf-name">
+        <label for="rs-name">Nome do cliente</label>
+        <input type="text" id="rs-name" placeholder="Ex: Michael Timmerman" oninput="rsRender()" autocomplete="off">
+        <div class="req-note">Obrigatório.</div>
+      </div>
+      <div class="fgrp field-block req" id="rf-vendor">
+        <label for="rs-vendor">Vendor (account)</label>
+        <input type="text" id="rs-vendor" list="rs-vendors" placeholder="Ex: INSTITUTO EXPERIENCE" oninput="rsRender()" autocomplete="off">
+        <div class="req-note">Obrigatório.</div>
+      </div>
+    </div>
+    <datalist id="rs-vendors"><option value="INSTITUTO EXPERIENCE"><option value="CLICKVAULT LLC"><option value="Drumser S.A."><option value="BLUE GLOBAL ENTERPRISES LLP"><option value="MAIVER"><option value="WW GROWTH USA"><option value="Atlas Chronos 2"><option value="EMB EMPREENDIMENTOS"><option value="GRUPO FENIX"></datalist>
 
     <div class="field-block req" id="rf-products">
       <label>Produto e quantidade <span class="hint">(bottles/units a reenviar)</span></label>
@@ -1986,6 +1999,8 @@ function rsImport(){
     else if(/FABRICA|FACTORY|FULFILL|CENTRO/.test(k)){$r("factory").value=rsMatchFactory(v);found++;}
     else if(/ENDERECO|ADDRESS/.test(k)){$r("address").value=v;found++;}
     else if(/E-?MAIL/.test(k)){$r("email").value=v;found++;}
+    else if(/VENDOR|ACCOUNT|CONTA/.test(k)){$r("vendor").value=v;found++;}
+    else if(/NOME|NAME|CUSTOMER|CLIENTE/.test(k)&&!/PRODUT|PRODUCT/.test(k)){$r("name").value=v;found++;}
     else if(/PRODUT|PRODUCT/.test(k)){names=v.split("+").map(x=>x.trim()).filter(Boolean);found++;}
     else if(/QUANTIDADE|QTD|QUANTITY|BOTTLES|UNIT/.test(k)){qtys=v.split("+").map(x=>(x.match(/\d+/)||[""])[0]);found++;}
     else if(/MOTIVO|REASON/.test(k)){const o=[...$r("reason").options].find(o=>o.value&&norm(o.value).includes(norm(v).split(" ")[0]));if(o){$r("reason").value=o.value;found++;}}
@@ -1998,7 +2013,7 @@ function rsImport(){
 /* ---------- validação ---------- */
 function rsChecks(){
   const bad={};
-  ["agent","reason","order","factory","address"].forEach(k=>{if(!rsV(k))bad[k]=1});
+  ["agent","reason","order","factory","address","name","vendor"].forEach(k=>{if(!rsV(k))bad[k]=1});
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rsV("email")))bad.email=1;
   if(!rsFilled().length||rsFilled().some(p=>!(Number(p.qty)>0)))bad.products=1;
   const warn=[];
@@ -2025,6 +2040,7 @@ function rsData(){
   return{
     protocolo:RS_PROTO,agente:rsV("agent"),origem:rsV("origin"),ticket:rsV("ticket"),motivo:rsV("reason"),
     orderNumber:rsV("order"),produto:rsProdText(),quantidade:rsQtyText(),endereco:rsAddress(),
+    nomeCliente:rsV("name"),vendor:rsV("vendor"),
     email:rsV("email"),fabrica:rsV("factory"),observacoes:rsV("note")
   };
 }
@@ -2032,7 +2048,7 @@ function rsRender(){
   const d=rsData(),{warn}=rsChecks();
   $r("title").textContent=`REENVIO - ${new Date().toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}`;
   $r("proto").textContent=RS_PROTO;
-  const rows=[["Order number",d.orderNumber],["Produto",d.produto],["Quantidade",d.quantidade],["Endereço de envio",d.endereco],["Customer email",d.email],["Nome da fábrica",d.fabrica],["Motivo",d.motivo],["Origem",d.origem+(d.ticket?` · ticket #${d.ticket.replace(/^#/,"")}`:"")],["Agente",d.agente],["Observações",d.observacoes]];
+  const rows=[["Order number",d.orderNumber],["Produto",d.produto],["Quantidade",d.quantidade],["Endereço de envio",d.endereco],["Customer email",d.email],["Customer name",d.nomeCliente],["Vendor",d.vendor],["Nome da fábrica",d.fabrica],["Motivo",d.motivo],["Origem",d.origem+(d.ticket?` · ticket #${d.ticket.replace(/^#/,"")}`:"")],["Agente",d.agente],["Observações",d.observacoes]];
   $r("preview").innerHTML=rows.map(([k,v])=>`<div class="end-row"><div class="k">${k}</div><div class="v${v?"":" empty"}">${v?endEsc(v):"—"}</div></div>`).join("");
   const w=$r("warn");w.innerHTML=warn.map(x=>"⚠ "+x).join("<br>");w.classList.toggle("show",warn.length>0);
 }
@@ -2040,7 +2056,7 @@ function rsRender(){
 /* ---------- cópia (plano B) ---------- */
 function rsSlackText(){
   const d=rsData();
-  return `REENVIO - ${new Date().toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}\nPROTOCOLO: ${d.protocolo}\nOrder Number: ${d.orderNumber}\nProduto: ${d.produto}\nQuantidade: ${d.quantidade} bottles\nEndereço de envio: ${d.endereco}\nCustomer email: ${d.email}\nNome da fábrica: ${d.fabrica}\nMotivo: ${d.motivo}`+(d.observacoes?`\nOBS: ${d.observacoes}`:"");
+  return `REENVIO - ${new Date().toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}\nPROTOCOLO: ${d.protocolo}\nOrder Number: ${d.orderNumber}\nProduto: ${d.produto}\nQuantidade: ${d.quantidade} bottles\nEndereço de envio: ${d.endereco}\nCustomer email: ${d.email}\nCustomer name: ${d.nomeCliente}\nVendor: ${d.vendor}\nNome da fábrica: ${d.fabrica}\nMotivo: ${d.motivo}`+(d.observacoes?`\nOBS: ${d.observacoes}`:"");
 }
 /* mesma ordem das colunas da aba Reenvios: as 5 originais primeiro, depois as que o script acrescenta */
 function rsRowValues(){
@@ -2120,7 +2136,7 @@ async function rsTrack(){
 
 /* ---------- limpar / iniciar ---------- */
 function rsClear(keepResult){
-  ["ticket","reason","order","factory","email","address","note","import"].forEach(k=>{$r(k).value=""});
+  ["ticket","reason","order","factory","email","name","vendor","address","note","import"].forEach(k=>{$r(k).value=""});
   rsProducts=[{name:"",qty:""}];rsRenderProducts();
   document.querySelectorAll("#view-reenvio .field-block.invalid").forEach(el=>el.classList.remove("invalid"));
   if(!keepResult)$r("result").className="end-result";

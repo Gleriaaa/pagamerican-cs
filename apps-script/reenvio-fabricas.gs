@@ -40,6 +40,8 @@ const COLS = {
   quantidade: ["quantidade", "qtd", "quantity"],
   endereco:   ["enderecodeenvio", "shippingaddress", "endereco", "address"],
   email:      ["customeremail", "email"],
+  nome:       ["customername", "nomedocliente", "nome", "name"],
+  vendor:     ["accountvendor", "vendor", "account", "conta"],
   protocolo:  ["protocolo", "protocol"],
   ticket:     ["ticket"],
   dataEnvio:  ["datadoenvioafabrica", "datesenttofactory", "dataenvio", "datesent", "data", "date"],
@@ -154,6 +156,8 @@ function doPost(e) {
     put("quantidade", d.quantidade);
     put("endereco", d.endereco);
     put("email", d.email);
+    put("nome", d.nomeCliente);
+    put("vendor", d.vendor);
     put("protocolo", d.protocolo);
     put("ticket", d.ticket ? "'" + d.ticket : "");
     put("dataEnvio", "'" + Utilities.formatDate(new Date(), "America/Sao_Paulo", "dd/MM/yyyy"));
