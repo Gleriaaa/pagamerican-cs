@@ -11,7 +11,7 @@ O que ele faz:
 
 ## Colunas esperadas (em qualquer ordem, nas 5 primeiras linhas)
 
-Order Number · Product · Quantity · Shipping Address · Customer Email · Protocol · Ticket · Date sent to factory · Reshipment tracking · Status · Notes
+Order Number · Product · Quantity · Shipping Address · Customer Email · Customer Name · Account / Vendor · Protocol · Ticket · Date sent to factory · Reshipment tracking · Status · Notes
 
 Os nomes em português (Produto, Protocolo, Data do envio à fábrica, Tracking do reenvio, Observações…) também funcionam.
 
@@ -36,3 +36,13 @@ Ao alterar o script depois, use **Implantar → Gerenciar implantações → edi
 ## Compartilhar com as fábricas
 
 Cada fábrica recebe acesso de **editor só à própria planilha**. O script roda com a sua conta, então as fábricas não precisam ter acesso a ele.
+
+## Avisos por e-mail para as fábricas
+
+Os e-mails vão em inglês para **todos os editores da planilha da fábrica**, menos o dono. Compartilhou como Editor, a pessoa passa a receber. Para parar, tire o acesso dela. Os e-mails nunca trazem endereço nem e-mail do cliente.
+
+- **Na hora:** cada reenvio novo enviado pelo site gera um e-mail "New reshipment request – Order ..." com pedido, produto, quantidade, protocolo e o link da planilha.
+- **Todo dia às 9h (horário de Nova York):** um lembrete com os reenvios sem tracking há 2 dias ou mais, que não estejam entregues nem cancelados.
+  - Para ligar o lembrete, rode **uma vez** a função `instalarLembrete`: no editor, escolha a função na lista ao lado de "Depurar" e clique em **Executar**.
+  - Para mudar a hora, os dias ou o fuso, ajuste `LEMBRETE_HORA`, `LEMBRETE_DIAS_MIN` e `LEMBRETE_FUSO` e rode `instalarLembrete` de novo.
+- **Cópia para a PagAmerican:** coloque os e-mails em `AVISO_COPIA`.
