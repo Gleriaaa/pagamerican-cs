@@ -732,7 +732,7 @@ textarea{resize:vertical;font-family:inherit}
 <div class="comp-wrap">
 
   <div class="comp-callout">
-    <b>Solicitação de reenvio.</b> Preencha e clique em <b>Enviar para a planilha</b>: a linha entra direto na aba <b>Reenvios</b> com protocolo, e o sistema avisa se essa order já tem um reenvio registrado. O endereço vai para a planilha exatamente como foi colado.
+    <b>Solicitação de reenvio.</b> Preencha e clique em <b>Enviar para a planilha</b>: a linha entra na aba <b>Reenvios</b> com protocolo e vai para a <b>validação</b>. Só depois de aprovado o reenvio segue para a planilha da fábrica. O sistema avisa se essa order já tem um reenvio registrado. O endereço vai para a planilha exatamente como foi colado.
   </div>
 
   <div class="panel">
@@ -858,7 +858,7 @@ textarea{resize:vertical;font-family:inherit}
         <input type="text" id="rs-trk-order" inputmode="numeric" placeholder="Order number, ex: 183156" onkeydown="if(event.key==='Enter')rsTrack()">
         <button class="comp-btn primary" id="rs-trk-btn" onclick="rsTrack()">Consultar</button>
       </div>
-      <div class="rs-trk-out" id="rs-trk-out"><div class="end-foot">Busca o tracking e o status que a fábrica preencheu na planilha de acompanhamento.</div></div>
+      <div class="rs-trk-out" id="rs-trk-out"><div class="end-foot">Mostra se o reenvio ainda está na validação (ou foi reprovado) e, depois de aprovado, o tracking e o status que a fábrica preencheu.</div></div>
     </div>
   </div>
 
@@ -2075,6 +2075,7 @@ async function rsSendFactory(d){
   try{
     const res=await fetch(RS_TRK_URL,{method:"POST",body:JSON.stringify(Object.assign({chave:RS_TRK_KEY,acao:"adicionar"},d)),signal:ctrl.signal});
     const j=await res.json();
+    if(j.ok&&j.validacao)return`<br><b>Enviado para validação.</b> Só vai para a planilha da <b>${endEsc(j.fabrica)}</b> depois de aprovado${j.jaExistia?" (já estava na validação)":""}. Acompanhe em <b>Acompanhar reenvio</b>.`+(j.avisados===0?"<br>⚠ Ninguém foi avisado da validação: avise o supervisor.":"")+(j.anteriores&&/^⚠/.test(j.anteriores)?`<br>⚠ Essa order já tem reenvio: ${endEsc(j.anteriores.replace(/^⚠\s*/,""))}.`:"");
     if(j.ok)return`<br>Também registrado na planilha da <b>${endEsc(j.fabrica)}</b>${j.jaExistia?" (já estava lá)":""}.`;
     if(j.semPlanilha)return`<br>${endEsc(j.erro)}`;
     throw new Error(j.erro||"Erro desconhecido");
@@ -2108,7 +2109,7 @@ async function rsSend(){
 /* ---------- acompanhar (tracking nas planilhas das fábricas) ---------- */
 function rsBadge(st){
   const n=(st||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
-  const k=/problem|devolvid|return|cancel|extravi|lost|issue|erro|undeliver|not deliver|nao entregue/.test(n)?"bad":/entregue|deliver/.test(n)?"ok":n?"wait":"";
+  const k=/reprovad|problem|devolvid|return|cancel|extravi|lost|issue|erro|undeliver|not deliver|nao entregue/.test(n)?"bad":/entregue|deliver/.test(n)?"ok":n?"wait":"";
   return`<span class="rs-badge ${k}">${endEsc(st||"Sem status")}</span>`;
 }
 async function rsTrack(){
@@ -2123,8 +2124,12 @@ async function rsTrack(){
     const res=await fetch(`${RS_TRK_URL}?chave=${encodeURIComponent(RS_TRK_KEY)}&order=${encodeURIComponent(order)}`,{signal:ctrl.signal});
     const j=await res.json();
     if(!j.ok)throw new Error(j.erro||"Erro desconhecido");
-    if(!j.resultados.length){msg("alert",`Nenhum reenvio da order <b>${endEsc(order)}</b> nas planilhas das fábricas.`);return;}
+    if(!j.resultados.length){msg("alert",`Nenhum reenvio da order <b>${endEsc(order)}</b> na validação nem nas planilhas das fábricas.`);return;}
     out.innerHTML=j.resultados.map(r=>{
+      if(r.validacao){
+        const rows=[["Fábrica",endEsc(r.fabrica)],["Status",rsBadge(r.status)],["Pedido em",endEsc(r.recebido)],["Produto",endEsc([r.produto,r.quantidade&&`(${r.quantidade})`].filter(Boolean).join(" "))],["Protocolo",endEsc(r.protocolo)],["Ticket",endEsc(r.ticket)],["Observações",endEsc(r.observacoes)]];
+        return`<div class="rs-trk-item">${rows.map(([k,v])=>`<div class="end-row"><div class="k">${k}</div><div class="v${v?"":" empty"}">${v||"—"}</div></div>`).join("")}</div>`;
+      }
       const rows=[["Fábrica",endEsc(r.fabrica)],["Status",rsBadge(r.status)],["Tracking",r.tracking?`<span class="rs-trk-track">${endEsc(r.tracking)}</span>`:""],["Enviado à fábrica",endEsc(r.dataEnvio)],["Produto",endEsc([r.produto,r.quantidade&&`(${r.quantidade})`].filter(Boolean).join(" "))],["Protocolo",endEsc(r.protocolo)],["Ticket",endEsc(r.ticket)],["Observações",endEsc(r.observacoes)]];
       return`<div class="rs-trk-item">${rows.map(([k,v])=>`<div class="end-row"><div class="k">${k}</div><div class="v${v?"":" empty"}">${v||(k==="Tracking"?"Aguardando a fábrica":"—")}</div></div>`).join("")}</div>`;
     }).join("");
